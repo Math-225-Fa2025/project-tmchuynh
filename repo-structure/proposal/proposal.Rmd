@@ -1,7 +1,34 @@
 ---
 title: "Project proposal"
-author: "Team name"
-output: github_document
+author: "Tina Huynh"
+output: 
+    github_document: 
+        toc: true
+        number_sections: true
+        fig_caption: true
+        fig_width: 6
+        fig_height: 4
+        highlight: tango
+    pdf_document: 
+        toc: true
+        number_sections: true
+        fig_caption: true
+        fig_width: 6
+        fig_height: 4
+        highlight: tango
+        latex_engine: xelatex
+        keep_tex: true
+        citation_package: natbib
+    html_document:
+        toc: true
+        toc_depth: 3
+        number_sections: true
+        fig_caption: true
+        fig_width: 6
+        fig_height: 4
+        highlight: tango
+        theme: readable
+        df_print: paged
 ---
 
 ```{r load-packages, message = FALSE}
@@ -277,12 +304,6 @@ My goal is a reproducible, decision-useful evidence base that supports intervent
 -   **Community framing:** avoid victim-blaming; emphasize **structural drivers** (poverty, governance, market access) and **solutions** (livelihoods, enforcement, demand reduction, health/vet safeguards).
 -   **Health claims:** treat any health indicators as **associational**; do not overstate causality.
 
-Here’s a tight, practical set of methods for your proposal.
-It’s split into **Statistical Tests** (inference you’ll report) and **Algorithms** (models/smoothers you’ll fit).
-Choices map to your data: country–year panels of seizures, socioeconomic/governance covariates, regional wholesale price indices (lagged), live-trade shares, and snapshot context (populations, tourism anchors).
-
-------------------------------------------------------------------------
-
 #### Statistical Tests
 
 **Associations & correlation**
@@ -323,8 +344,6 @@ Choices map to your data: country–year panels of seizures, socioeconomic/gover
 **Uncertainty**
 
 -   **Bootstrap CIs** for medians and for model coefficients where asymptotics are weak.
-
-------------------------------------------------------------------------
 
 #### Algorithms
 
