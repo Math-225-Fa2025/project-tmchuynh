@@ -4,18 +4,12 @@ author: "Tina Huynh"
 output: 
     github_document: 
         toc: true
+        toc_depth: 3
         number_sections: true
-        fig_caption: true
-        fig_width: 6
-        fig_height: 4
-        highlight: tango
     pdf_document: 
         toc: true
+        toc_depth: 3
         number_sections: true
-        fig_caption: true
-        fig_width: 6
-        fig_height: 4
-        highlight: tango
         latex_engine: xelatex
         keep_tex: true
         citation_package: natbib
@@ -23,10 +17,6 @@ output:
         toc: true
         toc_depth: 3
         number_sections: true
-        fig_caption: true
-        fig_width: 6
-        fig_height: 4
-        highlight: tango
         theme: readable
         df_print: paged
 ---
