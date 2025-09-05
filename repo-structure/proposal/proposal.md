@@ -984,9 +984,8 @@ sessionInfo()
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] compiler_4.2.2    fastmap_1.2.0     cli_3.6.5         tools_4.2.2      
-    ##  [5] htmltools_0.5.8.1 rstudioapi_0.17.1 yaml_2.3.10       rmarkdown_2.29   
-    ##  [9] knitr_1.50        xfun_0.53         digest_0.6.37     rlang_1.1.6      
-    ## [13] evaluate_1.0.5
+    ##  [5] htmltools_0.5.8.1 yaml_2.3.10       rmarkdown_2.29    knitr_1.50       
+    ##  [9] xfun_0.53         digest_0.6.37     rlang_1.1.6       evaluate_1.0.5
 
 ## 10.2 B. Hot-spot map scaffold
 
