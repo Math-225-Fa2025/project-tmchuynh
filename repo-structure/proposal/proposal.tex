@@ -1,0 +1,1358 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[
+]{article}
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{5}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage[]{natbib}
+\bibliographystyle{plainnat}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Project proposal},
+  pdfauthor={Tina Huynh},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Project proposal}
+\author{Tina Huynh}
+\date{}
+
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{3}
+\tableofcontents
+}
+\section{Executive Summary}\label{executive-summary}
+
+This project examines the illegal trade in tiger parts and its
+consequences for biodiversity, human communities, and public health. We
+will quantify seizure trends and trade signals, place them in the
+context of wild versus ex-situ (zoo/facility) populations, and integrate
+socioeconomic and governance indicators that shape poaching incentives
+and enforcement capacity. We will also address the historic loss of
+tiger subspecies/populations and the risks of zoonotic spillover
+associated with unregulated live-animal trade.
+
+Results will be presented as a reproducible data analysis (R/Quarto), a
+compact dataset, and a short report linking empirical findings to
+policy-relevant implications: conservation effectiveness, community
+livelihoods, and public-health prevention.
+
+\subsection{Scope}\label{scope}
+
+\begin{itemize}
+\item
+  \textbf{Focal taxon}: Panthera tigris (tigers).
+\item
+  \textbf{Spatial unit}: country (aggregate to sub-regions where
+  needed).
+\item
+  \textbf{Temporal scope}: 2010--2024 (or longest consistent overlap
+  across sources).
+\end{itemize}
+
+\subsection{Objective}\label{objective}
+
+\begin{itemize}
+\item
+  \textbf{Trade/Enforcement}: Quantify and visualize tiger-part seizure
+  trends over time and geography; compare item types (skins, bones,
+  teeth/claws).
+\item
+  \textbf{Prices (carefully handled)}: Use vetted wholesale price
+  ranges/indices to explore whether market signals correlate with
+  recorded pressure (seizures).
+\item
+  \textbf{Populations}: Contextualize trends with wild population
+  estimates and, where access permits, ex-situ counts (snapshot).
+\item
+  \textbf{Extinctions}: Document historic subspecies/population
+  extinctions and recent country-level functional extirpations,
+  acknowledging multiple interacting drivers.
+\item
+  \textbf{Socioeconomics \& Governance}: Test associations between
+  poverty, governance, and recorded poaching pressure; articulate the
+  dependency cycle of illegal income.
+\item
+  \textbf{Public Health}: Highlight how unregulated live-animal trade
+  elevates spillover risk and burdens human health systems.
+\end{itemize}
+
+\section{Background and Problem
+Statement}\label{background-and-problem-statement}
+
+\subsection{The Problem}\label{the-problem}
+
+Illegal trade in tiger parts (bones, skins, teeth/claws) and live
+animals continues to exert pressure on already small, fragmented wild
+populations. Poaching is reinforced by poverty, weak governance, and
+organized-crime supply chains; in some landscapes, snaring for
+commercial bushmeat and parts has become pervasive. Beyond biodiversity
+loss, this crime undermines the rule of law, corrodes public
+institutions, and erodes nature-based tourism revenues and jobs that
+would otherwise finance conservation and local livelihoods.
+
+Segments of the trade move live wildlife through multi-species, crowded,
+and unsanitary holding/transport. These conditions heighten the risk of
+zoonotic spillover by increasing close contact and pathogen shedding,
+and they bypass veterinary and quarantine controls---creating costs for
+public health as well as conservation. The risk is well documented
+across intergovernmental guidance and reviews and is relevant to any
+policy discussion on wildlife crime.
+
+The economic stakes are material. Tiger-viewing tourism can generate
+substantial site-level revenue and local employment; poaching-driven
+declines in sightings or access jeopardize those flows and can push
+households back toward illegal harvest, reinforcing a negative
+income--poaching loop. Countries that do not control poaching also incur
+reputational harms that affect destination branding, investor
+confidence, and international cooperation.
+
+\subsection{\texorpdfstring{The History of the \emph{Panthera tigris}
+Population}{The History of the Panthera tigris Population}}\label{the-history-of-the-panthera-tigris-population}
+
+\textbf{From continental giant to fragmented remnant.}\\
+Historically, tigers ranged from the forests and river systems of
+Anatolia/Central Asia through the Indian subcontinent and Southeast Asia
+to the Russian Far East and the Sunda Islands. By the early 1900s they
+occupied a mosaic of habitats---tropical moist forests, dry deciduous
+forests, mangroves, temperate/boreal forests, and grass--shrub
+systems---supported by abundant wild ungulates.
+
+\textbf{1900--1970: Rapid contraction and three extinctions.}\\
+- \textbf{Persecution \& sport hunting:} Colonial/royal hunting, bounty
+programs, and better firearms drove sustained offtake of tigers and
+their prey.\\
+- \textbf{Land conversion:} Large-scale clearing for agriculture,
+timber, plantations, and transport infrastructure fragmented habitat and
+severed corridors.\\
+- \textbf{Outcome:} Island subspecies \textbf{Bali} and \textbf{Javan}
+tigers, and the \textbf{Caspian} tiger on the mainland, disappeared
+during the mid-to-late 20th century as small, isolated populations
+collapsed under combined hunting pressure, prey loss, and habitat
+conversion.
+
+\textbf{1970s--1990s: International controls and uneven responses.}\\
+- \textbf{Policy era:} The 1970s--80s brought protected-area expansion
+and international trade controls; India launched \textbf{Project Tiger
+(1973)}, which created a dedicated reserve network and specialized
+protection.\\
+- \textbf{Shifting demand:} Illegal trade in \textbf{skins} and
+\textbf{bones} (for luxury and traditional medicine uses) escalated;
+some countries strengthened enforcement while others struggled with weak
+institutions and porous borders.\\
+- \textbf{Regional contrasts:} The \textbf{Amur (Siberian)} tiger
+hovered near the brink but began recovering under stricter protection;
+parts of mainland Southeast Asia saw steep declines as snaring
+proliferated.
+
+\textbf{2000s: The ``snaring crisis'' and national extirpations.}\\
+- \textbf{Low-cost mass killing:} Industrial-scale deployment of cheap
+wire snares by commercial and subsistence actors removed both tigers and
+their prey.\\
+- \textbf{National losses:} Tigers vanished from \textbf{Cambodia}
+(declared functionally extinct later, with reintroduction now planned)
+and from key landscapes in \textbf{Laos} and \textbf{Viet Nam}.
+\textbf{Malaysia} began a sharp decline despite substantial forest
+cover, while \textbf{Indonesia's} \textbf{Sumatran} tiger persisted
+under high pressure.\\
+- \textbf{Bright spots:} \textbf{India} and \textbf{Nepal} expanded
+camera-trap monitoring, boosted protection, and saw gradual increases;
+\textbf{Bhutan} remained relatively stable; the \textbf{Russian Far
+East} consolidated gains.
+
+\textbf{2010s--2020s: TX2 ambitions, taxonomy update, cautious
+optimism.}\\
+- \textbf{TX2 commitment (2010):} Range states endorsed the goal to
+\textbf{double wild tiger numbers by 2022}, catalyzing funding,
+monitoring, and anti-poaching partnerships.\\
+- \textbf{Taxonomy (2017):} Formal revision consolidated tigers into two
+subspecies---\textbf{continental} (\emph{P. t. tigris}) and
+\textbf{Sunda} (\emph{P. t. sondaica})---while retaining the
+conservation significance of historically recognized forms (e.g., Bali,
+Javan, Caspian).\\
+- \textbf{Status (recent):} The latest global assessment reports
+\textbf{\textasciitilde3.7k--5.6k} wild tigers. Gains in \textbf{India,
+Nepal, Bhutan, Russia} and re-occupancy into parts of \textbf{northeast
+China} contrast with ongoing declines or very low numbers in portions of
+mainland Southeast Asia. The \textbf{South China} tiger remains
+\textbf{likely extinct in the wild}.
+
+\textbf{Structure today: small, isolated, corridor-dependent
+populations.}\\
+Most surviving subpopulations are small and geographically isolated,
+connected---if at all---by narrow, human-dominated corridors. Priority
+landscapes (e.g., \textbf{Terai Arc}, \textbf{Western Ghats--Central
+India}, \textbf{Sundarbans}, \textbf{Russian Far East--NE China})
+function as meta-populations where connectivity, prey recovery, and
+conflict mitigation determine long-term viability. Fragmentation raises
+risks of \textbf{genetic erosion}, \textbf{demographic stochasticity},
+and site-level extirpation.
+
+\textbf{Threat matrix (persistent and interacting):}\\
+- \textbf{Illegal killing \& trade:} Targeted poaching for \textbf{skins
+and bones}, opportunistic killing via \textbf{snares}, and retaliatory
+conflict killings.\\
+- \textbf{Prey depletion:} Overhunting of deer, wild pig, and other
+ungulates undermines carrying capacity even where habitat remains.\\
+- \textbf{Habitat loss \& fragmentation:} Agricultural expansion,
+plantation estates, logging, linear infrastructure, and settlements
+sever movement pathways.\\
+- \textbf{Governance \& poverty:} Weak enforcement capacity, corruption,
+and limited rural livelihoods fuel participation in illegal supply
+chains.\\
+- \textbf{Emerging risks:} \textbf{Climate change} threatens
+coastal/mangrove habitats (e.g., \textbf{Sundarbans} via sea-level rise
+and cyclones); expanding road/rail networks elevate mortality and open
+access for poachers.
+
+\textbf{What has worked (evidence-backed levers):}\\
+- \textbf{Site protection \& patrol quality:} Skilled, well-resourced
+patrols (SMART, informant networks), rapid response, and judicial
+follow-through reduce poaching.\\
+- \textbf{Prey base recovery:} Community co-management and hunting
+controls that allow ungulates to rebound increase tiger carrying
+capacity.\\
+- \textbf{Corridor protection:} Securing key linkages, regulating linear
+infrastructure, and targeted restoration maintain meta-population
+function.\\
+- \textbf{Community benefits:} Genuine local income from
+\textbf{ecotourism}, conservation jobs, and performance-based payments
+improves tolerance and reduces incentives to poach.\\
+- \textbf{Demand reduction \& market controls:} Visible enforcement,
+cross-border cooperation, and sustained demand-reduction campaigns
+shrink margins for traffickers.\\
+- \textbf{Transboundary collaboration:} Joint monitoring and coordinated
+enforcement in shared landscapes (e.g., India--Nepal Terai,
+Russia--China Far East) address cross-border movement of wildlife and
+offenders.
+
+\textbf{Bottom line.}\\
+Tigers can rebound rapidly where \textbf{protection is credible},
+\textbf{prey is abundant}, and \textbf{communities see real benefits}.
+But the same factors that drove the 20th-century collapse---illegal
+killing, prey loss, and habitat fragmentation---still operate. Without
+continuous, well-governed effort that pairs \textbf{livelihoods and
+governance} with \textbf{enforcement and demand reduction}, local
+recoveries remain fragile and reversible.
+
+\subsection{Existing Research}\label{existing-research}
+
+Wildlife crime, governance, and impacts. The UNODC World Wildlife Crime
+Report (2024) documents the scale of wildlife trafficking, its
+convergence with corruption and organized crime, and harms to
+governance, development, and public health---framing wildlife crime as a
+cross-cutting development and security issue, not just a conservation
+problem.
+
+Poverty, livelihoods, and poaching. Reviews in conservation and
+development literatures show that illegal hunting is often rooted in
+poverty, limited legal opportunities, and weak state presence; snaring
+in Southeast Asia is repeatedly highlighted as a low-cost, high-impact
+method linked to commercial demand and household income needs. The
+evidence cautions against simplistic narratives and emphasizes
+structural drivers (poverty, markets, governance).
+
+Population status and trends. The IUCN Red List reassessment (Goodrich
+et al., 2022) provides the current global estimate and Endangered
+status; WWF/Global Tiger Forum syntheses note stabilization or increases
+in some range states since 2010 (TX2), alongside declines
+elsewhere---indicating heterogeneous outcomes linked to protection and
+pressure.
+
+Snaring and recent extirpations. Peer-reviewed field studies from Laos
+(Nam Et-Phou Louey) document the disappearance of tigers by 2014, with
+snares implicated; WWF and news summaries align with those findings.
+These cases are used as cautionary examples of how trade-driven killing,
+coupled with habitat and prey loss, can rapidly eliminate small
+populations.
+
+Health risk from live trade. Intergovernmental guidelines (WOAH) and
+UNODC communication during COVID-19 underline that unregulated
+live-animal trade elevates spillover risk through high-contact,
+unsanitary interfaces across the supply chain. This evidence underpins
+the project's public-health framing (associational, not causal claims).
+
+Tourism, jobs, and finance. WWF and site-level studies report
+substantial tiger-linked tourism value and local capture of benefits;
+declines in wildlife or access translate into measurable revenue and
+employment losses, weakening incentives for protection and local buy-in.
+These findings justify including an ecotourism/jobs lens alongside
+biological and enforcement metrics.
+
+\section{Research Questions}\label{research-questions}
+
+\subsection{Core Research Questions}\label{core-research-questions}
+
+\begin{itemize}
+\item
+  \textbf{Q:} Where wild population snapshots exist, is wild\_pop\_mid
+  negatively correlated with seizures per million (signaling depletion
+  pressure) or uncorrelated (detection bias)?\\
+  \textbf{H:} Weak negative correlation overall, with wide uncertainty.
+\item
+  \textbf{Q:} Do persistent poaching signals plausibly damage
+  destination brand and cooperation prospects?\\
+  \textbf{H:} High, sustained illegal trade indicators correlate with
+  reputational risk narratives.
+\item
+  \textbf{Q:} What economic losses (revenue/jobs) are implied when tiger
+  sightings/access fall (e.g., from poaching)?\\
+  \textbf{H:} Reduced sightings/access materially cuts reserve-level
+  revenue and local earnings; at scale, this undermines sustainable
+  employment, reinforcing the poverty--poaching loop.
+\item
+  \textbf{Q:} Do improvements (Δ) in governance indices correlate with
+  subsequent decreases in seizures per million (lead--lag association)?
+  \textbf{H:} Positive Δ rule-of-law in year t associates with lower
+  seizures per million in t+1.
+\item
+  \textbf{Q:} Are poverty, unemployment, basic services, and governance
+  associated with recorded poaching pressure?\\
+  \textbf{H:} Higher poverty and weaker rule-of-law align with higher
+  seizures per capita.
+\item
+  \textbf{Q:} Are year-over-year changes in poverty/unemployment
+  correlated with changes in seizures per million (Δ--Δ analysis)?\\
+  \textbf{H:} Worsening poverty/unemployment associates with rising
+  seizures per million.
+\item
+  \textbf{Q:} How do trade/enforcement trends relate to wild population
+  context and (if available) ex-situ counts?\\
+  \textbf{H:} Areas with historically depleted wild populations show
+  weaker elasticity of seizures to price signals (fewer animals to
+  poach), but trafficking routes persist.
+\end{itemize}
+
+\subsection{Sub-Questions}\label{sub-questions}
+
+\begin{itemize}
+\item
+  \textbf{Q:} How have tiger-part seizures changed over time and where
+  are hot spots?\\
+  \textbf{H:} Seizures show clustered hot spots and non-linear trends
+  driven by enforcement and market dynamics.
+\item
+  \textbf{Q:} Do wholesale price indices/ranges align with subsequent
+  changes in seizures?\\
+  \textbf{H:} Higher prior-year wholesale indices correlate with higher
+  current seizures (association, not causal proof).
+\item
+  \textbf{Q:} What does the subspecies/population extinction timeline
+  indicate about illegal trade alongside habitat/prey loss?\\
+  \textbf{H:} Extirpation events coincide with periods of high poaching
+  pressure and weak governance, with habitat/prey loss as interacting
+  drivers.
+\item
+  \textbf{Q:} Is the poverty ↔ seizures correlation heterogeneous by
+  region (South Asia vs.~mainland Southeast Asia vs.~Russia/China)?\\
+  \textbf{H:} Strongest in mainland Southeast Asia, weaker in
+  higher-income/high-governance regions.
+\item
+  \textbf{Q:} Where live-animal seizures occur, do indicators suggest
+  elevated spillover risk?\\
+  \textbf{H:} Higher shares of live-trade seizures co-occur with weaker
+  services/governance.
+\end{itemize}
+
+\section{Data}\label{data}
+
+\subsection{Data Sources}\label{data-sources}
+
+\begin{itemize}
+\item
+  \textbf{CITES Trade Database} --- official, country-reported
+  international trade in CITES-listed species; filter for Panthera
+  tigris and relevant product terms.
+\item
+  \textbf{TRAFFIC (e.g., ``Skin and Bones'' series)} --- consolidated
+  seizure analyses (counts/weights by year/country/item).
+\item
+  \textbf{Protected areas / habitat context} --- WDPA; forest-loss
+  layers (Global Forest Watch/Hansen).
+\item
+  \textbf{IUCN Red List (Panthera tigris)} --- status, range,
+  best-available global population context.
+\item
+  \textbf{UNODC World Wildlife Crime Reports} --- trafficking flows,
+  valuation methods, wholesale price ranges/indices (use only as
+  ranges/indices; no granular detail).
+\item
+  \textbf{Wildlife Justice Commission (WJC)} --- carefully collected
+  wholesale price intelligence (use as indices/ranges, aggregated by
+  year/region).
+\item
+  \textbf{Species360 / ZIMS \& studbooks} --- ex-situ snapshots
+  (access-controlled; use if permission is granted).
+\item
+  \textbf{Socioeconomics/Governance} --- World Bank (WDI), Worldwide
+  Governance Indicators (WGI).
+\item
+  \textbf{Public-health} --- aggregated country-year counts from
+  official reporting where available (used illustratively, not for
+  causal claims).
+\end{itemize}
+
+\subsection{Variables \& Data Schema}\label{variables-data-schema}
+
+\subsubsection{TRAFFIC --- Seizures (pressure
+signal)}\label{traffic-seizures-pressure-signal}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Grain:} \texttt{country}--\texttt{year} (optionally
+  \texttt{item})
+\item
+  \textbf{Vars (raw/clean):} \texttt{item}
+  (skin\textbar bone\textbar tooth\textbar claw\textbar mixed),
+  \texttt{seizures\_n}, \texttt{seizures\_kg}
+\item
+  \textbf{Derived:} \texttt{seizures\_total}, \texttt{skins},
+  \texttt{bones}, \texttt{teeth\_claws},
+  \texttt{seizures\_per\_million\ =\ 1e6\ *\ seizures\_total\ /\ pop},
+  \texttt{log\_spm\ =\ log1p(seizures\_per\_million)}
+\item
+  \textbf{Live-trade proxy:} \texttt{live\_flag} → \texttt{live\_share}
+  (\% by country--year)
+\end{itemize}
+
+\subsubsection{CITES Trade Database --- Reported trade
+(context)}\label{cites-trade-database-reported-trade-context}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Grain:} record → aggregate to \texttt{country}--\texttt{year}
+\item
+  \textbf{Variables:} \texttt{exporter}, \texttt{importer},
+  \texttt{year}, \texttt{term}, \texttt{purpose}, \texttt{source},
+  \texttt{reported\_qty}, \texttt{unit}
+\item
+  \textbf{Derived:} \texttt{cites\_records}, \texttt{cites\_qty\_total},
+  \texttt{cites\_live\_share}
+\end{itemize}
+
+\subsubsection{\texorpdfstring{UNODC / WJC --- \textbf{Wholesale price
+indices/ranges}}{UNODC / WJC --- Wholesale price indices/ranges}}\label{unodc-wjc-wholesale-price-indicesranges}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Grain:} \texttt{region}--\texttt{year}
+\item
+  \textbf{Variables:} \texttt{commodity},
+  \texttt{market\_stage="wholesale"}, \texttt{index\_low\_usd},
+  \texttt{index\_high\_usd}, \texttt{index\_mid},
+  \texttt{index\_mid\_lag}
+\item
+  \textbf{Note:} Optional CPI-deflated \texttt{index\_mid\_real}
+\end{itemize}
+
+\subsubsection{IUCN / National sources --- Population
+context}\label{iucn-national-sources-population-context}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Wild pop (snapshot):}
+  \texttt{wild\_pop\_min\textbar{}max\textbar{}mid},
+  \texttt{estimate\_year} (country/landscape)
+\item
+  \textbf{Extinction / extirpation events:} \texttt{geography},
+  \texttt{event\_type}, \texttt{event\_year}, \texttt{notes}
+\end{itemize}
+
+\subsubsection{Species360 / ZIMS / Studbooks --- Ex-situ
+(snapshot)}\label{species360-zims-studbooks-ex-situ-snapshot}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Variables:} \texttt{ex\_situ\_count},
+  \texttt{facility\_count}, \texttt{ex\_situ\_year},
+  \texttt{coverage\_notes}
+\end{itemize}
+
+\subsubsection{WDI \& WGI --- Socioeconomics \&
+governance}\label{wdi-wgi-socioeconomics-governance}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Demographics \& income:} \texttt{pop}, \texttt{gdp\_ppp\_pc}
+\item
+  \textbf{Poverty \& employment:} \texttt{pov\_215}, \texttt{unemp}
+\item
+  \textbf{Basic services:} \texttt{clean\_water} or
+  \texttt{electricity\_access}
+\item
+  \textbf{Governance:} \texttt{rule\_of\_law},
+  \texttt{control\_of\_corruption}
+\item
+  \textbf{Plus:} \texttt{region} (for joining to price indices)
+\end{itemize}
+
+\subsubsection{WDPA / GFW}\label{wdpa-gfw}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Protection coverage:} \texttt{pa\_coverage\_pct}
+\item
+  \textbf{Habitat loss:} \texttt{forest\_loss\_pct},
+  \texttt{baseline\_forest\_cover}
+\end{itemize}
+
+\subsubsection{Public-health proxies}\label{public-health-proxies}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Live trade:} \texttt{live\_share}
+\item
+  \textbf{Health signal:} \texttt{outbreak\_count} (coarse)
+\end{itemize}
+
+\subsubsection{Tourism anchors
+(site-level)}\label{tourism-anchors-site-level}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Variables:} \texttt{reserve}, \texttt{anchor\_value\_usd},
+  \texttt{local\_share}, \texttt{gate\_fees\_usd},
+  \texttt{reserve\_budget\_usd}, \texttt{year}
+\item
+  \textbf{Scenarios:} \texttt{visitation\_decline\_\{10,20,30\}},
+  \texttt{revenue\_loss}, \texttt{local\_earnings\_loss}
+\end{itemize}
+
+\subsubsection{Keys \& Joins}\label{keys-joins}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Primary panel key:} \texttt{country} (ISO3) + \texttt{year}
+\item
+  \textbf{Regional joins:} map \texttt{country\ →\ region} for price
+  indices
+\item
+  \textbf{Snapshots:} keep separate with their own year columns; do
+  \textbf{not} annualize
+\end{itemize}
+
+\section{Methodology}\label{methodology}
+
+\subsection{Data Analysis Plan}\label{data-analysis-plan}
+
+\subsubsection{Data Quality \& Bias
+Controls}\label{data-quality-bias-controls}
+
+\begin{itemize}
+\tightlist
+\item
+  Harmonize ISO3 country codes and region mapping; explicit missingness
+  handling.
+\item
+  Use per-capita and log transforms for skewed outcomes (seizures).
+\item
+  Seizures are detection-biased; population estimates are
+  ranges/snapshots.
+\item
+  Price data used \textbf{only} as aggregated \textbf{wholesale}
+  ranges/indices.
+\end{itemize}
+
+\subsubsection{Prices → Pressure
+(associations)}\label{prices-pressure-associations}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Unit:} region--year (or country aggregated to region).
+\item
+  \textbf{Spec:}
+  \(\text{spm}_t = \alpha + \beta\,\text{index\_mid}_{t-1} + \gamma_t + \varepsilon\)
+  (OLS on SPM; GLM on counts with offset log(pop)).
+\item
+  Readout: sign/CI of β; LOESS overlay. Associations only.
+\end{itemize}
+
+\subsubsection{Populations \&
+Extinctions}\label{populations-extinctions}
+
+\begin{itemize}
+\tightlist
+\item
+  Timeline of historic subspecies/population losses and recent country
+  extirpations; overlay regional seizure trends.
+\item
+  Place seizure trends alongside wild population context; interpret
+  descriptively.
+\end{itemize}
+
+\subsubsection{Socioeconomic Drivers \& Dependency
+Cycle}\label{socioeconomic-drivers-dependency-cycle}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Unit:} country--year.
+\item
+  Bivariate plots: poverty, unemployment, basic services, governance vs
+  \(\log(1+\text{SPM})\).
+\item
+  Light regression with lagged covariates and year FE:
+  \(\text{Seizures}_{c,t} = \beta_0 + \beta_1 \text{Poverty}_{c,t-1} + \beta_2 \text{RuleOfLaw}_{c,t-1} + \beta_3 \text{GDPpc}_{c,t-1} + \gamma_t + \varepsilon_{c,t}\)
+\end{itemize}
+
+\subsubsection{Live-Trade \& Public-Health
+Risk}\label{live-trade-public-health-risk}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Unit:} country--year (subset with \texttt{live\_share}).
+\item
+  \textbf{Spec:}
+  \texttt{live\_share\ \textasciitilde{}\ services\ +\ governance\ +\ year\ FE}
+  (OLS or beta regression).
+\item
+  Use panels to illustrate elevated spillover risk where live-trade
+  share is high.
+\end{itemize}
+
+\subsubsection{Ecotourism Revenue \&
+Jobs}\label{ecotourism-revenue-jobs}
+
+\begin{itemize}
+\tightlist
+\item
+  Site-level anchor(s); scenario analysis (10--30\% visitation drop) →
+  revenue and local-earnings losses.
+\item
+  Contextualize with macro wildlife-tourism jobs figures (qualitative).
+\end{itemize}
+
+\subsection{Statistical Tests}\label{statistical-tests}
+
+\textbf{Associations \& correlation}
+
+\begin{itemize}
+\tightlist
+\item
+  Pearson/Spearman between \texttt{log\_spm} and predictors
+  (\texttt{pov\_215}, \texttt{gdp\_ppp\_pc}, \texttt{rule\_of\_law},
+  \texttt{index\_mid\_lag},
+  \texttt{clean\_water}/\texttt{electricity\_access}).
+\item
+  Kendall's τ for small-N regional series.
+\end{itemize}
+
+\textbf{Group/comparative}
+
+\begin{itemize}
+\tightlist
+\item
+  t-test or Wilcoxon for high vs low poverty (or governance) on
+  \texttt{log\_spm}.
+\item
+  ANOVA or Kruskal--Wallis across quartiles; Dunn (Holm) post-hoc if
+  nonparametric.
+\end{itemize}
+
+\textbf{Trend \& structural change}
+
+\begin{itemize}
+\tightlist
+\item
+  Mann--Kendall + Theil--Sen for monotonic trends in yearly seizures.
+\item
+  Change-points (CUSUM, Bai--Perron) on seizures or price-index series.
+\end{itemize}
+
+\textbf{Count-model diagnostics}
+
+\begin{itemize}
+\tightlist
+\item
+  Overdispersion test (Cameron--Trivedi); switch to Negative Binomial if
+  needed.
+\item
+  Vuong/LR to compare Poisson vs NB vs zero-inflated.
+\end{itemize}
+
+\textbf{Panel \& regression diagnostics}
+
+\begin{itemize}
+\tightlist
+\item
+  Breusch--Pagan (heteroskedasticity) → HC3 or cluster-robust SE.
+\item
+  VIF (multicollinearity); Moran's I on residuals; Ramsey RESET;
+  residual plots.
+\end{itemize}
+
+\textbf{Proportions \& live-trade}
+
+\begin{itemize}
+\tightlist
+\item
+  Two-proportion z-tests or χ² for binarized comparisons; rely on beta
+  regression for continuous \texttt{live\_share}.
+\end{itemize}
+
+\textbf{Multiple comparisons \& uncertainty}
+
+\begin{itemize}
+\tightlist
+\item
+  FDR control (Benjamini--Hochberg).
+\item
+  Bootstrap CIs for medians and coefficients where needed.
+\end{itemize}
+
+\subsubsection{Algorithms}\label{algorithms}
+
+\textbf{Core models (panel/cross-section)}
+
+\begin{itemize}
+\item
+  \textbf{OLS with fixed effects}:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{log\_spm\_ct\ \textasciitilde{}\ poverty\_\{t-1\}\ +\ rule\_of\_law\_\{t-1\}\ +\ gdp\_ppp\_pc\_\{t-1\}\ +\ year\_FE}
+    (country--year panel).
+  \item
+    Robust \textbf{HC3} or \textbf{clustered SE} (by country or region).
+  \end{itemize}
+\item
+  \textbf{GLM for counts} (when modeling raw seizures):
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{Poisson / Negative Binomial} with
+    \texttt{offset\ =\ log(pop)}; choose \textbf{NB} if overdispersion;
+    consider \textbf{ZINB} if many zeros.
+  \end{itemize}
+\end{itemize}
+
+\textbf{Nonlinearity \& robust effects}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{GAM (splines)} for potential curvature in \texttt{poverty},
+  \texttt{rule\_of\_law}, or \texttt{index\_mid\_lag}.
+\item
+  \textbf{Quantile regression} (e.g., τ = 0.5) to estimate median
+  associations robust to outliers.
+\end{itemize}
+
+\textbf{``Price → pressure'' association (regional)}
+
+\begin{itemize}
+\item
+  Regional aggregation + \textbf{lagged regressor}:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{spm\_region\_t\ \textasciitilde{}\ index\_mid\_\{t-1\}\ +\ year\_FE},
+    OLS with HAC (Newey--West) SE for serial correlation.
+  \end{itemize}
+\item
+  \textbf{LOESS} smoother in scatterplots for visualization (no
+  inference).
+\end{itemize}
+
+\textbf{Event/Policy analyses (descriptive, not causal claims)}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Interrupted time series (ITS)} / segmented regression around
+  major policy shocks, with \textbf{Newey--West} errors.
+\item
+  \textbf{Event-study plots} (two-way FE if sample permits) to visualize
+  pre/post patterns; interpret cautiously.
+\end{itemize}
+
+\textbf{Live-trade risk modeling}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Beta regression} (or \textbf{quasi-binomial}) for
+  \texttt{live\_share\ \textasciitilde{}\ services\ +\ governance\ +\ year}
+\end{itemize}
+
+\textbf{Spatial sanity}
+
+\begin{itemize}
+\tightlist
+\item
+  If Moran's I flags spatial autocorrelation, use \textbf{cluster-robust
+  SE by region}, or add \textbf{regional FE}; full spatial lag/error
+  models are optional stretch goals.
+\end{itemize}
+
+\textbf{Predictive/importance (optional, clearly labeled exploratory)}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Regularized regression} (\textbf{LASSO / Elastic Net}) to
+  gauge variable importance among many correlated covariates; k-fold CV
+  for tuning.
+\item
+  \textbf{Random Forest / Gradient Boosting} to obtain
+  \textbf{permutation importance} and \textbf{partial dependence} plots;
+  stress \textbf{non-causal}, exploratory nature.
+\end{itemize}
+
+\textbf{Smoothers \& decomposition (EDA)}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{STL decomposition} on longer regional series (seizures or
+  price indices) to separate trend/seasonal/irregular components (if
+  periodicity exists).
+\item
+  \textbf{Theil--Sen} lines on bivariate plots as robust trend
+  depiction.
+\end{itemize}
+
+\subsection{Software}\label{software}
+
+\textbf{Core data work:} \texttt{tidyverse} (dplyr, tidyr, readr,
+ggplot2), \texttt{lubridate}, \texttt{stringr} \textbf{Fast I/O \& large
+files:} \texttt{duckdb}, \texttt{DBI}, \texttt{arrow} \textbf{Statistics
+\& econometrics:} \texttt{fixest}, \texttt{sandwich}, \texttt{lmtest},
+\texttt{clubSandwich}, \texttt{MASS}, \texttt{glmmTMB}, \texttt{pscl}
+(optional), \texttt{mgcv}, \texttt{betareg}, \texttt{car},
+\texttt{performance}, \texttt{DescTools}, \texttt{Kendall},
+\texttt{trend}, \texttt{strucchange}, \texttt{changepoint}
+\textbf{Geospatial \& maps:} \texttt{sf}, \texttt{rnaturalearth},
+\texttt{rnaturalearthdata}, \texttt{tmap} (optional), \texttt{classInt},
+\texttt{viridis}, \texttt{spdep}/\texttt{sfdep} \textbf{Reporting \&
+reproducibility:} \texttt{rmarkdown}, \texttt{knitr}, \texttt{renv}
+
+\section{Ethics, Risks, Communication \& Privacy Concerns
+Addressed}\label{ethics-risks-communication-privacy-concerns-addressed}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Purpose:} academic analysis of drivers/impacts; \textbf{no
+  operational guidance}.
+\item
+  \textbf{Price data:} use aggregated \textbf{wholesale} ranges/indices;
+  no procurement details.
+\item
+  \textbf{Bias \& uncertainty:} seizures are detection-biased;
+  population estimates are ranges; clearly label uncertainty.
+\item
+  \textbf{Community framing:} avoid victim-blaming; emphasize structural
+  drivers and solutions (livelihoods, governance, demand reduction,
+  sanitary controls on live trade).
+\item
+  \textbf{Public-health:} discuss live-trade spillover risk as
+  \textbf{associational}.
+\item
+  \textbf{Causality:} present associations; avoid over-claiming.
+\item
+  \textbf{Ex-situ data:} document permissions; omit if unavailable.
+\item
+  \textbf{Attribution:} cite TRAFFIC, CITES, IUCN, UNODC, WJC, and
+  others; respect licenses and access terms.
+\end{itemize}
+
+\section{Deliverables}\label{deliverables}
+
+\subsection{Visualizations}\label{visualizations}
+
+\subsubsection{F1 --- Tiger-part seizures over time
+(total)}\label{f1-tiger-part-seizures-over-time-total}
+
+\textbf{Purpose}: Show overall pressure trend.
+
+\textbf{Inputs (TRAFFIC → Seizures)}: country, year, seizures\_total.
+(Optionally sum to global/regional with region from WDI/WGI.)
+
+\textbf{Chart}: Column (year on x, total on y). Optional 3--5-year
+moving average.
+
+Recorded tiger-part seizures fluctuate over time, reflecting shifts in
+market dynamics, enforcement effort, and reporting capacity.
+
+\subsubsection{F2 --- Seizures by commodity (skins, bones,
+teeth/claws)}\label{f2-seizures-by-commodity-skins-bones-teethclaws}
+
+\textbf{Purpose}: Identify which commodities dominate.
+
+\textbf{Inputs (TRAFFIC)}: year, item splits: skins, bones, teeth\_claws
+(or long format item, n).
+
+\textbf{Chart}: Small-multiples columns (one panel per item), aligned
+axes if feasible.
+
+Different product types exhibit distinct trajectories, indicating
+heterogeneous demand and supply chains.
+
+\subsubsection{F3 --- Seizure hot-spots
+map}\label{f3-seizure-hot-spots-map}
+
+\textbf{Purpose}: Where enforcement encounters occur.
+
+\textbf{Inputs (TRAFFIC + WDI/WGI)}: country, last 5-yr sum
+seizures\_total; join ISO3 to map; optional rate = per million
+(seizures\_per\_million).
+
+\textbf{Chart}: Choropleth (country fill by value). Optional labels for
+top 5.
+
+Seizures cluster geographically, highlighting priority corridors and
+jurisdictions for coordinated responses.
+
+\subsubsection{F4 --- Lagged wholesale index vs.~seizures (``price'' →
+pressure
+association)}\label{f4-lagged-wholesale-index-vs.-seizures-price-pressure-association}
+
+\textbf{Purpose}: Test if prior wholesale signals align with subsequent
+pressure.
+
+\textbf{Inputs (UNODC/WJC + TRAFFIC + WDI/WGI)}: region, year,
+index\_mid\_lag; regional seizures\_per\_million.
+
+\textbf{Chart}: Scatter with LOESS (x = index\_mid\_lag, y = regional
+seizures\_per\_million).
+
+Higher prior-year wholesale indices are associated with higher recorded
+pressure; results are correlational, not causal.
+
+\subsubsection{F5 --- Wild vs.~ex-situ populations
+(context)}\label{f5-wild-vs.-ex-situ-populations-context}
+
+\textbf{Purpose}: Contrast conservation states.
+
+\textbf{Inputs (IUCN + ZIMS/studbooks)}:
+wild\_pop\_min\textbar max\textbar mid, estimate\_year; ex\_situ\_count,
+ex\_situ\_year, coverage\_notes.
+
+\textbf{Chart}: Two bars/lines with error whiskers (wild range
+vs.~ex-situ snapshot). Prominent caveat footnote.
+
+Wild populations remain limited relative to ex-situ holdings; estimates
+are ranges with substantial uncertainty.
+
+\subsubsection{F6 --- Extinction / extirpation timeline (historic +
+recent)}\label{f6-extinction-extirpation-timeline-historic-recent}
+
+\textbf{Purpose}: Place losses in time.
+
+\textbf{Inputs (IUCN / literature)}: event\_type (extinct \textbar{}
+functional\_extirpation), event\_year, notes.
+
+\textbf{Chart}: Timeline with labeled markers; panels for (historic
+subspecies) vs (recent country losses).
+
+Historic subspecies losses and recent country-level extirpations reflect
+interacting drivers, including illegal killing, habitat conversion, and
+prey depletion.
+
+\subsubsection{F7 --- Pressure vs.~loss
+overlay}\label{f7-pressure-vs.-loss-overlay}
+
+\textbf{Purpose}: Visual association between elevated pressure and loss
+events.
+
+\textbf{Inputs (TRAFFIC + events)}: Regional/yearly seizures\_total and
+extirpation markers.
+
+\textbf{Chart}: Line (seizures) with vertical lines/flags at
+event\_year.
+
+Extirpation milestones coincide with periods of elevated recorded
+pressure in parts of the range (descriptive, not causal).
+
+\subsubsection{F8 --- Country case cards (e.g., Cambodia,
+Laos)}\label{f8-country-case-cards-e.g.-cambodia-laos}
+
+\textbf{Purpose}: Succinct narrative for key cases.
+
+\textbf{Inputs}: country, last camera-trap year (narrative),
+event\_year, 5--10-yr regional seizures\_total sparkline; 2--3 policy
+milestones.
+
+\textbf{Chart}: Two mini cards with sparkline and bullets.
+
+Case studies illustrate how poaching and governance conditions can
+culminate in functional extirpation.
+
+\subsubsection{F9 --- Poverty vs.~recorded
+pressure}\label{f9-poverty-vs.-recorded-pressure}
+
+\textbf{Purpose}: Socioeconomic association.
+
+\textbf{Inputs (WDI/WGI + TRAFFIC)}: pov\_215, log\_spm, region.
+
+\textbf{Chart}: Scatter (x = poverty headcount \%, y = log(1+SPM)),
+color by region, LOESS.
+
+Higher poverty aligns with greater recorded pressure; association only,
+and subject to detection bias.
+
+\subsubsection{F10 --- Governance vs.~recorded
+pressure}\label{f10-governance-vs.-recorded-pressure}
+
+\textbf{Purpose}: Governance association.
+
+\textbf{Inputs (WGI + TRAFFIC)}: rule\_of\_law, log\_spm.
+
+\textbf{Chart}: Scatter with linear fit; optionally facet by region.
+
+Stronger rule of law is associated with lower recorded pressure.
+
+\subsubsection{F11 --- Live-trade risk indicator (spillover
+proxy)}\label{f11-live-trade-risk-indicator-spillover-proxy}
+
+\textbf{Purpose}: Track unregulated live-animal trade share.
+
+\textbf{Inputs (TRAFFIC/CITES)}: live\_share by country--year; optional
+regional mean.
+
+\textbf{Chart}: Line by region; or bars by country for latest year.
+
+Where live-animal seizures comprise a larger share, spillover risk from
+unsanitary holding/transport conditions is of greater concern.
+
+\subsubsection{F12 --- Socioeconomic
+quartet}\label{f12-socioeconomic-quartet}
+
+\textbf{Purpose}: Side-by-side drivers view.
+
+\textbf{Inputs (WDI/WGI + TRAFFIC)}: pov\_215, unemp, clean\_water or
+electricity\_access, rule\_of\_law, all vs log\_spm.
+
+\textbf{Chart}: 4 small-multiple scatters with identical axes scales.
+
+Poverty, employment, basic services, and governance show distinct
+associations with recorded pressure.
+
+\subsubsection{F13 --- Tiger tourism value (site
+anchor)}\label{f13-tiger-tourism-value-site-anchor}
+
+\textbf{Purpose}: Ground economic stakes at reserve level.
+
+\textbf{Inputs (Tourism valuation study)}: reserve, anchor\_value\_usd,
+gate\_fees\_usd, reserve\_budget\_usd, local\_share.
+
+\textbf{Chart}: Single ``value card'' bar; inset comparing gate fees
+vs.~budget.
+
+Tiger tourism at key reserves generates substantial revenue, often
+helping finance protection and local livelihoods.
+
+\subsubsection{F14 --- ``What if sightings fall?'' scenario (revenue \&
+local earnings
+losses)}\label{f14-what-if-sightings-fall-scenario-revenue-local-earnings-losses}
+
+\textbf{Purpose}: Illustrate sensitivity to poaching shocks.
+
+\textbf{Inputs (Tourism + scenario)}: anchor\_value\_usd, local\_share,
+visitation\_decline\_\{10,20,30\}, computed revenue\_loss,
+local\_earnings\_loss.
+
+\textbf{Chart}: Tornado/interval bar showing loss under 10--30\%
+declines; annotate assumptions.
+
+Reduced sightings/access can quickly erode reserve revenue and local
+earnings; values shown are illustrative scenarios.
+
+\subsubsection{F15 --- Wildlife-tourism jobs context
+(macro)}\label{f15-wildlife-tourism-jobs-context-macro}
+
+\textbf{Purpose}: Put site-level numbers in labor-market perspective.
+
+\textbf{Inputs (WTTC/credible synthesis)}: global and Asia--Pacific
+wildlife-tourism jobs (headline stats).
+
+\textbf{Chart}: Two bars or a small multiple comparing totals.
+
+Wildlife tourism supports millions of jobs; declines in flagship species
+jeopardize broader employment and development gains.
+
+\subsubsection{F16 --- Reputation \& governance
+(callout)}\label{f16-reputation-governance-callout}
+
+\textbf{Purpose}: Communicate non-market, strategic costs.
+
+\textbf{Inputs (UNODC / synthesis)}: short bullets on governance harms,
+organized crime links, brand risk.
+
+\textbf{Chart}: Text-forward callout; optional icons; no data plot
+required.
+
+Persistent poaching undermines governance and international reputation,
+with knock-on effects for investment and destination branding.
+
+\textbf{Notes on joins and readiness per figure}:
+
+\begin{itemize}
+\item
+  By-country figures: F1--F3, F8--F12 use country--year (ISO3), with
+  region as a cosmetic or grouping field.
+\item
+  By-region figures (price linkage): F4 requires country → region
+  mapping to join index\_mid\_lag. Aggregate seizures to region-year
+  first.
+\item
+  Snapshot/context figures: F5 (populations) and F13--F14 (tourism
+  anchors) are not merged into the panel; keep as separate tables with
+  clear years and caveats.
+\item
+  Event overlays: F6--F7 add an events table (event\_year, event\_type,
+  geography) to annotate timelines.
+\end{itemize}
+
+\subsection{Models}\label{models}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Panel OLS (FE):}
+  \texttt{fixest::feols(log\_spm\ \textasciitilde{}\ lag(pov\_215,1)\ +\ lag(rule\_of\_law,1)\ +\ lag(gdp\_ppp\_pc,1)\ \textbar{}\ year,\ vcov="HC3")}
+\item
+  \textbf{Counts (NB):}
+  \texttt{MASS::glm.nb(seizures\_total\ \textasciitilde{}\ lag(pov\_215,1)+lag(rule\_of\_law,1)+lag(gdp\_ppp\_pc,1)+factor(year)\ +\ offset(log(pop)))}
+\item
+  \textbf{Beta regression (live\_share):}
+  \texttt{betareg::betareg(live\_share01\ \textasciitilde{}\ clean\_water\ +\ rule\_of\_law\ +\ factor(year))}
+\item
+  \textbf{Regional price model:}
+  \texttt{feols(seizures\_pm\ \textasciitilde{}\ index\_lag\ \textbar{}\ year,\ vcov="NW")}
+\end{itemize}
+
+\subsection{Reports}\label{reports}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Format:} This R Markdown renders to \textbf{GitHub Markdown},
+  \textbf{PDF}, and \textbf{HTML} with a single source file (this
+  \texttt{.Rmd}).
+\item
+  \textbf{Reproducibility:} Pin package versions with \texttt{renv}.
+  Include session info in the appendix.
+\item
+  \textbf{Artifacts:} Save \texttt{output/figs/} and an analysis-ready
+  panel CSV in \texttt{output/data/}.
+\end{itemize}
+
+\section{Significance \& Expected
+Outcomes}\label{significance-expected-outcomes}
+
+\begin{itemize}
+\tightlist
+\item
+  A clean, analysis-ready \textbf{country--year panel} combining
+  seizures, price indices (wholesale ranges), socioeconomic/governance
+  indicators, and live-trade proxies.
+\item
+  Transparent \textbf{figures (F1--F16)} suitable for a policy-facing
+  brief.
+\item
+  Clear statements of \textbf{associations} (not causal claims), with
+  ethics and uncertainty front-and-center.
+\item
+  Practical \textbf{scenario analysis} quantifying potential ecotourism
+  revenue and local-earnings losses from reduced sightings/access.
+\end{itemize}
+
+\section{Conclusion}\label{conclusion}
+
+Illegal tiger trade is not only a biodiversity crisis; it is a
+governance, development, and public-health challenge. By integrating
+enforcement signals, market context, socioeconomic conditions, and
+tourism economics, this project provides a reproducible evidence base
+for interventions that pair \textbf{livelihoods and governance} with
+\textbf{enforcement and demand reduction}.
+
+\section{Appendices}\label{appendices}
+
+\subsection{A. Package/session info}\label{a.-packagesession-info}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{sessionInfo}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## R version 4.2.2 Patched (2022-11-10 r83330)
+## Platform: x86_64-pc-linux-gnu (64-bit)
+## Running under: Debian GNU/Linux 12 (bookworm)
+## 
+## Matrix products: default
+## BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.11.0
+## LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.11.0
+## 
+## locale:
+##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+##  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+##  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+##  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## loaded via a namespace (and not attached):
+##  [1] compiler_4.2.2    fastmap_1.2.0     cli_3.6.5         tools_4.2.2      
+##  [5] htmltools_0.5.8.1 yaml_2.3.10       rmarkdown_2.29    knitr_1.50       
+##  [9] xfun_0.53         digest_0.6.37     rlang_1.1.6       evaluate_1.0.5
+\end{verbatim}
+
+\subsection{B. Hot-spot map scaffold}\label{b.-hot-spot-map-scaffold}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(sf); }\FunctionTok{library}\NormalTok{(rnaturalearth); }\FunctionTok{library}\NormalTok{(ggplot2); }\FunctionTok{library}\NormalTok{(viridis)}
+\NormalTok{world }\OtherTok{\textless{}{-}}\NormalTok{ rnaturalearth}\SpecialCharTok{::}\FunctionTok{ne\_countries}\NormalTok{(}\AttributeTok{scale =} \StringTok{"medium"}\NormalTok{, }\AttributeTok{returnclass =} \StringTok{"sf"}\NormalTok{) }\SpecialCharTok{|\textgreater{}}
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{select}\NormalTok{(iso\_a3, geometry)}
+
+\CommentTok{\# last5y\_panel must contain: country\_iso3, seizures\_per\_million}
+\NormalTok{mapdat }\OtherTok{\textless{}{-}}\NormalTok{ world }\SpecialCharTok{|\textgreater{}}\NormalTok{ dplyr}\SpecialCharTok{::}\FunctionTok{left\_join}\NormalTok{(last5y\_panel, }\AttributeTok{by =} \FunctionTok{c}\NormalTok{(}\StringTok{"iso\_a3"} \OtherTok{=} \StringTok{"country\_iso3"}\NormalTok{))}
+
+\FunctionTok{ggplot}\NormalTok{(mapdat) }\SpecialCharTok{+}
+  \FunctionTok{geom\_sf}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{fill =}\NormalTok{ seizures\_per\_million), }\AttributeTok{color =} \ConstantTok{NA}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_viridis\_c}\NormalTok{(}\AttributeTok{option =} \StringTok{"C"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{fill =} \StringTok{"Seizures / 1M"}\NormalTok{, }\AttributeTok{title =} \StringTok{"Tiger{-}part seizure hot spots (last 5 years)"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{C. Lagged wholesale index vs.~seizures
+(regional)}\label{c.-lagged-wholesale-index-vs.-seizures-regional}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(dplyr); }\FunctionTok{library}\NormalTok{(ggplot2)}
+\NormalTok{regdat }\OtherTok{\textless{}{-}}\NormalTok{ region\_year }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{seizures\_pm =} \FloatTok{1e6} \SpecialCharTok{*}\NormalTok{ seizures\_total }\SpecialCharTok{/}\NormalTok{ pop,}
+         \AttributeTok{index\_lag   =}\NormalTok{ dplyr}\SpecialCharTok{::}\FunctionTok{lag}\NormalTok{(index\_mid, }\DecValTok{1}\NormalTok{)) }\SpecialCharTok{|\textgreater{}}
+\NormalTok{  tidyr}\SpecialCharTok{::}\FunctionTok{drop\_na}\NormalTok{(seizures\_pm, index\_lag)}
+
+\FunctionTok{ggplot}\NormalTok{(regdat, }\FunctionTok{aes}\NormalTok{(index\_lag, seizures\_pm)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.7}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_smooth}\NormalTok{(}\AttributeTok{method =} \StringTok{"loess"}\NormalTok{, }\AttributeTok{se =} \ConstantTok{FALSE}\NormalTok{, }\AttributeTok{color =} \StringTok{"black"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Wholesale index (lagged 1y)"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Seizures per million"}\NormalTok{,}
+       \AttributeTok{title =} \StringTok{"Wholesale signal (lagged) vs. recorded pressure"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+
+\end{document}
