@@ -1,7 +1,34 @@
 ---
 title: "Project proposal"
 author: "Tina Huynh"
-output: github_document
+output: 
+    github_document: 
+        toc: true
+        number_sections: true
+        fig_caption: true
+        fig_width: 6
+        fig_height: 4
+        highlight: tango
+    pdf_document: 
+        toc: true
+        number_sections: true
+        fig_caption: true
+        fig_width: 6
+        fig_height: 4
+        highlight: tango
+        latex_engine: xelatex
+        keep_tex: true
+        citation_package: natbib
+    html_document:
+        toc: true
+        toc_depth: 3
+        number_sections: true
+        fig_caption: true
+        fig_width: 6
+        fig_height: 4
+        highlight: tango
+        theme: readable
+        df_print: paged
 ---
 
 ```{r load-packages, message = FALSE}
@@ -11,11 +38,18 @@ library(broom)
 
 ## 1. Introduction
 
-This project examines the illegal trade in tiger parts and its consequences for biodiversity, human communities, and public health.
-We will quantify seizure trends and trade signals, place them in the context of wild versus ex-situ (zoo/facility) populations, and integrate socioeconomic and governance indicators that shape poaching incentives and enforcement capacity.
-We will also address the historic loss of tiger subspecies/populations and the risks of zoonotic spillover associated with unregulated live-animal trade.
+This project will examine the illegal trade in tiger parts and its consequences for biodiversity, human communities, and public health.
+I will build a country–year panel (2010–2024) that integrates seizure data (TRAFFIC), reported trade (CITES), wholesale price indices/ranges (UNODC/WJC), wild population context (IUCN/national sources), and socioeconomic/governance indicators (WDI/WGI).
+Using this panel, I will quantify trends in tiger-part seizures, test whether prior wholesale price signals are associated with subsequent enforcement pressure, and map geographic hot spots.
+I will place these signals alongside wild vs. ex-situ (zoo/facility) population snapshots to contextualize conservation status and extinction risk.
 
-Results will be presented as a reproducible data analysis (R/Quarto), a compact dataset, and a short report linking empirical findings to policy-relevant implications: conservation effectiveness, community livelihoods, and public-health prevention.
+To understand drivers and consequences, I will estimate transparent, association-focused models: fixed-effects OLS and Negative Binomial count models for seizures (with per-capita scaling and robust/clustered errors), generalized additive models to capture potential nonlinearity, and beta regression for the live-animal trade share as a spillover-risk proxy.
+I will examine links between poverty, services, and governance and recorded poaching pressure; overlay major policy/enforcement events on regional time series; and compile a concise timeline of historic subspecies/population losses and recent country-level functional extirpations.
+Because wildlife loss directly affects local economies, I will add a site-level ecotourism module (e.g., a tiger-reserve valuation anchor) and run simple “what-if” scenarios (10–30% drop in sightings) to illustrate potential revenue and job losses that can push communities toward illegal activity.
+
+My outputs will include a clean, documented dataset; policy-ready visualizations (F1–F16: trends, hot spots, price–pressure associations, socioeconomic correlations, live-trade risk indicators, extinction timelines, and economic scenarios); and a concise report highlighting implications for conservation finance, sustainable employment, reputational risk, and public-health prevention.
+Throughout, I will be explicit about limits: seizures are detection-biased; population figures carry uncertainty; and all statistical relationships are associational, not causal.
+My goal is a reproducible, decision-useful evidence base that supports interventions pairing livelihoods and governance with targeted enforcement and demand reduction.
 
 ### 1.1 Scope
 
@@ -269,3 +303,108 @@ Results will be presented as a reproducible data analysis (R/Quarto), a compact 
 -   **Biases:** seizures ≠ total illegal activity; detection and reporting vary widely.
 -   **Community framing:** avoid victim-blaming; emphasize **structural drivers** (poverty, governance, market access) and **solutions** (livelihoods, enforcement, demand reduction, health/vet safeguards).
 -   **Health claims:** treat any health indicators as **associational**; do not overstate causality.
+
+Here’s a tight, practical set of methods for your proposal.
+It’s split into **Statistical Tests** (inference you’ll report) and **Algorithms** (models/smoothers you’ll fit).
+Choices map to your data: country–year panels of seizures, socioeconomic/governance covariates, regional wholesale price indices (lagged), live-trade shares, and snapshot context (populations, tourism anchors).
+
+------------------------------------------------------------------------
+
+#### Statistical Tests
+
+**Associations & correlation**
+
+-   **Pearson** (linear) and **Spearman** (rank) between `log_spm` (log(1+seizures per million)) and predictors (`pov_215`, `gdp_ppp_pc`, `rule_of_law`, `index_mid_lag`, `clean_water`/`electricity_access`).
+-   **Kendall’s τ** as a robustness check on small-N regional series.
+
+**Group/comparative tests**
+
+-   **t-test** or **Wilcoxon rank-sum** for high- vs low-poverty groups (or governance high vs low) on `log_spm`.
+-   **ANOVA** or **Kruskal–Wallis** across poverty/governance **quartiles**, with **Dunn’s test (Holm)** post-hoc if nonparametric.
+
+**Trend & structural change (time series)**
+
+-   **Mann–Kendall** trend test + **Theil–Sen** slope for monotonic trends in yearly global/regional seizures.
+-   **Change-point tests** (e.g., **CUSUM** or **Bai–Perron**) on regional seizure or price-index series to flag structural breaks that align with policy events.
+
+**Count-model diagnostics**
+
+-   **Overdispersion test** (Cameron–Trivedi) on Poisson; if present, prefer **Negative Binomial**.
+-   **Vuong** (or LR) tests to compare Poisson vs **NB** vs **zero-inflated** variants where zeros are excessive.
+
+**Panel & regression diagnostics**
+
+-   **Breusch–Pagan** (heteroskedasticity); use **HC3** or **cluster-robust** SE if violated.
+-   **VIF** for multicollinearity.
+-   **Moran’s I** on country-level residuals (spatial autocorrelation check); if present, cluster by region or add spatial controls.
+-   **Ramsey RESET** (specification) and residual Q–Q/fit plots for sanity checks.
+
+**Proportions & live-trade**
+
+-   **Two-proportion z-tests** or **χ²** on share of live-animal seizures across periods/regions (if binarized); for continuous `live_share`, rely on regression/β-regression below.
+
+**Multiple comparisons**
+
+-   Control false-discoveries in families of tests with **Benjamini–Hochberg (FDR)**.
+
+**Uncertainty**
+
+-   **Bootstrap CIs** for medians and for model coefficients where asymptotics are weak.
+
+------------------------------------------------------------------------
+
+#### Algorithms
+
+**Core models (panel/cross-section)**
+
+-   **OLS with fixed effects**:
+
+    -   `log_spm_ct ~ poverty_{t-1} + rule_of_law_{t-1} + gdp_ppp_pc_{t-1} + year_FE` (country–year panel).
+    -   Robust **HC3** or **clustered SE** (by country or region).
+
+-   **GLM for counts** (when modeling raw seizures):
+
+    -   **Poisson / Negative Binomial** with `offset = log(pop)`; choose **NB** if overdispersion; consider **ZINB** if many zeros.
+
+**Nonlinearity & robust effects**
+
+-   **GAM (splines)** for potential curvature in `poverty`, `rule_of_law`, or `index_mid_lag`.
+-   **Quantile regression** (e.g., τ = 0.5) to estimate median associations robust to outliers.
+
+**“Price → pressure” association (regional)**
+
+-   Regional aggregation + **lagged regressor**:
+
+    -   `spm_region_t ~ index_mid_{t-1} + year_FE`, OLS with HAC (Newey–West) SE for serial correlation.
+
+-   **LOESS** smoother in scatterplots for visualization (no inference).
+
+**Event/Policy analyses (descriptive, not causal claims)**
+
+-   **Interrupted time series (ITS)** / segmented regression around major policy shocks, with **Newey–West** errors.
+-   **Event-study plots** (two-way FE if sample permits) to visualize pre/post patterns; interpret cautiously.
+
+**Live-trade risk modeling**
+
+-   **Beta regression** (or **quasi-binomial**) for `live_share` (0–1), with predictors: services (`clean_water`/`electricity_access`), governance, year FE.
+
+**Spatial sanity**
+
+-   If Moran’s I flags spatial autocorrelation, use **cluster-robust SE by region**, or add **regional FE**; full spatial lag/error models are optional stretch goals.
+
+**Predictive/importance (optional, clearly labeled exploratory)**
+
+-   **Regularized regression** (**LASSO / Elastic Net**) to gauge variable importance among many correlated covariates; k-fold CV for tuning.
+-   **Random Forest / Gradient Boosting** to obtain **permutation importance** and **partial dependence** plots; stress **non-causal**, exploratory nature.
+
+**Smoothers & decomposition (EDA)**
+
+-   **STL decomposition** on longer regional series (seizures or price indices) to separate trend/seasonal/irregular components (if periodicity exists).
+-   **Theil–Sen** lines on bivariate plots as robust trend depiction.
+
+------------------------------------------------------------------------
+
+**Reporting discipline**
+
+-   Always report: model formula, unit of analysis, N, SE type (HC3 / clustered / HAC), goodness-of-fit (AIC/BIC or pseudo-R²), and key coefficient estimates with 95% CIs.
+-   Clearly label all **associations** as non-causal; tie interpretations back to biases (detection, reporting) and uncertainty in population and price data.
