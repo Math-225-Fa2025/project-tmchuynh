@@ -1,6 +1,6 @@
 ---
 title: "Project proposal"
-author: "Team name"
+author: "Tina Huynh"
 output: github_document
 ---
 
@@ -11,82 +11,261 @@ library(broom)
 
 ## 1. Introduction
 
-#### Motivation:
+This project examines the illegal trade in tiger parts and its consequences for biodiversity, human communities, and public health.
+We will quantify seizure trends and trade signals, place them in the context of wild versus ex-situ (zoo/facility) populations, and integrate socioeconomic and governance indicators that shape poaching incentives and enforcement capacity.
+We will also address the historic loss of tiger subspecies/populations and the risks of zoonotic spillover associated with unregulated live-animal trade.
 
-Poverty, health, environmental quality, and happiness are interconnected in ways that matter deeply for global well-being.
-Yet these relationships are often studied in isolation.
-This project aims to explore how these dimensions interact at the global level.
+Results will be presented as a reproducible data analysis (R/Quarto), a compact dataset, and a short report linking empirical findings to policy-relevant implications: conservation effectiveness, community livelihoods, and public-health prevention.
 
-#### **Goal:** 
+### 1.1 Scope
 
-Combine three major datasets — the World Bank Development Indicators, the Global Health Observatory (WHO), and the World Happiness Report — to investigate how income, environment, and health outcomes interact to shape happiness across countries.
+-   Focal taxon: *Panthera tigris* (tigers).
+-   Spatial unit: country (aggregate to sub-regions where needed).
+-   Temporal scope: 2010–2024 (or longest consistent overlap across sources).
 
-### Research Questions:
+## 2. Objectives
 
--   How strong is the relationship between national income and life expectancy?
--   Do countries with higher renewable energy adoption show better health outcomes?
--   Are wealthier countries always happier, or do health and environmental factors explain additional variation?
--   Which factors (income, environment, or health outcomes) are the strongest predictors of happiness?
--   Do countries with similar GDP but different environmental quality show different levels of happiness?
--   Can a multiple regression model predict happiness score from GDP per capita, life expectancy, social support, and environmental quality? Which variable is most important?
+1.  **Trade/Enforcement:** Quantify and visualize tiger-part seizure trends over time and geography; compare item types (skins, bones, teeth/claws).
+2.  **Prices (carefully handled):** Use vetted **wholesale price ranges/indices** to explore whether market signals correlate with recorded pressure (seizures).
+3.  **Populations:** Contextualize trends with **wild population** estimates and, where access permits, **ex-situ** counts (snapshot).
+4.  **Extinctions:** Document historic subspecies/population extinctions and recent country-level functional extirpations, acknowledging multiple interacting drivers.
+5.  **Socioeconomics & Governance:** Test associations between poverty, governance, and recorded poaching pressure; articulate the **dependency cycle** of illegal income.
+6.  **Public Health:** Highlight how unregulated live-animal trade elevates **spillover risk** and burdens human health systems.
 
-## 2. Data
+## 3. Research Questions and Hypotheses
 
-1.  **World Bank Development Indicators (WDI):** GDP per capita, poverty headcount ratio, CO₂ emissions, renewable energy share, access to clean water.
-2.  **Global Health Observatory (WHO):** Life expectancy, child and maternal mortality, disease burden from environmental risks.
-3.  **World Happiness Report:** Happiness score, GDP per capita (normalized), social support, perceptions of corruption, freedom.
+-   **Q1 Trends/where:** How have tiger-part seizures changed over time and where are hot spots?\
+    **H1:** Seizures show clustered hot spots and non-linear trends driven by enforcement and market dynamics.
+-   **Q2 Prices → pressure:** Do **wholesale** price indices/ranges align with subsequent changes in seizures?\
+    **H2:** Higher prior-year wholesale indices correlate with higher current seizures (association, not causal proof).
+-   **Q3 Populations:** How do trade/enforcement trends relate to **wild** population context and (if available) **ex-situ** counts?\
+    **H3:** Areas with historically depleted wild populations show weaker elasticity of seizures to price signals (fewer animals to poach), but trafficking routes persist.
+-   **Q4 Extinctions:** What does the subspecies/population extinction timeline indicate about illegal trade alongside habitat/prey loss?\
+    **H4:** Extirpation events coincide with periods of high poaching pressure and weak governance, with habitat/prey loss as interacting drivers.
+-   **Q5 Socioeconomics/governance:** Are poverty, unemployment, basic services, and governance associated with recorded poaching pressure?\
+    **H5:** Higher poverty and weaker rule-of-law align with higher seizures per capita.
+-   **Q6 Public-health risk (live trade):** Where live-animal seizures occur, do indicators suggest elevated spillover risk?\
+    **H6:** Higher shares of live-trade seizures co-occur with weaker services/governance.
+-   **Q7 Ecotourism & jobs:** What economic losses (revenue/jobs) are implied when tiger sightings/access fall (e.g., from poaching)?\
+    **H7:** Reduced sightings/access materially cuts reserve-level revenue and local earnings; at scale, this undermines sustainable employment, reinforcing the poverty–poaching loop.
+-   **Q8 Reputation:** Do persistent poaching signals plausibly damage destination brand and cooperation prospects?\
+    **H8:** High, sustained illegal trade indicators correlate with reputational risk narratives (qualitative).
 
-## 3. Data analysis plan
+## 4. Data Sources (open or requestable)
 
-### Data Preparation
+-   **IUCN Red List (Panthera tigris)** — status, range, best-available global population context.
+-   **CITES Trade Database** — official, country-reported international trade in CITES-listed species; filter for *Panthera tigris* and relevant product terms.
+-   **TRAFFIC (e.g., “Skin and Bones” series)** — consolidated seizure analyses (counts/weights by year/country/item).
+-   **UNODC World Wildlife Crime Reports** — trafficking flows, valuation methods, **wholesale** price ranges/indices (use only as ranges/indices; no granular detail).
+-   **Wildlife Justice Commission (WJC)** — carefully collected **wholesale** price intelligence (use as indices/ranges, aggregated by year/region).
+-   **Species360 / ZIMS & studbooks** — ex-situ snapshots (access-controlled; use if permission is granted).
+-   **Socioeconomics/Governance** — World Bank (WDI), Worldwide Governance Indicators (WGI).
+-   **Protected areas / habitat context (optional)** — WDPA; forest-loss layers (Global Forest Watch/Hansen).
+-   **Public-health (optional, coarse)** — aggregated country-year counts from official reporting where available (used illustratively, not for causal claims).
 
--   Merge datasets by country (and by year where possible, e.g., 2015–2020).
--   Clean variable names, check units, and handle missing values.
--   Create derived indicators (e.g., GDP quartiles, air quality quartiles).
+## 5. Ethics, Risks, and Communication
 
-### Core Research Questions with Methods
+-   **Purpose:** academic analysis of drivers/impacts; **no operational guidance**.
+-   **Prices:** use **wholesale ranges/indices** only; aggregate by year/region; no “how/where” detail.
+-   **Bias & uncertainty:** seizures are detection-biased; population estimates are ranges; clearly label all uncertainty.
+-   **Framing:** avoid victim-blaming; emphasize structural drivers and solutions (livelihoods, governance, demand reduction, sanitary controls on live trade).
+-   **Public-health:** discuss live-trade spillover risk as **associational**; no causal claims beyond evidence.
 
-How strong is the relationship between national income and life expectancy?
+## 6. Data Analysis Plan
 
--   Scatterplot: GDP per capita (x) vs. Life expectancy (y), color by continent.
--   Correlation coefficient to quantify strength.
--   Facet by continent for regional variation.
+### 6.1 Data Quality & Bias Controls
 
-Do countries with higher renewable energy adoption show better health outcomes?
+-   **Harmonize country names/ISO codes**; ensure region mapping for price indices.
+-   **Handle missingness** explicitly; document coverage by country–year.
+-   **Per-capita and log transforms** for skewed outcomes (seizures).
+-   **Detection/reporting bias** acknowledgment: seizures ≠ total illegal activity; enforcement intensity varies.
+-   **Population estimates** treated as ranges/snapshots; do *not* fabricate annual series.
+-   **Price data** used only as aggregated **wholesale** ranges/indices; no transactional specifics.
 
--   Scatterplot: % renewable energy (x) vs. Life expectancy (y).
--   Grouped bar plots: average life expectancy by renewable energy quartile.
--   Regression line to visualize trend.
+### 6.2 Prices → Pressure (associations)
 
-Are wealthier countries always happier, or do health and environmental factors explain additional variation?
+-   Build annual **wholesale indices/ranges** for tiger parts (UNODC/WJC).
+-   Explore **lagged** associations (e.g., t-1 price index vs t seizures) via scatter + LOESS and simple OLS/Poisson with year fixed effects.
+-   Emphasize **correlation**, not causation; acknowledge reporting/detection bias.
+-   **Unit:** region–year (or country aggregated to region for price linkage).
+-   **Spec:** $spm_t = α + β * index_mid_{t-1} + γ_t + ε$ (OLS on SPM or GLM on counts with offset log(pop)).
+-   **Readout:** sign/CI of β; LOESS overlay.
+-   **Note:** associational; robustness with region FE if data permit.
 
--   Scatterplot: GDP per capita (x) vs. Happiness score (y), bubble size = life expectancy, color = continent.
--   Residual plot: happiness vs. GDP, then plot residuals against air pollution.
--   Boxplots: happiness across GDP quartiles.
+### 6.3 Populations & Extinctions
 
-Which factors (income, environment, or health outcomes) are the strongest predictors of happiness?
+-   Place seizure trends alongside **wild population** context (global range; country snapshots where credible).
+-   **Subspecies/population extinctions**: brief timeline for historic losses (Bali, Javan, Caspian) and recent country-level functional extirpations (e.g., Cambodia, Laos); attribute multiple drivers (poaching/illegal trade, habitat conversion, prey depletion).
+-   **Build** a timeline of historic subspecies/population losses and recent country extirpations (e.g., Cambodia, Laos) and **overlay** regional seizure trends.
+-   **Interpretation:** structured narrative; do not claim causality.
 
--   Correlation heatmap of happiness vs. GDP, life expectancy, air quality.
--   Multiple regression: Happiness \~ GDP + Life expectancy + Air quality.
--   Coefficient plot to compare effect sizes.
+### 6.4 Socioeconomic Drivers & Dependency Cycle
 
-Do countries with similar GDP but different environmental quality show different levels of happiness?
+-   Contrast seizures per million people across **poverty quartiles**.
 
--   Scatterplot: GDP per capita (x) vs. Happiness score (y), color = air pollution.
--   Highlight clusters of countries with similar GDP but divergent happiness.
--   Faceted plots: GDP vs. Happiness by air quality quartile.
+-   Bivariate plots: poverty, unemployment, basic services, and governance vs **log(1 + seizures per million)**.
 
-Can a multiple regression model predict happiness score from GDP per capita, life expectancy, social support, and environmental quality?
-Which variable is most important?
+-   Light regression (intro level), lagging covariates and adding year fixed effects:
 
--   Regression model with multiple predictors.
--   Coefficient plot with standardized betas.
--   Partial regression plots for each predictor.
+    $$
+    \text{Seizures}_{c,t} = \beta_0 + \beta_1 \text{Poverty}_{c,t-1} + \beta_2 \text{RuleOfLaw}_{c,t-1} + \beta_3 \text{GDPpc}_{c,t-1} + \gamma_t + \varepsilon_{c,t}
+    $$
 
-## 4. Expected Results
+    Interpret as **associations**; discuss the **dependency cycle** where illegal income becomes self-reinforcing under weak alternatives.
 
--   Strong positive relationship between GDP and life expectancy, with diminishing returns at higher incomes.
--   Higher renewable energy shares loosely associated with better health outcomes.
--   Happiness correlates with wealth but also reflects health, social support, and environment.
--   Environmental quality helps explain differences in happiness among countries with similar GDP.
--   Regression will likely show GDP and social support as strongest predictors, but life expectancy and environment remain meaningful contributors.
+-   **Unit:** country–year.
+
+-   **Alternatives:** Poisson/NegBin for counts with offset(log pop)); quantile regressions for heavy tails.
+
+-   **Readout:** direction, magnitude, and stability across specs.
+
+### 6.5 Live-Trade & Public-Health Risk
+
+-   Calculate `live_share` of seizures; plot trends by region/country.
+-   Show `live_share` vs basic-services/governance proxies.
+-   Panel with coarse outbreak counts for qualitative discussion of **spillover risk**; no causal claims.
+-   **Unit:** country–year (subset where `live_share` observed).
+-   **Spec:** $live_share_ct ~ services (water/electricity) + governance + year FE$ (OLS or beta regression if proportions).
+-   **Readout:** directional association with services/governance.
+
+### 6.6 Ecotourism Revenue & Jobs
+
+-   **Anchor:** site-level, peer-reviewed valuation (e.g., annual value and local share).
+-   **Scenarios:** 10–30% visitation drop → compute **revenue** and **local earnings** losses.
+-   **Contextualize:** relate to national/regional wildlife-tourism jobs figures (qualitative framing).
+
+## 7. Visualizations & Data Requirements
+
+### F1 — Tiger-part seizures over time (total)
+
+-   **Purpose:** Show overall pressure trend.
+-   **Inputs (TRAFFIC → Seizures):** `country`, `year`, `seizures_total`. (Optionally sum to global/regional with `region` from WDI/WGI.)
+-   **Chart:** Column (year on x, total on y). Optional 3–5-year moving average.
+-   **Caption (paste):** *Recorded tiger-part seizures fluctuate over time, reflecting shifts in market dynamics, enforcement effort, and reporting capacity.*
+
+### F2 — Seizures by commodity (skins, bones, teeth/claws)
+
+-   **Purpose:** Identify which commodities dominate.
+-   **Inputs (TRAFFIC):** `year`, item splits: `skins`, `bones`, `teeth_claws` (or long format `item`, `n`).
+-   **Chart:** Small-multiples columns (one panel per item), aligned axes if feasible.
+-   *Different product types exhibit distinct trajectories, indicating heterogeneous demand and supply chains.*
+
+### F3 — Seizure hot-spots map
+
+-   **Purpose:** Where enforcement encounters occur.
+-   **Inputs (TRAFFIC + WDI/WGI):** `country`, last 5-yr sum `seizures_total`; join ISO3 to map; optional rate = per million (`seizures_per_million`).
+-   **Chart:** Choropleth (country fill by value). Optional labels for top 5.
+-   *Seizures cluster geographically, highlighting priority corridors and jurisdictions for coordinated responses.*
+
+### F4 — Lagged wholesale index vs. seizures (“price” → pressure association)
+
+-   **Purpose:** Test if prior wholesale signals align with subsequent pressure.
+-   **Inputs (UNODC/WJC + TRAFFIC + WDI/WGI):** `region`, `year`, `index_mid_lag`; regional `seizures_per_million`.
+-   **Chart:** Scatter with LOESS (x = `index_mid_lag`, y = regional `seizures_per_million`).
+-   *Higher prior-year wholesale indices are associated with higher recorded pressure; results are correlational, not causal.*
+
+### F5 — Wild vs. ex-situ populations (context)
+
+-   **Purpose:** Contrast conservation states.
+-   **Inputs (IUCN + ZIMS/studbooks):** `wild_pop_min|max|mid`, `estimate_year`; `ex_situ_count`, `ex_situ_year`, `coverage_notes`.
+-   **Chart:** Two bars/lines with error whiskers (wild range vs. ex-situ snapshot). Prominent caveat footnote.
+-   *Wild populations remain limited relative to ex-situ holdings; estimates are ranges with substantial uncertainty.*
+
+### F6 — Extinction / extirpation timeline (historic + recent)
+
+-   **Purpose:** Place losses in time.
+-   **Inputs (IUCN / literature):** `event_type` (extinct \| functional_extirpation), `event_year`, `notes`.
+-   **Chart:** Timeline with labeled markers; panels for (historic subspecies) vs (recent country losses).
+-   *Historic subspecies losses and recent country-level extirpations reflect interacting drivers, including illegal killing, habitat conversion, and prey depletion.*
+
+### F7 — Pressure vs. loss overlay
+
+-   **Purpose:** Visual association between elevated pressure and loss events.
+-   **Inputs (TRAFFIC + events):** Regional/yearly `seizures_total` and extirpation markers.
+-   **Chart:** Line (seizures) with vertical lines/flags at `event_year`.
+-   *Extirpation milestones coincide with periods of elevated recorded pressure in parts of the range (descriptive, not causal).*
+
+### F8 — Country case cards (e.g., Cambodia, Laos)
+
+-   **Purpose:** Succinct narrative for key cases.
+-   **Inputs:** `country`, last camera-trap year (narrative), `event_year`, 5–10-yr regional `seizures_total` sparkline; 2–3 policy milestones.
+-   **Chart:** Two mini cards with sparkline and bullets.
+-   *Case studies illustrate how poaching and governance conditions can culminate in functional extirpation.*
+
+### F9 — Poverty vs. recorded pressure
+
+-   **Purpose:** Socioeconomic association.
+-   **Inputs (WDI/WGI + TRAFFIC):** `pov_215`, `log_spm`, `region`.
+-   **Chart:** Scatter (x = poverty headcount %, y = log(1+SPM)), color by region, LOESS.
+-   *Higher poverty aligns with greater recorded pressure; association only, and subject to detection bias.*
+
+### F10 — Governance vs. recorded pressure
+
+-   **Purpose:** Governance association.
+-   **Inputs (WGI + TRAFFIC):** `rule_of_law`, `log_spm`.
+-   **Chart:** Scatter with linear fit; optionally facet by region.
+-   *Stronger rule of law is associated with lower recorded pressure.*
+
+### F11 — Live-trade risk indicator (spillover proxy)
+
+-   **Purpose:** Track unregulated live-animal trade share.
+-   **Inputs (TRAFFIC/CITES):** `live_share` by `country`–`year`; optional regional mean.
+-   **Chart:** Line by region; or bars by country for latest year.
+-   *Where live-animal seizures comprise a larger share, spillover risk from unsanitary holding/transport conditions is of greater concern.*
+
+### F12 — Socioeconomic quartet
+
+-   **Purpose:** Side-by-side drivers view.
+-   **Inputs (WDI/WGI + TRAFFIC):** `pov_215`, `unemp`, `clean_water` or `electricity_access`, `rule_of_law`, all vs `log_spm`.
+-   **Chart:** 4 small-multiple scatters with identical axes scales.
+-   *Poverty, employment, basic services, and governance show distinct associations with recorded pressure.*
+
+### F13 — Tiger tourism value (site anchor)
+
+-   **Purpose:** Ground economic stakes at reserve level.
+-   **Inputs (Tourism valuation study):** `reserve`, `anchor_value_usd`, `gate_fees_usd`, `reserve_budget_usd`, `local_share`.
+-   **Chart:** Single “value card” bar; inset comparing gate fees vs. budget.
+-   *Tiger tourism at key reserves generates substantial revenue, often helping finance protection and local livelihoods.*
+
+### F14 — “What if sightings fall?” scenario (revenue & local earnings losses)
+
+-   **Purpose:** Illustrate sensitivity to poaching shocks.
+-   **Inputs (Tourism + scenario):** `anchor_value_usd`, `local_share`, `visitation_decline_{10,20,30}`, computed `revenue_loss`, `local_earnings_loss`.
+-   **Chart:** Tornado/interval bar showing loss under 10–30% declines; annotate assumptions.
+-   *Reduced sightings/access can quickly erode reserve revenue and local earnings; values shown are illustrative scenarios.*
+
+### F15 — Wildlife-tourism jobs context (macro)
+
+-   **Purpose:** Put site-level numbers in labor-market perspective.
+-   **Inputs (WTTC/credible synthesis):** global and Asia–Pacific wildlife-tourism jobs (headline stats).
+-   **Chart:** Two bars or a small multiple comparing totals.
+-   *Wildlife tourism supports millions of jobs; declines in flagship species jeopardize broader employment and development gains.*
+
+### F16 — Reputation & governance (callout)
+
+-   **Purpose:** Communicate non-market, strategic costs.
+-   **Inputs (UNODC / synthesis):** short bullets on governance harms, organized crime links, brand risk.
+-   **Chart:** Text-forward callout; optional icons; no data plot required.
+-   *Persistent poaching undermines governance and international reputation, with knock-on effects for investment and destination branding.*
+
+------------------------------------------------------------------------
+
+#### Notes on joins and readiness per figure
+
+-   **By-country figures:** F1–F3, F8–F12 use `country`–`year` (ISO3), with `region` as a cosmetic or grouping field.
+-   **By-region figures (price linkage):** F4 requires `country → region` mapping to join `index_mid_lag`. Aggregate seizures to region-year first.
+-   **Snapshot/context figures:** F5 (populations) and F13–F14 (tourism anchors) are **not** merged into the panel; keep as separate tables with clear years and caveats.
+-   **Event overlays:** F6–F7 add an events table (`event_year`, `event_type`, `geography`) to annotate timelines.
+
+## 10. Ethics & Risk Mitigation
+
+-   **Purpose:** academic analysis of drivers and impacts; **no operational guidance**.
+-   **Price handling:** use **aggregated wholesale ranges/indices** from reputable syntheses; **no “how/where” details**.
+-   **Price data:** use vetted **wholesale ranges/indices** aggregated by year/region; no procurement detail.
+-   **Population estimates:** use latest credible sources; treat as ranges, not annual time series.
+-   **Causality:** present associations; avoid over-claiming.
+-   **Data access (ex-situ):** document permissions; omit if unavailable.
+-   **Attribution:** cite TRAFFIC, CITES, IUCN, UNODC, WJC, and any other sources; respect licenses and access terms (e.g., ZIMS).
+-   **Biases:** seizures ≠ total illegal activity; detection and reporting vary widely.
+-   **Community framing:** avoid victim-blaming; emphasize **structural drivers** (poverty, governance, market access) and **solutions** (livelihoods, enforcement, demand reduction, health/vet safeguards).
+-   **Health claims:** treat any health indicators as **associational**; do not overstate causality.
