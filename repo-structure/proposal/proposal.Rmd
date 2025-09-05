@@ -622,33 +622,43 @@ sessionInfo()
 ## B. Hot-spot map scaffold
 
 ```{r hotspot-map, eval=FALSE}
-library(sf); library(rnaturalearth); library(ggplot2); library(viridis)
+library(sf)
+library(rnaturalearth)
+library(ggplot2)
+library(viridis)
 world <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf") |>
   dplyr::select(iso_a3, geometry)
 
 # last5y_panel must contain: country_iso3, seizures_per_million
-mapdat <- world |> dplyr::left_join(last5y_panel, by = c("iso_a3" = "country_iso3"))
+mapdat <- world |>
+  dplyr::left_join(last5y_panel, by = c("iso_a3" = "country_iso3"))
 
 ggplot(mapdat) +
   geom_sf(aes(fill = seizures_per_million), color = NA) +
   scale_fill_viridis_c(option = "C") +
-  labs(fill = "Seizures / 1M", title = "Tiger-part seizure hot spots (last 5 years)") +
+  labs(fill = "Seizures / 1M",
+       title = "Tiger-part seizure hot spots (last 5 years)") +
   theme_minimal()
 ```
 
 ## C. Lagged wholesale index vs. seizures (regional)
 
 ```{r price-pressure, eval=FALSE}
-library(dplyr); library(ggplot2)
+library(dplyr)
+library(ggplot2)
 regdat <- region_year |>
-  mutate(seizures_pm = 1e6 * seizures_total / pop,
-         index_lag   = dplyr::lag(index_mid, 1)) |>
+  mutate(
+    seizures_pm = 1e6 * seizures_total / pop,
+    index_lag = dplyr::lag(index_mid, 1)
+  ) |>
   tidyr::drop_na(seizures_pm, index_lag)
 
 ggplot(regdat, aes(index_lag, seizures_pm)) +
   geom_point(alpha = 0.7) +
   geom_smooth(method = "loess", se = FALSE, color = "black") +
-  labs(x = "Wholesale index (lagged 1y)", y = "Seizures per million",
-       title = "Wholesale signal (lagged) vs. recorded pressure") +
+  labs(
+    x = "Wholesale index (lagged 1y)", y = "Seizures per million",
+    title = "Wholesale signal (lagged) vs. recorded pressure"
+  ) +
   theme_minimal()
 ```
