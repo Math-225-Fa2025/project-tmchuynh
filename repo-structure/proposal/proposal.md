@@ -108,6 +108,13 @@ library(broom)
 ### Expected Outcomes & Limitations
 
 #### Expected Outcomes
+
+1. **Quantified Color Advantage**: Demonstrate statistically significant white advantage with confidence intervals
+2. **Rating-Performance Models**: Develop predictive models for win probability based on rating differentials  
+3. **Opening Effectiveness Rankings**: Create evidence-based opening recommendations by time control
+4. **Performance Progression Tracking**: Identify patterns in skill development and rating growth
+5. **Multi-factor Analysis**: Understand interactions between rating, time control, color, and opening choice
+
 #### Limitations
 
 1. **Sampling Bias**: 
