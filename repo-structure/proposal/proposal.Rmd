@@ -608,3 +608,9 @@ These enhanced visualizations provide deeper insights into:
 - Performance trends over time
 
 ---
+
+### Data Analysis Methods & Strategies
+
+```{r statistical-models, EVAL=TRUE}
+# Enhanced statistical modeling
+```
