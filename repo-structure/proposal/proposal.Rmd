@@ -457,4 +457,15 @@ table(lichess_df$user_color)
 
 ```{r exploratory-analysis, EVAL=TRUE}
 # Enhanced exploratory data analysis
-```
+color_performance <- lichess_df %>%
+  group_by(user_color) %>%
+  summarise(
+    games = n(),
+    wins = sum(user_result == "win"),
+    losses = sum(user_result == "loss"), 
+    draws = sum(user_result == "draw"),
+    win_rate = wins / games,
+    avg_rating = mean(user_rating, na.rm = TRUE),
+    avg_accuracy = mean(user_accuracy, na.rm = TRUE),
+    .groups = "drop"
+  )
