@@ -718,8 +718,12 @@ ggsave("../presentation/presentation_files/win_rate_by_rating_category.png", plo
 # 5. Model comparison and validation
 if (nrow(model_data) > 50) {
   cat("\n=== MODEL COMPARISON ===\n")
+  
   # Simple model
   simple_model <- glm(win ~ rating_advantage, data = model_data, family = binomial)
+  # Complex model
+  complex_model <- glm(win ~ rating_advantage + white + time_control + opening_family +
+    I(rating_advantage^2), data = model_data, family = binomial)
   print(aic_comparison)
 }
 ```
