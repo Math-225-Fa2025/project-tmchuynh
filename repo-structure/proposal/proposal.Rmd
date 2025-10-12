@@ -457,9 +457,13 @@ table(lichess_df$user_color)
 
 ```{r exploratory-analysis, EVAL=TRUE}
 # Enhanced exploratory data analysis
+
+# Create data directory if it doesn't exist
 if (!dir.exists("../presentation")) {
   dir.create("../presentation", recursive = TRUE)
 }
+
+# 1. Performance by color
 color_performance <- lichess_df %>%
   group_by(user_color) %>%
   summarise(
@@ -474,6 +478,8 @@ color_performance <- lichess_df %>%
   )
 
 print(color_performance)
+
+# 2. Win rate by color visualization
 p1 <- ggplot(lichess_df, aes(x = user_color, fill = user_result)) +
   geom_bar(position = "fill") +
   labs(title = "Game Outcomes by Piece Color", 
@@ -484,6 +490,8 @@ p1 <- ggplot(lichess_df, aes(x = user_color, fill = user_result)) +
 
 print(p1)
 ggsave("../presentation/presentation_files/game_outcomes_by_color.png", plot = p1, width = 8, height = 6, dpi = 300)
+
+# 3. Performance across time controls
 p2 <- ggplot(lichess_df, aes(x = time_control, fill = user_result)) +
   geom_bar(position = "fill") +
   labs(title = "Game Outcomes by Time Control",
@@ -494,6 +502,8 @@ p2 <- ggplot(lichess_df, aes(x = time_control, fill = user_result)) +
 
 print(p2)
 ggsave("../presentation/presentation_files/game_outcomes_by_time_control.png", plot = p2, width = 10, height = 6, dpi = 300)
+
+# 4. Rating difference vs. outcome
 p3 <- ggplot(lichess_df, aes(x = rating_diff, fill = user_result)) +
   geom_histogram(position = "identity", alpha = 0.7, bins = 20, color = "black") +
   facet_wrap(~user_result) +
@@ -505,6 +515,8 @@ p3 <- ggplot(lichess_df, aes(x = rating_diff, fill = user_result)) +
 
 print(p3)
 ggsave("../presentation/presentation_files/rating_difference_distribution.png", plot = p3, width = 12, height = 8, dpi = 300)
+
+# 5. Accuracy analysis
 if (sum(!is.na(lichess_df$user_accuracy)) > 0) {
   p4 <- ggplot(lichess_df %>% filter(!is.na(user_accuracy)), 
                aes(x = user_result, y = user_accuracy, fill = user_result)) +
@@ -518,6 +530,8 @@ if (sum(!is.na(lichess_df$user_accuracy)) > 0) {
   print(p4)
   ggsave("../presentation/presentation_files/accuracy_distribution_by_outcome.png", plot = p4, width = 10, height = 6, dpi = 300)
 }
+
+# 6. Opening performance analysis
 opening_stats <- lichess_df %>%
   group_by(opening_family) %>%
   summarise(
@@ -538,6 +552,8 @@ p5 <- ggplot(opening_stats, aes(x = reorder(opening_family, win_rate), y = win_r
 
 print(p5)
 ggsave("../presentation/presentation_files/win_rate_by_opening_family.png", plot = p5, width = 10, height = 8, dpi = 300)
+
+# 7. Performance over time
 if (nrow(lichess_df) > 10) {
   lichess_df <- lichess_df %>%
     arrange(game_date) %>%
@@ -560,6 +576,8 @@ if (nrow(lichess_df) > 10) {
   print(p6)
   ggsave("../presentation/presentation_files/rolling_win_rate_over_time.png", plot = p6, width = 12, height = 6, dpi = 300)
 }
+
+# 8. Correlation analysis
 if (sum(!is.na(lichess_df$user_accuracy)) > 10) {
   numeric_vars <- lichess_df %>%
     select(user_rating, opponent_rating, rating_diff, user_accuracy) %>%
