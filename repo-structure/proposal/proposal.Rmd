@@ -33,6 +33,11 @@ Data will be stored in tibbles and manipulated with `dplyr` and `tidyr`.
    - `rating_change = rating_post - rating_pre`
    - `is_white_win = ifelse(winner == "white", 1, 0)`
 5. Integrate FIDE data by matching players or aggregating by country/title.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
 ```{r libraries}
 library(httr)
 library(jsonlite)
