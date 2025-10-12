@@ -8,6 +8,16 @@ output: html_document
 # Statistical Analysis of Chess Performance and Player Progression
 
 ## Information
+
+### Research Questions
+
+1. How do **opening choices** influence win probability across time controls (e.g., blitz, rapid, classical)?
+2. Does **playing frequency** or **game volume** correlate with **rating growth** over time?
+3. Are **white pieces** statistically more likely to win, and does this advantage vary by rating or game type?
+4. How does **player rating** predict **accuracy and move efficiency**, and are these patterns consistent across skill brackets?
+
+---
+
 ### Data Information
 
 #### Lichess Public API and Game Database
