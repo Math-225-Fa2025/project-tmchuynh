@@ -11,6 +11,8 @@ The codebook outlines dataset dimensions, field types, and example values to ens
 
 ## 2. Lichess Public API Dataset
 
+### 2.1 General Description
+
 The **Lichess API** is a RESTful interface that provides public access to millions of chess games, player profiles, and rating histories.
 Data were retrieved via the endpoint: [https://lichess.org/api/games/user/{username}?max=100&analysed=true](https://lichess.org/api/games/user/{username}?max=100&analysed=true)
 
