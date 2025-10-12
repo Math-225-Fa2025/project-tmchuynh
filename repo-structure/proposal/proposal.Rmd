@@ -566,5 +566,11 @@ if (sum(!is.na(lichess_df$user_accuracy)) > 10) {
     filter(complete.cases(.))
   if (nrow(numeric_vars) > 0) {
     cor_matrix <- cor(numeric_vars)
+    
+    # Save correlation plot
+    png("../presentation/presentation_files/correlation_matrix_numeric_variables.png", width = 800, height = 600, res = 300)
+    corrplot(cor_matrix, method = "color", type = "upper",
+             title = "Correlation Matrix of Numeric Variables")
+    dev.off()
 }
 ```
