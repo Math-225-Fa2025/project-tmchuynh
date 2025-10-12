@@ -33,18 +33,31 @@ Data will be stored in tibbles and manipulated with `dplyr` and `tidyr`.
    - `rating_change = rating_post - rating_pre`
    - `is_white_win = ifelse(winner == "white", 1, 0)`
 5. Integrate FIDE data by matching players or aggregating by country/title.
+```{r libraries}
+library(httr)
+library(jsonlite)
+library(dplyr)
+library(purrr)
+library(tidyr)
+library(ggplot2)
+library(lubridate)
+library(skimr)
+library(corrplot)
 library(broom)
+library(modelr)
+library(scales)
+
+# Set theme for consistent plotting
+theme_set(theme_minimal())
 ```
+---
 
-## 1. Introduction
+### Comparison Groups
 
+#### Primary Grouping Variables
 
-
-## 2. Data
-
-
-
-## 3. Data analysis plan
-
-
-
+1. **By Color:** White vs. Black
+   - **First-move advantage analysis**: Quantifying the theoretical 52-56% win rate for white pieces
+   - **Opening initiative impact**: How color affects opening choice and early game strategy
+   - **Endgame conversion rates**: Color-specific success in winning/drawing positions
+   - **Psychological factors**: Player confidence and aggression based on piece color
