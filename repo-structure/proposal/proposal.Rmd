@@ -714,3 +714,12 @@ p_rating <- ggplot(rating_impact, aes(x = rating_category, y = win_rate)) +
 
 print(p_rating)
 ggsave("../presentation/presentation_files/win_rate_by_rating_category.png", plot = p_rating, width = 12, height = 8, dpi = 300)
+
+# 5. Model comparison and validation
+if (nrow(model_data) > 50) {
+  cat("\n=== MODEL COMPARISON ===\n")
+  # Simple model
+  simple_model <- glm(win ~ rating_advantage, data = model_data, family = binomial)
+  print(aic_comparison)
+}
+```
