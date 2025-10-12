@@ -278,6 +278,29 @@ if (nrow(lichess_df) > 0) {
 
 glimpse(lichess_df)
 ```
+
+```{r data-quality}
+# Data quality assessment
+cat("=== DATA QUALITY REPORT ===\n")
+
+# Missing data analysis
+missing_summary <- lichess_df %>%
+  summarise_all(~sum(is.na(.))) %>%
+  pivot_longer(everything(), names_to = "variable", values_to = "missing_count") %>%
+  mutate(missing_pct = round(missing_count / nrow(lichess_df) * 100, 2)) %>%
+  arrange(desc(missing_count))
+
+print(missing_summary)
+
+# Basic statistics
+cat("\n=== SUMMARY STATISTICS ===\n")
+summary(lichess_df %>% select(user_rating, opponent_rating, rating_diff, user_accuracy))
+
+# Distribution of key variables
+cat("\n=== CATEGORICAL VARIABLE DISTRIBUTIONS ===\n")
+table(lichess_df$user_result)
+table(lichess_df$time_control) 
+table(lichess_df$user_color)
 ```
 
 ---
