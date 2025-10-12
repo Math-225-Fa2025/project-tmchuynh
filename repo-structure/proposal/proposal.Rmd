@@ -80,3 +80,9 @@ theme_set(theme_minimal())
 - **Chi-square tests** for categorical outcomes (win/loss/draw)
 - **Wilcoxon rank-sum tests** for non-parametric comparisons
 - **Fisher's exact tests** for small sample contingency tables
+#### Expected Group Differences
+
+**Color-based Expectations:**
+- White advantage should be consistent across rating levels (52-56% win rate)
+- Advantage may diminish in bullet games due to time pressure
+- Opening diversity should favor white pieces in aggressive systems
