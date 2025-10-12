@@ -25,6 +25,12 @@ output: html_document
 The **Lichess API** is an open data service provided by Lichess.org, a free online chess platform.  
 It offers access to detailed, anonymized game records, including metadata such as player ratings, time controls, openings, and results.  
 The **Lichess Database** also publishes monthly bulk archives of millions of games in PGN format, which can be converted into CSV or JSON for analysis.
+---
+
+#### FIDE Player Rating Lists
+
+The **FIDE (Fédération Internationale des Échecs)** rating lists contain official Elo ratings, federation, title, age, and gender for all registered players worldwide.  
+These data provide demographic and global context to the Lichess dataset and allow calibration of player strength and rating dynamics.
 ##### Variables
 
 - `player_name`: player's full name  
