@@ -724,6 +724,8 @@ if (nrow(model_data) > 50) {
   # Complex model
   complex_model <- glm(win ~ rating_advantage + white + time_control + opening_family +
     I(rating_advantage^2), data = model_data, family = binomial)
+  # Compare models
+  anova(simple_model, logit_model, complex_model, test = "Chisq")
   print(aic_comparison)
 }
 ```
