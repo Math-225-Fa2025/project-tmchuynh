@@ -105,3 +105,17 @@ theme_set(theme_minimal())
 - Time zone and circadian rhythm effects
 - Internet connection stability impacts
 - Mobile vs. desktop playing interface
+
+#### Sample Size and Power Analysis
+
+**Minimum Sample Requirements:**
+- **Color analysis**: 100+ games per color for reliable estimates
+- **Time control comparison**: 50+ games per category
+- **Rating tier analysis**: 30+ games per 100-point rating band
+- **Opening effectiveness**: 20+ games per opening family
+
+**Power Calculations:**
+- **Effect size detection**: Minimum 5% win rate difference
+- **Statistical power**: Target 80% power for primary comparisons
+- **Alpha level**: 0.05 with Bonferroni correction for multiple tests
+- **Confidence intervals**: 95% CI for all effect estimates
