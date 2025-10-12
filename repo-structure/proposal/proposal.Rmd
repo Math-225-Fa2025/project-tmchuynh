@@ -199,6 +199,14 @@ glimpse(lichess_df)
    - **Hypermodern Systems**: King's Indian Defense, Nimzo-Indian Defense
    - **Solid Defenses**: French Defense, Caro-Kann Defense, Petrov Defense
    - **Sicilian Variations**: Open Sicilian, Closed Sicilian, Dragon Variation
+
+#### Secondary Analysis Dimensions
+
+5. **By Player Demographics:**
+   - **Age Groups**: Youth (< 18), Adult (18-40), Veteran (40+) where data available
+   - **Geographic Regions**: Continental analysis using FIDE federation data
+   - **Title Categories**: Titled players (GM, IM, FM) vs. untitled players
+   - **Activity Level**: Casual (< 10 games/month), Regular (10-50), Active (50+)
 #### Statistical Comparison Framework
 
 **Pairwise Comparisons:**
