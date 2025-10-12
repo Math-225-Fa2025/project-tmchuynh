@@ -81,13 +81,26 @@ Data will be stored in tibbles and manipulated with `dplyr` and `tidyr`.
 
 ### Data Cleaning
 
-1. Import JSON or CSV data from the Lichess API or PGN archive.  
-2. Standardize rating fields, convert timestamps, and filter out corrupted games.  
-3. Recode categorical fields for uniformity (`winner`, `color`, `game_type`).  
-4. Derive computed variables such as:
-   - `rating_change = rating_post - rating_pre`
-   - `is_white_win = ifelse(winner == "white", 1, 0)`
-5. Integrate FIDE data by matching players or aggregating by country/title.
+The data cleaning process will involve several systematic steps to ensure data quality and consistency:
+
+1. **Data Import and Initial Processing**
+   - Import game data from JSON or CSV files obtained through the Lichess API or PGN archive downloads
+   - Perform initial data validation to identify incomplete or malformed records
+
+2. **Data Standardization**
+   - Standardize rating fields to ensure consistent numerical formatting
+   - Convert Unix timestamps to readable datetime formats for temporal analysis
+   - Filter out corrupted games or records with missing essential information
+
+3. **Categorical Variable Recoding**
+     - `winner`: ensure consistent values ("white", "black", "draw")
+     - `color`: standardize player color assignments
+4. **Derived Variable Creation**
+     - `rating_change = rating_post - rating_pre` (rating gain/loss per game)
+5. **External Data Integration**
+   - Merge FIDE rating data with Lichess records where possible
+   - Aggregate demographic information by country or title for comparative analysis
+   - Handle missing values and data mismatches between datasets appropriately
 
 #### Data Collection Process
 
