@@ -86,3 +86,22 @@ theme_set(theme_minimal())
 - White advantage should be consistent across rating levels (52-56% win rate)
 - Advantage may diminish in bullet games due to time pressure
 - Opening diversity should favor white pieces in aggressive systems
+#### Control Variables and Confounding Factors
+
+**Player-level Controls:**
+- Historical rating trajectory (improving vs. declining)
+- Playing frequency and recent activity
+- Specialization in specific time controls or openings
+- Title status and competitive experience
+
+**Game-level Controls:**
+- Opponent strength relative to player rating
+- Recent performance streak effects
+- Opening preparation depth
+- Hardware/software advantages (engine assistance detection)
+
+**Environmental Controls:**
+- Platform-specific features (Lichess vs. Chess.com differences)
+- Time zone and circadian rhythm effects
+- Internet connection stability impacts
+- Mobile vs. desktop playing interface
