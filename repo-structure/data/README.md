@@ -56,6 +56,25 @@ Data were collected from: [https://ratings.fide.com/download_lists.phtml](https:
 | **Time coverage:**       | Monthly updates since 2001          |
 | **Source format:**       | CSV / XLSX                          |
 
+
+### 3.3 Variable Dictionary
+
+| Variable Name     | Type      | Source Field      | Description                               | Example             |
+|-------------------|-----------|-------------------|-------------------------------------------|---------------------|
+| `fide_id`         | Character | `fideid`          | Unique identifier assigned by FIDE.       | `"1503014"`         |
+| `player_name`     | Character | `name`            | Player’s full name (surname, given name). | `"CARLSEN, Magnus"` |
+| `title`           | Factor    | `title`           | FIDE title: GM, IM, FM, WGM, WIM, etc.    | `"GM"`              |
+| `country`         | Factor    | `country`         | Three-letter country code (ISO/FIDE).     | `"NOR"`             |
+| `gender`          | Factor    | `sex`             | Player gender: M / F.                     | `"M"`               |
+| `rating_standard` | Integer   | `rating_standard` | Standard rating (classical).              | `2830`              |
+| `rating_rapid`    | Integer   | `rating_rapid`    | Rapid rating.                             | `2820`              |
+| `rating_blitz`    | Integer   | `rating_blitz`    | Blitz rating.                             | `2885`              |
+| `games_played`    | Integer   | `games`           | Number of rated games in that period.     | `12`                |
+| `birth_year`      | Integer   | `birth_year`      | Player’s birth year.                      | `1990`              |
+| `inactive_flag`   | Logical   | `inactive_flag`   | TRUE if player is currently inactive.     | `FALSE`             |
+
+
+
 ---
 
 ## 4. Combined Dataset Summary
