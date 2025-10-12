@@ -344,6 +344,19 @@ table(lichess_df$user_color)
    - **Geographic Regions**: Continental analysis using FIDE federation data
    - **Title Categories**: Titled players (GM, IM, FM) vs. untitled players
    - **Activity Level**: Casual (< 10 games/month), Regular (10-50), Active (50+)
+
+6. **By Game Context:**
+   - **Tournament vs. Casual**: Rated tournament games vs. informal matches
+   - **Time of Day**: Morning, afternoon, evening performance patterns
+   - **Day of Week**: Weekday vs. weekend performance variations
+   - **Season/Month**: Temporal performance fluctuations
+
+7. **By Performance Metrics:**
+   - **Accuracy Tiers**: High (90%+), Medium (75-90%), Low (< 75%)
+   - **Game Length**: Short (< 20 moves), Medium (20-40), Long (40+)
+   - **Material Balance**: Simplified vs. complex material positions
+   - **Time Usage**: Efficient vs. time-pressured game management
+
 #### Statistical Comparison Framework
 
 **Pairwise Comparisons:**
