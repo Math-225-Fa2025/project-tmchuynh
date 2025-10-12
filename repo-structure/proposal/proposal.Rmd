@@ -25,6 +25,20 @@ output: html_document
 The **Lichess API** is an open data service provided by Lichess.org, a free online chess platform.  
 It offers access to detailed, anonymized game records, including metadata such as player ratings, time controls, openings, and results.  
 The **Lichess Database** also publishes monthly bulk archives of millions of games in PGN format, which can be converted into CSV or JSON for analysis.
+
+##### Variables
+
+- `player_id`: unique user identifier  
+- `rating_pre` and `rating_post`: player ratings before and after the game  
+- `game_type`: categorical variable (e.g., "blitz", "rapid", "classical", "bullet")  
+- `opening_name`: chess opening name (e.g., "Sicilian Defense")  
+- `winner`: categorical ("white", "black", or "draw")  
+- `color`: player's color for the game  
+- `avg_move_time`: average time per move (seconds)  
+- `accuracy`: move accuracy score (from Lichess analysis)  
+- `datetime`: UTC timestamp of game  
+- `moves`: total number of moves per game  
+
 ##### Collection Information
 
 Data are accessible via the **Lichess API** (`https://lichess.org/api`) and the **Lichess Database** (`https://database.lichess.org/`).  
