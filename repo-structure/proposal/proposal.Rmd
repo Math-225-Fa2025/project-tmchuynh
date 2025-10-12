@@ -755,9 +755,16 @@ if (nrow(model_data) > 50) {
 #### Expected Outcomes
 
 1. **Quantified Color Advantage**: Demonstrate statistically significant white advantage with confidence intervals
+2. **Rating-Performance Models**: Develop predictive models for win probability based on rating differentials  
+3. **Opening Effectiveness Rankings**: Create evidence-based opening recommendations by time control
 #### Limitations
 
 1. **Sampling Bias**: 
    - Overrepresentation of active, higher-rated players
    - Platform-specific playing styles may not generalize
    - Self-selection bias in analyzed games
+
+2. **Technical Constraints**:
+   - API rate limits restrict sample sizes per user
+   - Missing accuracy data for non-analyzed games
+   - Potential data quality issues in automated parsing
