@@ -120,6 +120,12 @@ The data collection will involve creating a robust function to gather chess game
 #### Data Processing Steps
 1. **Timestamp conversion**: Convert Unix timestamps to readable date formats for temporal analysis
 2. **Rating calculations**: Derive rating differences between players and categorize skill levels
+#### Data Quality Assessment
+
+After processing, the dataset will undergo comprehensive quality checks:
+
+- **Missing data analysis**: Identify variables with incomplete information and assess impact
+
 ---
 
 ### Comparison Groups
