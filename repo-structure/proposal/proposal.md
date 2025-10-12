@@ -185,9 +185,16 @@ The exploratory analysis will examine multiple dimensions of chess performance t
 - Create histograms showing rating difference distributions for wins, losses, and draws
 #### Accuracy and Performance Correlation
 - Study the relationship between move accuracy and game results
+- Create box plots comparing accuracy distributions across different outcomes
 - Identify accuracy thresholds associated with winning versus losing
+- Examine how accuracy varies by player rating level
+
 #### Opening Strategy Analysis
 - Evaluate performance across different opening families (Sicilian Defense, Queen's Gambit, etc.)
+#### Temporal Performance Trends
+- Calculate moving win rates to identify improvement or decline patterns
+- Identify periods of strongest and weakest play
+
 #### Statistical Relationships
 - Generate correlation matrices for numerical variables (ratings, accuracy, etc.)
 - Create correlation heatmaps to visualize relationships between performance metrics
