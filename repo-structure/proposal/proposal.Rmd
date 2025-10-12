@@ -644,6 +644,12 @@ logit_results <- data.frame(
   Upper_CI = round(conf_intervals[,2], 3)
 )
 print(logit_results)
+
+# 2. Linear Regression for Accuracy Prediction
 if (sum(!is.na(lichess_df$user_accuracy)) > 20) {
+  cat("\n=== LINEAR REGRESSION: ACCURACY PREDICTION ===\n")
+  
   accuracy_model <- lm(user_accuracy ~ user_rating + time_control + user_color + rating_diff,
                        data = lichess_df %>% filter(!is.na(user_accuracy)))
+  
+  summary(accuracy_model)
