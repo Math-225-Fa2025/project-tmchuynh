@@ -66,3 +66,17 @@ theme_set(theme_minimal())
    - **Opening initiative impact**: How color affects opening choice and early game strategy
    - **Endgame conversion rates**: Color-specific success in winning/drawing positions
    - **Psychological factors**: Player confidence and aggression based on piece color
+
+2. **By Game Type:** Blitz, Rapid, Classical, Bullet
+   - **Bullet (< 3 minutes)**: Ultra-fast games emphasizing intuition and pattern recognition
+   - **Blitz (3-8 minutes)**: Fast-paced games balancing speed and tactical calculation
+   - **Rapid (8-25 minutes)**: Moderate time controls allowing strategic planning
+   - **Classical (> 25 minutes)**: Deep positional games with extensive calculation
+   - **Correspondence**: Turn-based games with days per move (if available)
+#### Statistical Comparison Framework
+
+**Pairwise Comparisons:**
+- **Two-sample t-tests** for continuous variables (rating, accuracy)
+- **Chi-square tests** for categorical outcomes (win/loss/draw)
+- **Wilcoxon rank-sum tests** for non-parametric comparisons
+- **Fisher's exact tests** for small sample contingency tables
