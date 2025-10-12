@@ -57,6 +57,11 @@ All data are published under the **Creative Commons CC0 Public Domain license**.
 | `datetime` | POSIXct | `createdAt` | Timestamp of game (UTC). | `"2024-05-23 17:42:00"` |
 
 
+- Missing fields for unanalysed or aborted games.  
+- Rate limits apply: max 100 games per call unless using bulk PGN archives.  
+- Accuracy scores may differ slightly based on version of Lichess analysis engine.  
+- Some users have private accounts that limit accessible data.
+
 ---
 
 ## 3. FIDE Ratings API Dataset
