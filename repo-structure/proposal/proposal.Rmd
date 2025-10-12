@@ -667,3 +667,13 @@ cat("\n=== ANOVA: PERFORMANCE BY TIME CONTROL ===\n")
 win_rate_by_control <- lichess_df %>%
   group_by(time_control) %>%
   summarise(win_rate = mean(user_result == "win"), .groups = "drop")
+
+print(win_rate_by_control)
+
+# Statistical test
+if (length(unique(lichess_df$time_control)) > 1) {
+  # Chi-square test for independence
+  contingency_table <- table(lichess_df$time_control, lichess_df$user_result)
+  chi_test <- chisq.test(contingency_table)
+  print(chi_test)
+}
