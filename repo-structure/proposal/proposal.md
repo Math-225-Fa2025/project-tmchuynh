@@ -141,6 +141,8 @@ If API data collection fails, a simulated dataset will be generated for demonstr
 After processing, the dataset will undergo comprehensive quality checks:
 
 - **Missing data analysis**: Identify variables with incomplete information and assess impact
+- **Distribution validation**: Verify that rating distributions and game outcomes match expected patterns
+- **Outlier detection**: Flag unusual values that might indicate data errors
 
 ---
 
@@ -164,12 +166,19 @@ The exploratory analysis will examine multiple dimensions of chess performance t
 
 #### Performance Analysis by Piece Color
 - Calculate win rates, draw rates, and loss rates for games played as white versus black pieces
+- Generate statistical summaries including average ratings and accuracy scores by color
+- Create stacked bar charts showing the proportion of different game outcomes for each color
 #### Time Control Performance Patterns
+- Analyze game outcomes across different time formats (bullet, blitz, rapid, classical)
 - Identify time controls where players perform best or worst
 #### Rating Differential Impact
 - Examine how rating differences between opponents affect game outcomes
+- Create histograms showing rating difference distributions for wins, losses, and draws
 #### Accuracy and Performance Correlation
 - Study the relationship between move accuracy and game results
+- Identify accuracy thresholds associated with winning versus losing
+#### Opening Strategy Analysis
+- Evaluate performance across different opening families (Sicilian Defense, Queen's Gambit, etc.)
 #### Statistical Relationships
 - Generate correlation matrices for numerical variables (ratings, accuracy, etc.)
 - Create correlation heatmaps to visualize relationships between performance metrics
