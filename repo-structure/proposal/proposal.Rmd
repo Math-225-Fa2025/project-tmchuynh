@@ -25,6 +25,20 @@ output: html_document
 The **Lichess API** is an open data service provided by Lichess.org, a free online chess platform.  
 It offers access to detailed, anonymized game records, including metadata such as player ratings, time controls, openings, and results.  
 The **Lichess Database** also publishes monthly bulk archives of millions of games in PGN format, which can be converted into CSV or JSON for analysis.
+##### Variables
+
+- `player_name`: player's full name  
+- `fide_id`: unique identifier  
+- `country`: player's national federation  
+- `rating_standard`, `rating_rapid`, `rating_blitz`: ratings across formats  
+- `title`: player title (GM, IM, FM, WGM, etc.)  
+- `games_played`: total games considered in rating calculation  
+
+##### Collection Information
+
+FIDE rating data are published monthly on the official site (`https://ratings.fide.com/download_lists.phtml`) as `.csv` or `.xlsx` files.  
+The data are updated monthly and are freely available for research and statistical analysis.
+
 ## Data Analysis Plan
 
 ### Variable and Function Naming Conventions
@@ -32,6 +46,7 @@ The **Lichess Database** also publishes monthly bulk archives of millions of gam
 Variables will use lowercase snake_case naming (e.g., `rating_diff`, `win_rate`, `avg_move_time`).  
 Custom functions will follow similar naming conventions, such as `calc_win_rate()` and `normalize_rating_change()`.  
 Data will be stored in tibbles and manipulated with `dplyr` and `tidyr`.
+
 ---
 
 ### Data Cleaning
