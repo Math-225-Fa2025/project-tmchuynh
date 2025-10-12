@@ -89,6 +89,21 @@ Data will be stored in tibbles and manipulated with `dplyr` and `tidyr`.
    - `is_white_win = ifelse(winner == "white", 1, 0)`
 5. Integrate FIDE data by matching players or aggregating by country/title.
 library(broom)
+
+---
+
+### Comparison Groups
+
+1. **By Color:** White vs. Black
+2. **By Game Type:** Blitz, Rapid, Classical, Bullet
+3. **By Rating Tier:**
+
+   * Novice (<1400)
+   * Intermediate (1400–1800)
+   * Advanced (1800–2200)
+   * Expert (>2200)
+4. **By Opening Type:** Aggressive (e.g., King's Gambit) vs. Positional (e.g., Ruy Lopez)
+
 ### Data Analysis Methods & Strategies
 ### Expected Outcomes & Limitations
 
