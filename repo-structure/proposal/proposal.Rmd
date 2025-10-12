@@ -218,6 +218,11 @@ glimpse(lichess_df)
 - White advantage should be consistent across rating levels (52-56% win rate)
 - Advantage may diminish in bullet games due to time pressure
 - Opening diversity should favor white pieces in aggressive systems
+
+**Time Control Predictions:**
+- Bullet: Higher variance, more decisive results, fewer draws
+- Classical: Lower variance, more draws, deeper strategic play
+- Rating correlation with performance should strengthen in longer time controls
 #### Control Variables and Confounding Factors
 
 **Player-level Controls:**
