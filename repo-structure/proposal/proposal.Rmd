@@ -726,6 +726,11 @@ if (nrow(model_data) > 50) {
     I(rating_advantage^2), data = model_data, family = binomial)
   # Compare models
   anova(simple_model, logit_model, complex_model, test = "Chisq")
+  # AIC comparison
+  aic_comparison <- data.frame(
+    Model = c("Simple", "Standard", "Complex"),
+    AIC = c(AIC(simple_model), AIC(logit_model), AIC(complex_model))
+  )
   print(aic_comparison)
 }
 ```
