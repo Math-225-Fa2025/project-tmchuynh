@@ -484,3 +484,16 @@ p1 <- ggplot(lichess_df, aes(x = user_color, fill = user_result)) +
 
 print(p1)
 ggsave("../presentation/presentation_files/game_outcomes_by_color.png", plot = p1, width = 8, height = 6, dpi = 300)
+if (sum(!is.na(lichess_df$user_accuracy)) > 0) {
+  p4 <- ggplot(lichess_df %>% filter(!is.na(user_accuracy)), 
+               aes(x = user_result, y = user_accuracy, fill = user_result)) +
+    geom_boxplot(alpha = 0.7) +
+    geom_jitter(width = 0.2, alpha = 0.4) +
+    labs(title = "Accuracy Distribution by Game Outcome",
+         x = "Game Result", y = "Accuracy (%)",
+         fill = "Result") +
+    scale_fill_manual(values = c("win" = "lightgreen", "loss" = "salmon", "draw" = "lightblue"))
+  
+  print(p4)
+  ggsave("../presentation/presentation_files/accuracy_distribution_by_outcome.png", plot = p4, width = 10, height = 6, dpi = 300)
+}
