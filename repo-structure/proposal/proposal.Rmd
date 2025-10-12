@@ -677,3 +677,24 @@ if (length(unique(lichess_df$time_control)) > 1) {
   chi_test <- chisq.test(contingency_table)
   print(chi_test)
 }
+
+# 4. Rating difference impact analysis
+cat("\n=== RATING DIFFERENCE ANALYSIS ===\n")
+
+rating_impact <- lichess_df %>%
+  mutate(
+    rating_category = cut(rating_diff,
+      breaks = c(-Inf, -200, -100, 0, 100, 200, Inf),
+      labels = c(
+        "Much Lower", "Lower", "Slightly Lower",
+        "Slightly Higher", "Higher", "Much Higher"
+      )
+    )
+  ) %>%
+  summarise(
+    games = n(),
+    win_rate = mean(user_result == "win"),
+    draw_rate = mean(user_result == "draw"),
+    loss_rate = mean(user_result == "loss"),
+    .groups = "drop"
+  )
