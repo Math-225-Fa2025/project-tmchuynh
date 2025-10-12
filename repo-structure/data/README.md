@@ -57,6 +57,18 @@ All data are published under the **Creative Commons CC0 Public Domain license**.
 | `datetime` | POSIXct | `createdAt` | Timestamp of game (UTC). | `"2024-05-23 17:42:00"` |
 
 
+### 2.4 Data Processing Notes
+
+- Converted timestamps using `lubridate::ymd_hms()`.  
+- Derived `rating_post = rating_pre + rating_diff`.  
+- Created binary field `result = ifelse(winner == color, 1, 0)`.  
+- Filtered games where `rated == TRUE` and `speed %in% c("blitz", "rapid", "classical")`.  
+- Some games may lack `accuracy` data if engine analysis was unavailable.  
+- All variables converted to lowercase snake_case naming convention.
+
+
+### 2.5 Limitations
+
 - Missing fields for unanalysed or aborted games.  
 - Rate limits apply: max 100 games per call unless using bulk PGN archives.  
 - Accuracy scores may differ slightly based on version of Lichess analysis engine.  
