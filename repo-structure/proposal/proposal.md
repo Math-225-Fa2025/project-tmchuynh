@@ -228,6 +228,9 @@ The analysis will employ several statistical methods to understand chess perform
 - Categorize rating differences into meaningful brackets
 - Calculate win rates for each rating advantage category
 - Quantify how rating superiority translates to practical game outcomes
+**Model Comparison and Validation**
+- Compare simple versus complex models using information criteria (AIC)
+- Validate model assumptions through diagnostic testing
 #### Expected Statistical Results
 
 The analysis anticipates finding several key patterns:
