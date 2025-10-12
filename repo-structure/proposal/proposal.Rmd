@@ -613,6 +613,11 @@ These enhanced visualizations provide deeper insights into:
 
 ```{r statistical-models, EVAL=TRUE}
 # Enhanced statistical modeling
+
+# 1. Logistic Regression for Win Probability
+cat("=== LOGISTIC REGRESSION: WIN PROBABILITY ===\n")
+
+# Prepare data for modeling
 model_data <- lichess_df %>%
   filter(!is.na(user_rating), !is.na(opponent_rating)) %>%
   mutate(
@@ -621,3 +626,10 @@ model_data <- lichess_df %>%
     rating_advantage = rating_diff / 100,  # Scale for interpretability
     high_rating = ifelse(user_rating > median(user_rating), 1, 0)
   )
+
+# Logistic regression model
+logit_model <- glm(win ~ rating_advantage + white + time_control + opening_family,
+                   data = model_data, family = binomial)
+
+# Model summary
+summary(logit_model)
