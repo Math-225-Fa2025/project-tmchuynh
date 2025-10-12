@@ -457,6 +457,9 @@ table(lichess_df$user_color)
 
 ```{r exploratory-analysis, EVAL=TRUE}
 # Enhanced exploratory data analysis
+if (!dir.exists("../presentation")) {
+  dir.create("../presentation", recursive = TRUE)
+}
 color_performance <- lichess_df %>%
   group_by(user_color) %>%
   summarise(
@@ -480,3 +483,4 @@ p1 <- ggplot(lichess_df, aes(x = user_color, fill = user_result)) +
   scale_y_continuous(labels = percent_format())
 
 print(p1)
+ggsave("../presentation/presentation_files/game_outcomes_by_color.png", plot = p1, width = 8, height = 6, dpi = 300)
