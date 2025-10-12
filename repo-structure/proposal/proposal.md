@@ -199,7 +199,9 @@ The exploratory analysis will examine multiple dimensions of chess performance t
 - Visualize opening performance using horizontal bar charts
 
 #### Temporal Performance Trends
+- Track performance changes over time using rolling averages
 - Calculate moving win rates to identify improvement or decline patterns
+- Plot performance trends with smoothed trend lines
 - Identify periods of strongest and weakest play
 
 #### Statistical Relationships
