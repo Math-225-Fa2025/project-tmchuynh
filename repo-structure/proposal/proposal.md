@@ -4,11 +4,13 @@ author: "Tina Huynh"
 date: "`r Sys.Date()`"
 output: html_document
 ---
+## Information
+### Research Questions
+## Data Analysis Plan
 library(broom)
-```
-
-## 1. Introduction
-
-## 2. Data
-
-## 3. Data analysis plan
+### Data Analysis Methods & Strategies
+### Expected Outcomes & Limitations
+#### Expected Outcomes
+#### Limitations
+### Summary
+## References
