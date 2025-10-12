@@ -653,3 +653,9 @@ if (sum(!is.na(lichess_df$user_accuracy)) > 20) {
                        data = lichess_df %>% filter(!is.na(user_accuracy)))
   
   summary(accuracy_model)
+  
+  # Model diagnostics
+  par(mfrow = c(2, 2))
+  plot(accuracy_model)
+  par(mfrow = c(1, 1))
+}
