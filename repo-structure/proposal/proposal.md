@@ -104,6 +104,9 @@ The data cleaning process will involve several systematic steps to ensure data q
    - Calculate new variables to support analysis objectives:
      - `rating_change = rating_post - rating_pre` (rating gain/loss per game)
      - `is_white_win = ifelse(winner == "white", 1, 0)` (binary outcome for white wins)
+     - `rating_advantage = own_rating - opponent_rating` (rating differential)
+     - `game_duration_minutes = total_time_seconds / 60` (standardized time measurement)
+
 5. **External Data Integration**
    - Merge FIDE rating data with Lichess records where possible
    - Aggregate demographic information by country or title for comparative analysis
