@@ -518,6 +518,16 @@ if (sum(!is.na(lichess_df$user_accuracy)) > 0) {
   print(p4)
   ggsave("../presentation/presentation_files/accuracy_distribution_by_outcome.png", plot = p4, width = 10, height = 6, dpi = 300)
 }
+opening_stats <- lichess_df %>%
+  group_by(opening_family) %>%
+  summarise(
+    games = n(),
+    win_rate = mean(user_result == "win"),
+    avg_accuracy = mean(user_accuracy, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  filter(games >= 5) %>%  # Only openings with sufficient games
+  arrange(desc(win_rate))
 if (nrow(lichess_df) > 10) {
   lichess_df <- lichess_df %>%
     arrange(game_date) %>%
