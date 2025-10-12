@@ -450,3 +450,11 @@ table(lichess_df$user_color)
 - Compare results across different chess platforms
 - Validate against over-the-board tournament data where available
 - Account for platform-specific rating inflation/deflation
+
+---
+
+### Exploratory Data Analysis
+
+```{r exploratory-analysis, EVAL=TRUE}
+# Enhanced exploratory data analysis
+```
