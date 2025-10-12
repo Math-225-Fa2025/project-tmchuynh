@@ -172,9 +172,14 @@ The exploratory analysis will examine multiple dimensions of chess performance t
 - Calculate win rates, draw rates, and loss rates for games played as white versus black pieces
 - Generate statistical summaries including average ratings and accuracy scores by color
 - Create stacked bar charts showing the proportion of different game outcomes for each color
+- Test for statistical significance of any observed color advantage
+
 #### Time Control Performance Patterns
 - Analyze game outcomes across different time formats (bullet, blitz, rapid, classical)
+- Compare player performance and accuracy across time controls
+- Visualize outcome distributions using proportional bar charts
 - Identify time controls where players perform best or worst
+
 #### Rating Differential Impact
 - Examine how rating differences between opponents affect game outcomes
 - Create histograms showing rating difference distributions for wins, losses, and draws
