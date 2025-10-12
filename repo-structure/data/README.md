@@ -104,6 +104,11 @@ Data were collected from: [https://ratings.fide.com/download_lists.phtml](https:
 
 
 
+- Name matching between FIDE and Lichess is approximate; usernames do not always correspond.  
+- Ratings represent different pools (online vs. over-the-board), so direct comparison must be normalized.  
+- Some players are missing gender or title information.  
+- Data availability varies month-to-month due to federation updates.
+
 ---
 
 ## 4. Combined Dataset Summary
