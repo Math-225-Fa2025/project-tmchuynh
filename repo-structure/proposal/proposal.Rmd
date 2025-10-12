@@ -256,3 +256,10 @@ glimpse(lichess_df)
 - **Statistical power**: Target 80% power for primary comparisons
 - **Alpha level**: 0.05 with Bonferroni correction for multiple tests
 - **Confidence intervals**: 95% CI for all effect estimates
+
+#### Cross-validation Strategy
+
+**Temporal Validation:**
+- Split data chronologically for training/testing
+- Validate model performance on recent games
+- Account for meta-game evolution over time
