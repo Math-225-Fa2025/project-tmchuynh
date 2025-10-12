@@ -212,8 +212,16 @@ The analysis will employ several statistical methods to understand chess perform
 
 **Logistic Regression for Win Probability**
 - Calculate odds ratios to quantify the impact of each factor
+- Generate confidence intervals for statistical significance testing
 **Linear Regression for Accuracy Prediction**
+- Predict move accuracy based on:
+  - Player rating level
+  - Time control pressure
+  - Piece color effects
+  - Rating differential with opponent
+- Assess model fit and diagnostic plots for assumption validation
 - Identify which factors most strongly influence playing accuracy
+
 **Analysis of Variance (ANOVA)**
 - Compare performance across different time control categories
 #### Expected Statistical Results
