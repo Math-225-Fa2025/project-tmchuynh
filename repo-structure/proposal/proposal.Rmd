@@ -162,6 +162,78 @@ collect_lichess_data <- function(username, max_games = 500, delay = 1) {
     return(tibble())
   })
 }
+
+# Collect data for analysis
+lichess_df <- collect_lichess_data("magnuscarlsen", max_games = 200)
+
+# Data validation and cleaning
+if (nrow(lichess_df) > 0) {
+  lichess_df <- lichess_df %>%
+    filter(!is.na(id), rated == TRUE) %>%
+    mutate(
+      # Convert timestamps
+      game_date = as.POSIXct(createdAt / 1000, origin = "1970-01-01", tz = "UTC"),
+      game_duration = as.numeric(lastMoveAt - createdAt) / 1000 / 60, # minutes
+      
+      # User-specific variables
+      user_rating = ifelse(user_color == "white", white_rating, black_rating),
+      opponent_rating = ifelse(user_color == "white", black_rating, white_rating),
+      user_accuracy = ifelse(user_color == "white", white_accuracy, black_accuracy),
+      
+      # Game outcome from user's perspective
+      user_result = case_when(
+        is.na(winner) ~ "draw",
+        winner == user_color ~ "win",
+        TRUE ~ "loss"
+      ),
+      
+      # Rating difference (user - opponent)
+      rating_diff = user_rating - opponent_rating,
+      
+      # Game type categorization
+      time_control = case_when(
+        speed == "bullet" ~ "Bullet",
+        speed == "blitz" ~ "Blitz", 
+        speed == "rapid" ~ "Rapid",
+        speed == "classical" ~ "Classical",
+        TRUE ~ "Other"
+      ),
+      
+      # Opening categorization
+      opening_family = case_when(
+        str_detect(opening_name, "Sicilian") ~ "Sicilian Defense",
+        str_detect(opening_name, "French") ~ "French Defense", 
+        str_detect(opening_name, "Caro") ~ "Caro-Kann Defense",
+        str_detect(opening_name, "Queen's Gambit") ~ "Queen's Gambit",
+        str_detect(opening_name, "King's Indian") ~ "King's Indian Defense",
+        str_detect(opening_name, "Ruy Lopez|Spanish") ~ "Ruy Lopez",
+        str_detect(opening_name, "English") ~ "English Opening",
+        TRUE ~ "Other"
+      )
+    ) %>%
+    # Remove games with missing critical data
+    filter(!is.na(user_rating), !is.na(opponent_rating)) %>%
+    arrange(game_date)
+  
+  cat("Final dataset contains", nrow(lichess_df), "valid games\n")
+} else {
+  cat("No data collected - using simulated data for demonstration\n")
+  # Create simulated data for demonstration
+  set.seed(42)
+  lichess_df <- tibble(
+    id = paste0("sim_", 1:100),
+    game_date = seq(from = as.POSIXct("2024-01-01"), by = "day", length.out = 100),
+    user_color = sample(c("white", "black"), 100, replace = TRUE),
+    user_rating = sample(2400:2900, 100, replace = TRUE),
+    opponent_rating = sample(2200:2800, 100, replace = TRUE),
+    user_result = sample(c("win", "loss", "draw"), 100, replace = TRUE, prob = c(0.4, 0.35, 0.25)),
+    time_control = sample(c("Blitz", "Rapid", "Classical"), 100, replace = TRUE),
+    opening_family = sample(c("Sicilian Defense", "Queen's Gambit", "Ruy Lopez", "Other"), 100, replace = TRUE),
+    user_accuracy = runif(100, 75, 95),
+    rating_diff = user_rating - opponent_rating
+  )
+}
+
 glimpse(lichess_df)
 ```
 ```
