@@ -370,6 +370,13 @@ table(lichess_df$user_color)
 - **Kruskal-Wallis tests** for non-parametric multi-group comparisons
 - **Post-hoc testing** with Bonferroni correction for multiple comparisons
 - **Effect size calculations** (Cohen's d, eta-squared) for practical significance
+
+**Interaction Effects:**
+- **Two-way ANOVA** for color × time control interactions
+- **Factorial designs** testing rating tier × opening type combinations
+- **Mixed-effects models** accounting for player-level random effects
+- **Logistic regression** with interaction terms for win probability
+
 #### Expected Group Differences
 
 **Color-based Expectations:**
