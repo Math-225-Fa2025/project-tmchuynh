@@ -33,6 +33,30 @@ All data are published under the **Creative Commons CC0 Public Domain license**.
 | **Source format:**       | JSON (converted to tabular form using `jsonlite::fromJSON()` in R) |
 
 
+### 2.3 Variable Dictionary
+
+| Variable Name | Type      | JSON Path                                                | Description                                                      | Example      |
+|---------------|-----------|----------------------------------------------------------|------------------------------------------------------------------|--------------|
+| `game_id`     | Character | `id`                                                     | Unique identifier for each game.                                 | `"3n8y6FzQ"` |
+| `rated`       | Logical   | `rated`                                                  | Indicates whether the game affected player ratings.              | `TRUE`       |
+| `speed`       | Factor    | `speed`                                                  | Time control category (`bullet`, `blitz`, `rapid`, `classical`). | `"blitz"`    |
+| `time_limit`  | Integer   | `clock.initial`                                          | Initial time control per player (seconds).                       | `180`        |
+| `increment`   | Integer   | `clock.increment`                                        | Time increment per move (seconds).                               | `2`          |
+| `color`       | Factor    | Derived                                                  | Player’s color in this game (`White`, `Black`).                  | `"White"`    |
+| `winner`      | Factor    | `winner`                                                 | Color of the winner (`white`, `black`), or missing for draws.    | `"white"`    |
+| `result`      | Numeric   | Derived                                                  | Binary variable (1 = win, 0 = loss/draw).                        | `1`          |
+| `rating_pre`  | Integer   | `players.white.rating` or `players.black.rating`         | Player’s rating before game.                                     | `1850`       |
+| `rating_diff` | Integer   | `players.white.ratingDiff` or `players.black.ratingDiff` | Rating change from the game.                                     | `+4`         |
+| `rating_post` | Integer   | Derived                                                  | Rating after game (`rating_pre + rating_diff`).                  | `1854`       |
+| `opponent_rating` | Integer | Opponent’s pre-game rating. | `1830` |
+| `opening_name` | Character | `opening.name` | ECO classification of opening. | `"Sicilian Defense: Najdorf Variation"` |
+| `eco_code` | Character | `opening.eco` | ECO (Encyclopaedia of Chess Openings) code. | `"B90"` |
+| `moves` | Integer | `moves` | Number of full moves played. | `67` |
+| `accuracy` | Numeric | `analysis.accuracy` | Engine-calculated accuracy percentage. | `88.7` |
+| `avg_move_time` | Numeric | Derived | Average time per move (seconds). | `2.3` |
+| `datetime` | POSIXct | `createdAt` | Timestamp of game (UTC). | `"2024-05-23 17:42:00"` |
+
+
 ---
 
 ## 3. FIDE Ratings API Dataset
