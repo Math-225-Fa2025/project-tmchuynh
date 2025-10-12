@@ -66,5 +66,26 @@ library(broom)
 
 #### Expected Outcomes
 #### Limitations
+
+1. **Sampling Bias**: 
+   - Overrepresentation of active, higher-rated players
+   - Platform-specific playing styles may not generalize
+   - Self-selection bias in analyzed games
+
+2. **Technical Constraints**:
+   - API rate limits restrict sample sizes per user
+   - Missing accuracy data for non-analyzed games
+   - Potential data quality issues in automated parsing
+
+3. **Statistical Limitations**:
+   - Correlation vs. causation in performance factors
+   - Limited temporal data for robust time series analysis  
+   - Multiple testing concerns with numerous comparisons
+
+4. **External Validity**:
+   - Results specific to Lichess platform and user base
+   - May not generalize to over-the-board tournament play
+   - Time period and meta-game effects not controlled
+
 ### Summary
 ## References
