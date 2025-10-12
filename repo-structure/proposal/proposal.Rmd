@@ -439,3 +439,13 @@ table(lichess_df$user_color)
 - Split data chronologically for training/testing
 - Validate model performance on recent games
 - Account for meta-game evolution over time
+
+**Player-level Validation:**
+- Hold out specific players for generalization testing
+- Validate across different player populations
+- Test model robustness to playing style variations
+
+**Platform Validation:**
+- Compare results across different chess platforms
+- Validate against over-the-board tournament data where available
+- Account for platform-specific rating inflation/deflation
