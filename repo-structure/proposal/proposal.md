@@ -79,6 +79,8 @@ Data will be stored in tibbles and manipulated with `dplyr` and `tidyr`.
 
 ---
 
+---
+
 ### Data Cleaning
 
 The data cleaning process will involve several systematic steps to ensure data quality and consistency:
@@ -93,10 +95,15 @@ The data cleaning process will involve several systematic steps to ensure data q
    - Filter out corrupted games or records with missing essential information
 
 3. **Categorical Variable Recoding**
+   - Standardize categorical fields for uniformity across the dataset:
      - `winner`: ensure consistent values ("white", "black", "draw")
      - `color`: standardize player color assignments
+     - `game_type`: normalize time control categories (bullet, blitz, rapid, classical)
+
 4. **Derived Variable Creation**
+   - Calculate new variables to support analysis objectives:
      - `rating_change = rating_post - rating_pre` (rating gain/loss per game)
+     - `is_white_win = ifelse(winner == "white", 1, 0)` (binary outcome for white wins)
 5. **External Data Integration**
    - Merge FIDE rating data with Lichess records where possible
    - Aggregate demographic information by country or title for comparative analysis
@@ -118,8 +125,17 @@ The data collection will involve creating a robust function to gather chess game
   - Player colors and final results
 
 #### Data Processing Steps
+
+Once collected, the raw data will undergo several cleaning and transformation steps:
+
 1. **Timestamp conversion**: Convert Unix timestamps to readable date formats for temporal analysis
 2. **Rating calculations**: Derive rating differences between players and categorize skill levels
+3. **Game categorization**: Classify games by time control and opening families
+4. **Outcome standardization**: Ensure consistent labeling of wins, losses, and draws from each player's perspective
+5. **Quality filtering**: Remove incomplete games or those missing critical information
+
+If API data collection fails, a simulated dataset will be generated for demonstration purposes, maintaining the same structure and statistical properties as real chess data.
+
 #### Data Quality Assessment
 
 After processing, the dataset will undergo comprehensive quality checks:
