@@ -39,6 +39,12 @@ The **Lichess Database** also publishes monthly bulk archives of millions of gam
 - `datetime`: UTC timestamp of game  
 - `moves`: total number of moves per game  
 
+##### Collection Information
+
+Data are accessible via the **Lichess API** (`https://lichess.org/api`) and the **Lichess Database** (`https://database.lichess.org/`).  
+The API allows filtered downloads by user, date, and game type, while the monthly archives allow large-scale collection for sampling or time series studies.  
+Lichess data are publicly available under the **Creative Commons CC0 license**, permitting academic use and redistribution.
+
 ---
 
 #### FIDE Player Rating Lists
@@ -54,6 +60,12 @@ These data provide demographic and global context to the Lichess dataset and all
 - `rating_standard`, `rating_rapid`, `rating_blitz`: ratings across formats  
 - `title`: player title (GM, IM, FM, WGM, etc.)  
 - `games_played`: total games considered in rating calculation  
+
+##### Collection Information
+
+FIDE rating data are published monthly on the official site (`https://ratings.fide.com/download_lists.phtml`) as `.csv` or `.xlsx` files.  
+The data are updated monthly and are freely available for research and statistical analysis.
+
 ---
 ---
 
