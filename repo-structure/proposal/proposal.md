@@ -146,6 +146,7 @@ After processing, the dataset will undergo comprehensive quality checks:
 - **Missing data analysis**: Identify variables with incomplete information and assess impact
 - **Distribution validation**: Verify that rating distributions and game outcomes match expected patterns
 - **Outlier detection**: Flag unusual values that might indicate data errors
+- **Completeness reporting**: Generate summary statistics on data availability across variables
 
 ---
 
