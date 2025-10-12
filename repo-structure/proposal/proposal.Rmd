@@ -705,11 +705,15 @@ print(rating_impact)
 # Visualization of rating impact
 p_rating <- ggplot(rating_impact, aes(x = rating_category, y = win_rate)) +
   geom_col(fill = "steelblue", alpha = 0.7) +
+  geom_text(aes(label = paste0(round(win_rate * 100, 1), "%")),
+    vjust = -0.5
+  ) +
   labs(
     title = "Win Rate by Rating Difference Category",
     x = "Rating Category (User vs Opponent)",
     y = "Win Rate"
   ) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   scale_y_continuous(labels = percent_format())
 
 print(p_rating)
