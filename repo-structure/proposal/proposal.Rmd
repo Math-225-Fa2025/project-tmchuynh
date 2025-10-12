@@ -484,6 +484,17 @@ p1 <- ggplot(lichess_df, aes(x = user_color, fill = user_result)) +
 
 print(p1)
 ggsave("../presentation/presentation_files/game_outcomes_by_color.png", plot = p1, width = 8, height = 6, dpi = 300)
+p3 <- ggplot(lichess_df, aes(x = rating_diff, fill = user_result)) +
+  geom_histogram(position = "identity", alpha = 0.7, bins = 20, color = "black") +
+  facet_wrap(~user_result) +
+  labs(title = "Rating Difference Distribution by Game Outcome",
+       x = "Rating Difference (User - Opponent)", y = "Count",
+       fill = "Result") +
+  scale_fill_manual(values = c("win" = "lightgreen", "loss" = "salmon", "draw" = "lightblue")) +
+  theme_minimal()
+
+print(p3)
+ggsave("../presentation/presentation_files/rating_difference_distribution.png", plot = p3, width = 12, height = 8, dpi = 300)
 if (sum(!is.na(lichess_df$user_accuracy)) > 0) {
   p4 <- ggplot(lichess_df %>% filter(!is.na(user_accuracy)), 
                aes(x = user_result, y = user_accuracy, fill = user_result)) +
