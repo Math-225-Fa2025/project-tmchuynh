@@ -22,6 +22,17 @@ The **Lichess Database** also publishes monthly bulk archives of millions of gam
 Variables will use lowercase snake_case naming (e.g., `rating_diff`, `win_rate`, `avg_move_time`).  
 Custom functions will follow similar naming conventions, such as `calc_win_rate()` and `normalize_rating_change()`.  
 Data will be stored in tibbles and manipulated with `dplyr` and `tidyr`.
+---
+
+### Data Cleaning
+
+1. Import JSON or CSV data from the Lichess API archive.  
+2. Standardize rating fields, convert timestamps, and filter out corrupted games.  
+3. Recode categorical fields for uniformity (`winner`, `color`, `game_type`).  
+4. Derive computed variables such as:
+   - `rating_change = rating_post - rating_pre`
+   - `is_white_win = ifelse(winner == "white", 1, 0)`
+5. Integrate FIDE data by matching players or aggregating by country/title.
 library(broom)
 ```
 
