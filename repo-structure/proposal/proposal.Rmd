@@ -734,3 +734,13 @@ if (nrow(model_data) > 50) {
   print(aic_comparison)
 }
 ```
+
+**Enhanced Expected Results:**
+
+* **Color Advantage**: White pieces should maintain a statistically significant 52-56% win rate advantage
+* **Rating Impact**: Each 100-point rating advantage should increase win probability by 15-25%
+* **Time Control Effects**: Faster time controls may show higher variance in outcomes
+* **Opening Performance**: Certain opening families will demonstrate consistently higher win rates
+* **Accuracy Correlation**: Higher-rated players should show less variance in accuracy (80%+ vs 60-70%)
+* **Temporal Patterns**: Performance should show learning effects and potential rating progression over time
+
