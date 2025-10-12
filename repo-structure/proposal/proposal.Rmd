@@ -1,5 +1,5 @@
 ---
-title: "Final Project Proposal - Statistical Analysis of Chess Performance and Player Progression"
+title:"Final Project Proposal: Statistical Analysis of Chess Performance and Player Progression"
 author: "Tina Huynh"
 date: "`r Sys.Date()`"
 output: html_document
@@ -41,7 +41,7 @@ The **Lichess Database** also publishes monthly bulk archives of millions of gam
 
 ##### Collection Information
 
-Data are accessible via the **Lichess API** (`https://lichess.org/api`) and the **Lichess Database** (`https://database.lichess.org/`).  
+Data are accessible via the **[Lichess API](https://lichess.org/api)** and the **[Lichess Database](https://database.lichess.org/)**.  
 The API allows filtered downloads by user, date, and game type, while the monthly archives allow large-scale collection for sampling or time series studies.  
 Lichess data are publicly available under the **Creative Commons CC0 license**, permitting academic use and redistribution.
 
@@ -63,8 +63,11 @@ These data provide demographic and global context to the Lichess dataset and all
 
 ##### Collection Information
 
-FIDE rating data are published monthly on the official site (`https://ratings.fide.com/download_lists.phtml`) as `.csv` or `.xlsx` files.  
+FIDE rating data are published monthly on [the official site](https://ratings.fide.com/download_lists.phtml) as `.csv` or `.xlsx` files.  
 The data are updated monthly and are freely available for research and statistical analysis.
+
+---
+---
 
 ## Data Analysis Plan
 
@@ -78,7 +81,7 @@ Data will be stored in tibbles and manipulated with `dplyr` and `tidyr`.
 
 ### Data Cleaning
 
-1. Import JSON or CSV data from the Lichess API archive.  
+1. Import JSON or CSV data from the Lichess API or PGN archive.  
 2. Standardize rating fields, convert timestamps, and filter out corrupted games.  
 3. Recode categorical fields for uniformity (`winner`, `color`, `game_type`).  
 4. Derive computed variables such as:
@@ -108,7 +111,7 @@ library(scales)
 theme_set(theme_minimal())
 ```
 
-```{r data-collection}
+```{r data-collection, EVAL=TRUE}
 # Enhanced data collection function with error handling and rate limiting
 collect_lichess_data <- function(username, max_games = 500, delay = 1) {
   cat("Collecting data for user:", username, "\n")
@@ -179,7 +182,6 @@ collect_lichess_data <- function(username, max_games = 500, delay = 1) {
         )
       }, error = function(e) {
         warning("Failed to parse line: ", substr(line, 1, 100), "...")
-        return(NULL)
       })
     })
     
@@ -201,7 +203,6 @@ collect_lichess_data <- function(username, max_games = 500, delay = 1) {
     
   }, error = function(e) {
     warning("Data collection failed: ", e$message)
-    return(tibble())
   })
 }
 
@@ -279,7 +280,7 @@ if (nrow(lichess_df) > 0) {
 glimpse(lichess_df)
 ```
 
-```{r data-quality}
+```{r data-quality, EVAL=TRUE}
 # Data quality assessment
 cat("=== DATA QUALITY REPORT ===\n")
 
