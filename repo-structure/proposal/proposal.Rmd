@@ -659,3 +659,11 @@ if (sum(!is.na(lichess_df$user_accuracy)) > 20) {
   plot(accuracy_model)
   par(mfrow = c(1, 1))
 }
+
+# 3. ANOVA: Performance across time controls
+cat("\n=== ANOVA: PERFORMANCE BY TIME CONTROL ===\n")
+
+# Win rate by time control
+win_rate_by_control <- lichess_df %>%
+  group_by(time_control) %>%
+  summarise(win_rate = mean(user_result == "win"), .groups = "drop")
