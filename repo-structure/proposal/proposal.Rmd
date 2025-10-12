@@ -6,6 +6,15 @@ output: html_document
 ---
 
 # Statistical Analysis of Chess Performance and Player Progression
+
+## Information
+### Data Information
+
+#### Lichess Public API and Game Database
+
+The **Lichess API** is an open data service provided by Lichess.org, a free online chess platform.  
+It offers access to detailed, anonymized game records, including metadata such as player ratings, time controls, openings, and results.  
+The **Lichess Database** also publishes monthly bulk archives of millions of games in PGN format, which can be converted into CSV or JSON for analysis.
 library(broom)
 ```
 
