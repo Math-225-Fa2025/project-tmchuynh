@@ -220,8 +220,15 @@ All visualizations will be saved as high-resolution images for use in presentati
 The analysis will employ several statistical methods to understand chess performance patterns:
 
 **Logistic Regression for Win Probability**
+- Model the probability of winning based on key factors:
+  - Rating advantage over opponent (scaled for interpretability)
+  - Piece color (white vs. black)
+  - Time control format
+  - Opening family choice
 - Calculate odds ratios to quantify the impact of each factor
 - Generate confidence intervals for statistical significance testing
+- Interpret results in terms of practical significance for chess players
+
 **Linear Regression for Accuracy Prediction**
 - Predict move accuracy based on:
   - Player rating level
