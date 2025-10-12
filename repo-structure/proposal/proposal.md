@@ -183,6 +183,9 @@ The exploratory analysis will examine multiple dimensions of chess performance t
 #### Rating Differential Impact
 - Examine how rating differences between opponents affect game outcomes
 - Create histograms showing rating difference distributions for wins, losses, and draws
+- Categorize rating advantages (e.g., "much higher," "slightly higher," etc.)
+- Analyze win probability as a function of rating advantage
+
 #### Accuracy and Performance Correlation
 - Study the relationship between move accuracy and game results
 - Create box plots comparing accuracy distributions across different outcomes
@@ -191,6 +194,10 @@ The exploratory analysis will examine multiple dimensions of chess performance t
 
 #### Opening Strategy Analysis
 - Evaluate performance across different opening families (Sicilian Defense, Queen's Gambit, etc.)
+- Calculate win rates for each opening type with sufficient game samples
+- Rank openings by effectiveness for the analyzed player
+- Visualize opening performance using horizontal bar charts
+
 #### Temporal Performance Trends
 - Calculate moving win rates to identify improvement or decline patterns
 - Identify periods of strongest and weakest play
@@ -224,6 +231,10 @@ The analysis will employ several statistical methods to understand chess perform
 
 **Analysis of Variance (ANOVA)**
 - Compare performance across different time control categories
+- Test for statistically significant differences in win rates between formats
+- Use chi-square tests to examine independence between time controls and outcomes
+- Determine if certain time formats favor specific playing styles
+
 **Rating Impact Analysis**
 - Categorize rating differences into meaningful brackets
 - Calculate win rates for each rating advantage category
@@ -231,6 +242,8 @@ The analysis will employ several statistical methods to understand chess perform
 **Model Comparison and Validation**
 - Compare simple versus complex models using information criteria (AIC)
 - Validate model assumptions through diagnostic testing
+- Assess predictive performance on held-out data when sample size permits
+
 #### Expected Statistical Results
 
 The analysis anticipates finding several key patterns:
