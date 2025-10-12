@@ -528,6 +528,13 @@ opening_stats <- lichess_df %>%
   ) %>%
   filter(games >= 5) %>%  # Only openings with sufficient games
   arrange(desc(win_rate))
+
+p5 <- ggplot(opening_stats, aes(x = reorder(opening_family, win_rate), y = win_rate)) +
+  geom_col(fill = "steelblue", alpha = 0.7) +
+  coord_flip() +
+  labs(title = "Win Rate by Opening Family",
+       x = "Opening Family", y = "Win Rate") +
+  scale_y_continuous(labels = percent_format())
 if (nrow(lichess_df) > 10) {
   lichess_df <- lichess_df %>%
     arrange(game_date) %>%
