@@ -691,6 +691,7 @@ rating_impact <- lichess_df %>%
       )
     )
   ) %>%
+  group_by(rating_category) %>%
   summarise(
     games = n(),
     win_rate = mean(user_result == "win"),
