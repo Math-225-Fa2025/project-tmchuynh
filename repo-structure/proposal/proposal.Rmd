@@ -633,3 +633,14 @@ logit_model <- glm(win ~ rating_advantage + white + time_control + opening_famil
 
 # Model summary
 summary(logit_model)
+
+# Extract and display odds ratios
+odds_ratios <- exp(coef(logit_model))
+conf_intervals <- exp(confint(logit_model))
+logit_results <- data.frame(
+  Variable = names(odds_ratios),
+  Odds_Ratio = round(odds_ratios, 3),
+  Lower_CI = round(conf_intervals[,1], 3),
+  Upper_CI = round(conf_intervals[,2], 3)
+)
+print(logit_results)
