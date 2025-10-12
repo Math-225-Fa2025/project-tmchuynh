@@ -224,6 +224,10 @@ The analysis will employ several statistical methods to understand chess perform
 
 **Analysis of Variance (ANOVA)**
 - Compare performance across different time control categories
+**Rating Impact Analysis**
+- Categorize rating differences into meaningful brackets
+- Calculate win rates for each rating advantage category
+- Quantify how rating superiority translates to practical game outcomes
 #### Expected Statistical Results
 
 The analysis anticipates finding several key patterns:
