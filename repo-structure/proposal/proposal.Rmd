@@ -206,6 +206,12 @@ glimpse(lichess_df)
 - **Chi-square tests** for categorical outcomes (win/loss/draw)
 - **Wilcoxon rank-sum tests** for non-parametric comparisons
 - **Fisher's exact tests** for small sample contingency tables
+
+**Multi-group Analysis:**
+- **ANOVA** for comparing means across multiple groups
+- **Kruskal-Wallis tests** for non-parametric multi-group comparisons
+- **Post-hoc testing** with Bonferroni correction for multiple comparisons
+- **Effect size calculations** (Cohen's d, eta-squared) for practical significance
 #### Expected Group Differences
 
 **Color-based Expectations:**
