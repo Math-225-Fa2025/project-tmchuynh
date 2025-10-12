@@ -117,6 +117,9 @@ The data collection will involve creating a robust function to gather chess game
   - Accuracy scores when available
   - Player colors and final results
 
+#### Data Processing Steps
+1. **Timestamp conversion**: Convert Unix timestamps to readable date formats for temporal analysis
+2. **Rating calculations**: Derive rating differences between players and categorize skill levels
 ---
 
 ### Comparison Groups
