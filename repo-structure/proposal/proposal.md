@@ -175,6 +175,13 @@ The analysis will employ several statistical methods to understand chess perform
 - Identify which factors most strongly influence playing accuracy
 **Analysis of Variance (ANOVA)**
 - Compare performance across different time control categories
+#### Expected Statistical Results
+
+The analysis anticipates finding several key patterns:
+
+- **Color Advantage**: White pieces should demonstrate a statistically significant advantage, with win rates 52-56% higher than black
+- **Time Control Effects**: Faster time controls may show higher variance in outcomes due to time pressure
+- **Accuracy Correlation**: Higher-rated players should show both higher average accuracy and less variance in performance
 ### Expected Outcomes & Limitations
 
 #### Expected Outcomes
