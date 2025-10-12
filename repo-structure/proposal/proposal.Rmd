@@ -757,6 +757,9 @@ if (nrow(model_data) > 50) {
 1. **Quantified Color Advantage**: Demonstrate statistically significant white advantage with confidence intervals
 2. **Rating-Performance Models**: Develop predictive models for win probability based on rating differentials  
 3. **Opening Effectiveness Rankings**: Create evidence-based opening recommendations by time control
+4. **Performance Progression Tracking**: Identify patterns in skill development and rating growth
+5. **Multi-factor Analysis**: Understand interactions between rating, time control, color, and opening choice
+
 #### Limitations
 
 1. **Sampling Bias**: 
@@ -768,3 +771,15 @@ if (nrow(model_data) > 50) {
    - API rate limits restrict sample sizes per user
    - Missing accuracy data for non-analyzed games
    - Potential data quality issues in automated parsing
+
+3. **Statistical Limitations**:
+   - Correlation vs. causation in performance factors
+   - Limited temporal data for robust time series analysis  
+   - Multiple testing concerns with numerous comparisons
+
+4. **External Validity**:
+   - Results specific to Lichess platform and user base
+   - May not generalize to over-the-board tournament play
+   - Time period and meta-game effects not controlled
+
+---
