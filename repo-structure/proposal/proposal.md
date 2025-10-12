@@ -164,6 +164,17 @@ All visualizations will be saved as high-resolution images for use in presentati
 ---
 
 ### Data Analysis Methods & Strategies
+
+#### Statistical Modeling Approach
+
+The analysis will employ several statistical methods to understand chess performance patterns:
+
+**Logistic Regression for Win Probability**
+- Calculate odds ratios to quantify the impact of each factor
+**Linear Regression for Accuracy Prediction**
+- Identify which factors most strongly influence playing accuracy
+**Analysis of Variance (ANOVA)**
+- Compare performance across different time control categories
 ### Expected Outcomes & Limitations
 
 #### Expected Outcomes
