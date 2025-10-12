@@ -140,6 +140,29 @@ After processing, the dataset will undergo comprehensive quality checks:
    * Expert (>2200)
 4. **By Opening Type:** Aggressive (e.g., King's Gambit) vs. Positional (e.g., Ruy Lopez)
 
+---
+
+### Exploratory Data Analysis
+
+The exploratory analysis will examine multiple dimensions of chess performance through comprehensive visualizations and statistical summaries:
+
+#### Performance Analysis by Piece Color
+- Calculate win rates, draw rates, and loss rates for games played as white versus black pieces
+#### Time Control Performance Patterns
+- Identify time controls where players perform best or worst
+#### Rating Differential Impact
+- Examine how rating differences between opponents affect game outcomes
+#### Accuracy and Performance Correlation
+- Study the relationship between move accuracy and game results
+#### Statistical Relationships
+- Generate correlation matrices for numerical variables (ratings, accuracy, etc.)
+- Create correlation heatmaps to visualize relationships between performance metrics
+- Identify key predictors of success through correlation analysis
+
+All visualizations will be saved as high-resolution images for use in presentations and reports, with consistent styling and clear labeling for professional presentation.
+
+---
+
 ### Data Analysis Methods & Strategies
 ### Expected Outcomes & Limitations
 
