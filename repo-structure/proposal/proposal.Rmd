@@ -65,6 +65,107 @@ library(scales)
 # Set theme for consistent plotting
 theme_set(theme_minimal())
 ```
+
+```{r data-collection}
+# Enhanced data collection function with error handling and rate limiting
+collect_lichess_data <- function(username, max_games = 500, delay = 1) {
+  cat("Collecting data for user:", username, "\n")
+  
+  # API request with proper error handling
+  url <- paste0("https://lichess.org/api/games/user/", username, 
+                "?max=", max_games, "&analysed=true&perfType=blitz,rapid,classical")
+  
+  tryCatch({
+    response <- GET(url, 
+                   add_headers("Accept" = "application/x-ndjson"),
+                   timeout(30))
+    
+    if (status_code(response) != 200) {
+      stop("API request failed with status: ", status_code(response))
+    }
+    
+    raw_text <- content(response, as = "text", encoding = "UTF-8")
+    
+    if (nchar(raw_text) == 0) {
+      warning("Empty response from API")
+      return(tibble())
+    }
+    
+    # Split and parse NDJSON
+    lines <- strsplit(raw_text, "\n")[[1]]
+    lines <- lines[nzchar(lines)]
+    
+    cat("Processing", length(lines), "games...\n")
+    
+    # Enhanced parsing with better error handling
+    lichess_games <- map(lines, function(line) {
+      tryCatch({
+        obj <- fromJSON(line, flatten = TRUE)
+        
+        # Extract player-specific data
+        user_color <- if(!is.null(obj$players$white$user$id) && 
+                        obj$players$white$user$id == username) "white" else "black"
+        
+        # More comprehensive data extraction
+        tibble(
+          id = obj$id %||% NA_character_,
+          username = username,
+          user_color = user_color,
+          rated = obj$rated %||% NA,
+          speed = obj$speed %||% NA_character_,
+          perf = obj$perf %||% NA_character_,
+          createdAt = obj$createdAt %||% NA_real_,
+          lastMoveAt = obj$lastMoveAt %||% NA_real_,
+          turns = obj$turns %||% NA_integer_,
+          winner = obj$winner %||% NA_character_,
+          status = obj$status %||% NA_character_,
+          white_rating = obj$players$white$rating %||% NA_integer_,
+          black_rating = obj$players$black$rating %||% NA_integer_,
+          white_username = obj$players$white$user$id %||% NA_character_,
+          black_username = obj$players$black$user$id %||% NA_character_,
+          opening_name = obj$opening$name %||% NA_character_,
+          opening_eco = obj$opening$eco %||% NA_character_,
+          opening_ply = obj$opening$ply %||% NA_integer_,
+          clock_initial = obj$clock$initial %||% NA_integer_,
+          clock_increment = obj$clock$increment %||% NA_integer_,
+          clock_total = obj$clock$totalTime %||% NA_integer_,
+          # Analysis data if available
+          white_accuracy = obj$players$white$analysis$accuracy %||% NA_real_,
+          black_accuracy = obj$players$black$analysis$accuracy %||% NA_real_,
+          white_blunder = obj$players$white$analysis$blunder %||% NA_integer_,
+          black_blunder = obj$players$black$analysis$blunder %||% NA_integer_
+        )
+      }, error = function(e) {
+        warning("Failed to parse line: ", substr(line, 1, 100), "...")
+        return(NULL)
+      })
+    })
+    
+    # Compact and bind
+    lichess_games <- compact(lichess_games)
+    
+    if (length(lichess_games) == 0) {
+      warning("No valid games parsed")
+      return(tibble())
+    }
+    
+    result_df <- bind_rows(lichess_games)
+    cat("Successfully collected", nrow(result_df), "games\n")
+    
+    # Rate limiting
+    if (delay > 0) Sys.sleep(delay)
+    
+    return(result_df)
+    
+  }, error = function(e) {
+    warning("Data collection failed: ", e$message)
+    return(tibble())
+  })
+}
+glimpse(lichess_df)
+```
+```
+
 ---
 
 ### Comparison Groups
