@@ -184,6 +184,21 @@ glimpse(lichess_df)
    - **Rapid (8-25 minutes)**: Moderate time controls allowing strategic planning
    - **Classical (> 25 minutes)**: Deep positional games with extensive calculation
    - **Correspondence**: Turn-based games with days per move (if available)
+
+3. **By Rating Tier:**
+   - **Beginner (< 1000)**: Learning basic rules and piece values
+   - **Novice (1000-1400)**: Developing tactical awareness and opening principles
+   - **Intermediate (1400–1800)**: Strategic understanding and pattern recognition
+   - **Advanced (1800–2200)**: Deep positional play and endgame technique
+   - **Expert (2200-2400)**: Near-master level with specialized knowledge
+   - **Master (2400+)**: Elite players with comprehensive chess understanding
+
+4. **By Opening Type:** 
+   - **Aggressive Openings**: King's Gambit, Evans Gambit, Danish Gambit
+   - **Positional Openings**: Ruy Lopez, Queen's Gambit, English Opening
+   - **Hypermodern Systems**: King's Indian Defense, Nimzo-Indian Defense
+   - **Solid Defenses**: French Defense, Caro-Kann Defense, Petrov Defense
+   - **Sicilian Variations**: Open Sicilian, Closed Sicilian, Dragon Variation
 #### Statistical Comparison Framework
 
 **Pairwise Comparisons:**
