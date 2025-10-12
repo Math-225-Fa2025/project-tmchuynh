@@ -41,7 +41,7 @@ The **Lichess Database** also publishes monthly bulk archives of millions of gam
 
 ##### Collection Information
 
-Data are accessible via the **Lichess API** (`https://lichess.org/api`) and the **Lichess Database** (`https://database.lichess.org/`).  
+Data are accessible via the **[Lichess API](https://lichess.org/api)** and the **[Lichess Database](https://database.lichess.org/)**.  
 The API allows filtered downloads by user, date, and game type, while the monthly archives allow large-scale collection for sampling or time series studies.  
 Lichess data are publicly available under the **Creative Commons CC0 license**, permitting academic use and redistribution.
 
@@ -63,7 +63,7 @@ These data provide demographic and global context to the Lichess dataset and all
 
 ##### Collection Information
 
-FIDE rating data are published monthly on the official site (`https://ratings.fide.com/download_lists.phtml`) as `.csv` or `.xlsx` files.  
+FIDE rating data are published monthly on [the official site](https://ratings.fide.com/download_lists.phtml) as `.csv` or `.xlsx` files.  
 The data are updated monthly and are freely available for research and statistical analysis.
 
 ---
@@ -88,7 +88,21 @@ Data will be stored in tibbles and manipulated with `dplyr` and `tidyr`.
    - `rating_change = rating_post - rating_pre`
    - `is_white_win = ifelse(winner == "white", 1, 0)`
 5. Integrate FIDE data by matching players or aggregating by country/title.
-library(broom)
+
+#### Data Collection Process
+
+The data collection will involve creating a robust function to gather chess game data from the Lichess API with the following features:
+
+- **Error handling**: The system will gracefully handle API failures, timeouts, and malformed responses
+- **Rate limiting**: Implement delays between requests to respect API usage limits
+- **Data validation**: Verify that collected games contain essential information like player ratings and game outcomes
+- **Comprehensive extraction**: Gather detailed game metadata including:
+  - Player ratings before and after games
+  - Time control settings (bullet, blitz, rapid, classical)
+  - Opening moves and names
+  - Game duration and move counts
+  - Accuracy scores when available
+  - Player colors and final results
 
 ---
 
