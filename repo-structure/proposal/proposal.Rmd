@@ -698,3 +698,5 @@ rating_impact <- lichess_df %>%
     loss_rate = mean(user_result == "loss"),
     .groups = "drop"
   )
+
+print(rating_impact)
