@@ -388,6 +388,17 @@ table(lichess_df$user_color)
 - Bullet: Higher variance, more decisive results, fewer draws
 - Classical: Lower variance, more draws, deeper strategic play
 - Rating correlation with performance should strengthen in longer time controls
+
+**Rating Tier Hypotheses:**
+- Lower-rated players: More decisive games, tactical oversights
+- Higher-rated players: More draws, positional advantages, endgame skills
+- Rating predictive power should increase with longer time controls
+
+**Opening Type Patterns:**
+- Aggressive openings: Higher win rates but also higher loss rates
+- Positional openings: More draws, consistent performance
+- Defense effectiveness should correlate with player rating level
+
 #### Control Variables and Confounding Factors
 
 **Player-level Controls:**
