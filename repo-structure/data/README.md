@@ -20,6 +20,9 @@ Data were retrieved via the endpoint: [https://lichess.org/api/games/user/{usern
 This dataset contains **game-level records** for a single player, including metadata such as ratings, results, openings, and timestamps.
 All data are published under the **Creative Commons CC0 Public Domain license**.
 
+
+### 2.2 Dataset Dimensions
+
 | Dimension                | Description                                                        |
 |--------------------------|--------------------------------------------------------------------|
 | **Unit of observation:** | Individual game                                                    |
@@ -34,10 +37,15 @@ All data are published under the **Creative Commons CC0 Public Domain license**.
 
 ## 3. FIDE Ratings API Dataset
 
+### 3.1 General Description
+
 The **FIDE Ratings API** (and downloadable monthly rating lists) provide official player-level data for all registered international players.  
 Data include rating history, titles, federation, gender, and number of games used in the rating period.
 
 Data were collected from: [https://ratings.fide.com/download_lists.phtml](https://ratings.fide.com/download_lists.phtml) or via the API endpoint (for recent ratings): [https://ratings.fide.com/api_list_players](https://ratings.fide.com/api_list_players)
+
+
+### 3.2 Dataset Dimensions
 
 | Dimension                | Description                         |
 |--------------------------|-------------------------------------|
