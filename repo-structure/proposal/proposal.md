@@ -261,8 +261,14 @@ The analysis will employ several statistical methods to understand chess perform
 The analysis anticipates finding several key patterns:
 
 - **Color Advantage**: White pieces should demonstrate a statistically significant advantage, with win rates 52-56% higher than black
+- **Rating Impact**: Each 100-point rating advantage should increase win probability by approximately 15-25%
 - **Time Control Effects**: Faster time controls may show higher variance in outcomes due to time pressure
+- **Opening Performance**: Certain opening families will demonstrate consistently superior results
 - **Accuracy Correlation**: Higher-rated players should show both higher average accuracy and less variance in performance
+- **Temporal Patterns**: Long-term data should reveal learning curves and rating progression trends
+
+---
+
 ### Expected Outcomes & Limitations
 
 #### Expected Outcomes
