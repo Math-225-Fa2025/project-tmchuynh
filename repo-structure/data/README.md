@@ -115,6 +115,17 @@ Data were collected from: [https://ratings.fide.com/download_lists.phtml](https:
 | `inactive_flag`   | Logical   | `inactive_flag`   | TRUE if player is currently inactive.     | `FALSE`             |
 
 
+### 3.4 Data Processing Notes
+
+- Downloaded `.csv` file from FIDE monthly list (April 2025).  
+- Renamed all fields to lowercase snake_case.  
+- Removed inactive players for primary analysis.  
+- Calculated `age = 2025 - birth_year` for correlation analyses.  
+- Joined to Lichess dataset using derived `player_name` or country-level aggregation.  
+- Filtered to titles `GM`, `IM`, `FM`, `CM` for focused skill-level comparisons.
+
+
+### 3.5 Limitations
 
 - Name matching between FIDE and Lichess is approximate; usernames do not always correspond.  
 - Ratings represent different pools (online vs. over-the-board), so direct comparison must be normalized.  
