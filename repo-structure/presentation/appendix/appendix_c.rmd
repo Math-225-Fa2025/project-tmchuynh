@@ -112,7 +112,7 @@ predicted_curves <- nonlinear_models %>%
   left_join(rating_nl_df, by = "user") %>%
   mutate(predicted = A - B * exp(-k * time_index))
 
-ggplot(predicted_curves, aes(x = time_index, y = rating, color = user)) +
+p1 <- ggplot(predicted_curves, aes(x = time_index, y = rating, color = user)) +
   geom_point(alpha = 0.4, size = 1.5) +
   geom_line(aes(y = predicted), linewidth = 1) +
   facet_wrap(~user, scales = "free_y") +
@@ -124,6 +124,8 @@ ggplot(predicted_curves, aes(x = time_index, y = rating, color = user)) +
     color = "User"
   ) +
   theme_minimal(base_size = 12)
+print(p1)
+ggsave("../../presentation/presentation_files/nonlinear_rating_progression.png", plot = p1, width = 8, height = 5, dpi = 300)
 ```
 
 > **Interpretation:**
