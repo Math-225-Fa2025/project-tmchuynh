@@ -282,25 +282,25 @@ if (nrow(rating_summary) == 0) {
     # Calculate volatility metrics per user and category
     volatility_stats <- rating_summary %>%
         filter(category %in% top_categories) %>%
-    group_by(user, category) %>%
-    summarise(
-        sd_rating = sd(rating, na.rm = TRUE),
-        cv = sd(rating, na.rm = TRUE) / mean(rating, na.rm = TRUE),
-        range = max(rating, na.rm = TRUE) - min(rating, na.rm = TRUE),
-        .groups = "drop"
-    )
+        group_by(user, category) %>%
+        summarise(
+            sd_rating = sd(rating, na.rm = TRUE),
+            cv = sd(rating, na.rm = TRUE) / mean(rating, na.rm = TRUE),
+            range = max(rating, na.rm = TRUE) - min(rating, na.rm = TRUE),
+            .groups = "drop"
+        )
 
-ggplot(volatility_stats, aes(x = category, y = sd_rating, fill = category)) +
-    geom_boxplot(alpha = 0.7) +
-    geom_jitter(width = 0.2, alpha = 0.4, size = 2) +
-    labs(
-        title = "Rating Volatility Distribution by Game Category",
-        subtitle = "Standard deviation of ratings over time per user",
-        x = "Game Category",
-        y = "Rating Standard Deviation"
-    ) +
-    theme_minimal(base_size = 12) +
-    theme(legend.position = "none")
+    ggplot(volatility_stats, aes(x = category, y = sd_rating, fill = category)) +
+        geom_boxplot(alpha = 0.7) +
+        geom_jitter(width = 0.2, alpha = 0.4, size = 2) +
+        labs(
+            title = "Rating Volatility Distribution by Game Category",
+            subtitle = "Standard deviation of ratings over time per user",
+            x = "Game Category",
+            y = "Rating Standard Deviation"
+        ) +
+        theme_minimal(base_size = 12) +
+        theme(legend.position = "none")
 }
 ```
 
@@ -312,59 +312,61 @@ ggplot(volatility_stats, aes(x = category, y = sd_rating, fill = category)) +
 if (nrow(rating_summary) == 0) {
     cat("No data available. Skipping growth rate analysis.\n")
     growth_models <- tibble()
-    growth_summary <- tibble(users = 0, positive_growth = 0, negative_growth = 0, 
-                             mean_growth = NA, median_growth = NA, sd_growth = NA, mean_r2 = NA)
+    growth_summary <- tibble(
+        users = 0, positive_growth = 0, negative_growth = 0,
+        mean_growth = NA, median_growth = NA, sd_growth = NA, mean_r2 = NA
+    )
 } else {
     # Fit linear models to estimate growth rates per user
     growth_models <- rating_summary %>%
-    filter(category == "Blitz", !is.na(rating_smooth)) %>%
-    group_by(user) %>%
-    filter(n() >= 10) %>%
-    do(model = lm(rating_smooth ~ relative_time, data = .)) %>%
-    mutate(
-        slope = coef(model)[2],
-        intercept = coef(model)[1],
-        r_squared = summary(model)$r.squared
-    ) %>%
-    select(-model)
+        filter(category == "Blitz", !is.na(rating_smooth)) %>%
+        group_by(user) %>%
+        filter(n() >= 10) %>%
+        do(model = lm(rating_smooth ~ relative_time, data = .)) %>%
+        mutate(
+            slope = coef(model)[2],
+            intercept = coef(model)[1],
+            r_squared = summary(model)$r.squared
+        ) %>%
+        select(-model)
 
-# Visualize growth rates
-ggplot(growth_models, aes(x = reorder(user, slope), y = slope, fill = r_squared)) +
-    geom_col() +
-    scale_fill_gradient2(
-        low = "#d73027", mid = "#fee090", high = "#1a9850",
-        midpoint = 0.5, name = "R²"
-    ) +
-    coord_flip() +
-    labs(
-        title = "Estimated Weekly Rating Growth Rate (Blitz)",
-        subtitle = "Linear trend slope per user (minimum 10 observations)",
-        x = "User",
-        y = "Rating Points per Week"
-    ) +
-    theme_minimal(base_size = 11)
+    # Visualize growth rates
+    ggplot(growth_models, aes(x = reorder(user, slope), y = slope, fill = r_squared)) +
+        geom_col() +
+        scale_fill_gradient2(
+            low = "#d73027", mid = "#fee090", high = "#1a9850",
+            midpoint = 0.5, name = "R²"
+        ) +
+        coord_flip() +
+        labs(
+            title = "Estimated Weekly Rating Growth Rate (Blitz)",
+            subtitle = "Linear trend slope per user (minimum 10 observations)",
+            x = "User",
+            y = "Rating Points per Week"
+        ) +
+        theme_minimal(base_size = 11)
 
-# Summary statistics for growth rates
-growth_summary <- growth_models %>%
-    summarise(
-        users = n(),
-        positive_growth = sum(slope > 0),
-        negative_growth = sum(slope < 0),
-        mean_growth = mean(slope, na.rm = TRUE),
-        median_growth = median(slope, na.rm = TRUE),
-        sd_growth = sd(slope, na.rm = TRUE),
-        mean_r2 = mean(r_squared, na.rm = TRUE)
+    # Summary statistics for growth rates
+    growth_summary <- growth_models %>%
+        summarise(
+            users = n(),
+            positive_growth = sum(slope > 0),
+            negative_growth = sum(slope < 0),
+            mean_growth = mean(slope, na.rm = TRUE),
+            median_growth = median(slope, na.rm = TRUE),
+            sd_growth = sd(slope, na.rm = TRUE),
+            mean_r2 = mean(r_squared, na.rm = TRUE)
+        )
+
+    knitr::kable(
+        growth_summary,
+        digits = 3,
+        caption = "Summary Statistics: Rating Growth Rates (Blitz Category)",
+        col.names = c(
+            "Users", "Positive", "Negative", "Mean Rate", "Median Rate",
+            "SD Rate", "Mean R²"
+        )
     )
-
-knitr::kable(
-    growth_summary,
-    digits = 3,
-    caption = "Summary Statistics: Rating Growth Rates (Blitz Category)",
-    col.names = c(
-        "Users", "Positive", "Negative", "Mean Rate", "Median Rate",
-        "SD Rate", "Mean R²"
-    )
-)
 }
 ```
 
