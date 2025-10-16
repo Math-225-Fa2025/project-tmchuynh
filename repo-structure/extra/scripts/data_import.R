@@ -623,35 +623,68 @@ get_lichess_data <- function(username, max_games = 20, access_token = NULL) {
             TRUE ~ 0
           ),
           rating_pre = case_when(
-            color == "White" ~ coalesce(players.white.rating, NA_integer_),
-            color == "Black" ~ coalesce(players.black.rating, NA_integer_),
+            color == "White" ~ players.white.rating,
+            color == "Black" ~ players.black.rating,
             TRUE ~ NA_integer_
           ),
           rating_diff = case_when(
-            color == "White" ~ coalesce(players.white.ratingDiff, 0L),
-            color == "Black" ~ coalesce(players.black.ratingDiff, 0L),
+            color == "White" ~
+              ifelse(
+                is.na(players.white.ratingDiff),
+                0L,
+                players.white.ratingDiff
+              ),
+            color == "Black" ~
+              ifelse(
+                is.na(players.black.ratingDiff),
+                0L,
+                players.black.ratingDiff
+              ),
             TRUE ~ 0L
           ),
           rating_post = rating_pre + rating_diff,
           opponent_rating = case_when(
-            color == "White" ~ coalesce(players.black.rating, NA_integer_),
-            color == "Black" ~ coalesce(players.white.rating, NA_integer_),
+            color == "White" ~ players.black.rating,
+            color == "Black" ~ players.white.rating,
             TRUE ~ NA_integer_
           ),
-          datetime = as_datetime(coalesce(createdAt, lastMoveAt) / 1000, tz = "UTC"),
-          # Ensure speed field exists
-          speed = coalesce(speed, perf, "unknown")
+          datetime = as_datetime(
+            ifelse(!is.na(.data$createdAt), .data$createdAt, .data$lastMoveAt) /
+              1000,
+            tz = "UTC"
+          ),
+          # Speed is already handled in the manual data frame construction
+          speed = ifelse(
+            is.na(.data$speed) | .data$speed == "",
+            "unknown",
+            .data$speed
+          )
         ) %>%
         select(
-          user, id, rated, speed, color, winner, result, rating_pre,
-          rating_diff, rating_post, opponent_rating, datetime
+          user,
+          id,
+          rated,
+          speed,
+          color,
+          winner,
+          result,
+          rating_pre,
+          rating_diff,
+          rating_post,
+          opponent_rating,
+          datetime
         ) %>%
         filter(!is.na(rating_pre), !is.na(opponent_rating))
 
       return(df)
     },
     error = function(e) {
-      message(paste("Error fetching data for", username, ":", e$message))
+      message(paste("Error fetching data for", username, ":"))
+      message(paste("  Error type:", class(e)[1]))
+      message(paste("  Error message:", e$message))
+      if (!is.null(e$call)) {
+        message(paste("  Error call:", deparse(e$call)))
+      }
       return(NULL)
     }
   )
