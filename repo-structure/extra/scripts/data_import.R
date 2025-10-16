@@ -551,16 +551,13 @@ get_lichess_data <- function(username, max_games = 20, access_token = NULL) {
         )
       }
 
-          # Remove any NULL entries and combine
-          game_list <- game_list[!sapply(game_list, is.null)]
+      # Remove any NULL entries and combine
+      game_list <- game_list[!sapply(game_list, is.null)]
 
-          if (length(game_list) == 0) {
-            message(paste(
-              "No valid games could be processed for user:",
-              username
-            ))
-            return(NULL)
-          }
+      if (length(game_list) == 0) {
+        message(paste("No valid games could be processed for user:", username))
+        return(NULL)
+      }
 
           message(paste(
             "Successfully processed",
