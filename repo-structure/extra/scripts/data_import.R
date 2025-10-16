@@ -777,8 +777,15 @@ lichess_clean <- lichess_all %>%
   filter(!is.na(avg_rating)) %>%
   arrange(desc(avg_rating))
 
-message(sprintf("✓ Cleaned data: %d users with complete statistics", nrow(lichess_clean)))
-message(sprintf("✓ Rating range: %d - %d", min(lichess_clean$avg_rating), max(lichess_clean$avg_rating)))
+message(sprintf(
+  "✓ Cleaned data: %d users with complete statistics",
+  nrow(lichess_clean)
+))
+message(sprintf(
+  "✓ Rating range: %d - %d",
+  min(lichess_clean$avg_rating),
+  max(lichess_clean$avg_rating)
+))
 
 # Show distribution by rating tier
 rating_dist <- lichess_clean %>% count(rating_tier, sort = TRUE)
