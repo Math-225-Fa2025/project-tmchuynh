@@ -207,7 +207,9 @@ if (nrow(rating_histories) == 0) {
 
     head(rating_summary, 10)
 }
-```---
+```
+
+---
 
 ### B.3 Visualization: Rating Progression Over Time
 
