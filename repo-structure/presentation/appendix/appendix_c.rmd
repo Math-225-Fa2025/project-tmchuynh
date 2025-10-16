@@ -148,7 +148,7 @@ knitr::kable(
 
 > For richer inference, we can estimate the same model in a Bayesian framework.
 
-```{r bayesian-model, eval=FALSE}
+```{r bayesian-model}
 library(brms)
 
 # Simple Bayesian nonlinear model example
