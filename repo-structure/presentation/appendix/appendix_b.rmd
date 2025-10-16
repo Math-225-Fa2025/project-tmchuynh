@@ -43,81 +43,85 @@ get_rating_history <- function(username) {
     Sys.sleep(runif(1, 0.5, 1.2)) # polite delay
 
     url <- paste0("https://lichess.org/api/user/", username, "/rating-history")
-    
-    tryCatch({
-        # Use httr for better error handling and timeout control
-        response_raw <- GET(url, timeout(30))
-        
-        if (status_code(response_raw) != 200) {
-            cat(paste0("  HTTP Error: ", status_code(response_raw), "\n"))
-            return(NULL)
-        }
-        
-        response <- fromJSON(content(response_raw, "text"), simplifyDataFrame = FALSE)
-        cat(paste0("  Response length: ", length(response), "\n"))
 
-        if (length(response) == 0) {
-            cat("  No rating history available\n")
-            return(NULL)
-        }
-        # Pre-allocate list with known size
-        result_list <- vector("list", length(response))
-        valid_entries <- 0
-        
-        # Vectorized processing where possible
-        for (i in seq_along(response)) {
-            item <- response[[i]]
-            game_type <- item[["name"]]
-            points_data <- item[["points"]]
-            
-            # Early validation
-            if (is.null(points_data) || length(points_data) == 0 || is.null(game_type)) {
-                next
+    tryCatch(
+        {
+            # Use httr for better error handling and timeout control
+            response_raw <- GET(url, timeout(30))
+
+            if (status_code(response_raw) != 200) {
+                cat(paste0("  HTTP Error: ", status_code(response_raw), "\n"))
+                return(NULL)
             }
-            
-            # More efficient matrix conversion
-            tryCatch({
-                if (is.list(points_data) && all(lengths(points_data) == 2)) {
-                    # Direct matrix creation from list
-                    points_matrix <- do.call(rbind, points_data)
-                } else if (is.matrix(points_data) && ncol(points_data) == 2) {
-                    points_matrix <- points_data
-                } else {
+
+            response <- fromJSON(content(response_raw, "text"), simplifyDataFrame = FALSE)
+            cat(paste0("  Response length: ", length(response), "\n"))
+
+            if (length(response) == 0) {
+                cat("  No rating history available\n")
+                return(NULL)
+            }
+            # Pre-allocate list with known size
+            result_list <- vector("list", length(response))
+            valid_entries <- 0
+
+            # Vectorized processing where possible
+            for (i in seq_along(response)) {
+                item <- response[[i]]
+                game_type <- item[["name"]]
+                points_data <- item[["points"]]
+
+                # Early validation
+                if (is.null(points_data) || length(points_data) == 0 || is.null(game_type)) {
                     next
                 }
-                
-                # Validate matrix dimensions
-                if (nrow(points_matrix) == 0) next
-                
-                valid_entries <- valid_entries + 1
-                
-                # More efficient tibble creation
-                result_list[[valid_entries]] <- tibble(
-                    user = username,
-                    category = game_type,
-                    date_index = as.integer(points_matrix[, 1]),
-                    rating = as.integer(points_matrix[, 2])
-                ) %>%
-                    mutate(date = as_date("2013-01-01") + weeks(date_index))
-                    
-            }, error = function(e) {
-                cat(paste0("  Warning: Skipping malformed data for ", game_type, ": ", e$message, "\n"))
-            })
-        }
-        
-        # Only bind valid entries
-        if (valid_entries > 0) {
-            result_list <- result_list[1:valid_entries]
-            return(bind_rows(result_list))
-        } else {
-            cat("  No valid rating points found\n")
+
+                # More efficient matrix conversion
+                tryCatch(
+                    {
+                        if (is.list(points_data) && all(lengths(points_data) == 2)) {
+                            # Direct matrix creation from list
+                            points_matrix <- do.call(rbind, points_data)
+                        } else if (is.matrix(points_data) && ncol(points_data) == 2) {
+                            points_matrix <- points_data
+                        } else {
+                            next
+                        }
+
+                        # Validate matrix dimensions
+                        if (nrow(points_matrix) == 0) next
+
+                        valid_entries <- valid_entries + 1
+
+                        # More efficient tibble creation
+                        result_list[[valid_entries]] <- tibble(
+                            user = username,
+                            category = game_type,
+                            date_index = as.integer(points_matrix[, 1]),
+                            rating = as.integer(points_matrix[, 2])
+                        ) %>%
+                            mutate(date = as_date("2013-01-01") + weeks(date_index))
+                    },
+                    error = function(e) {
+                        cat(paste0("  Warning: Skipping malformed data for ", game_type, ": ", e$message, "\n"))
+                    }
+                )
+            }
+
+            # Only bind valid entries
+            if (valid_entries > 0) {
+                result_list <- result_list[1:valid_entries]
+                return(bind_rows(result_list))
+            } else {
+                cat("  No valid rating points found\n")
+                return(NULL)
+            }
+        },
+        error = function(e) {
+            cat(paste0("  Error: ", e$message, "\n"))
             return(NULL)
         }
-        
-    }, error = function(e) {
-        cat(paste0("  Error: ", e$message, "\n"))
-        return(NULL)
-    })
+    )
 }
 
 # Collect rating histories
