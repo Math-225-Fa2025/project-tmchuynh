@@ -475,7 +475,31 @@ get_lichess_data <- function(username, max_games = 20, access_token = NULL) {
 # 3. FETCH RANDOM LICHESS USERS
 ############################################################
 
-message("Comprehensive Lichess user sampling across all rating tiers...")
+############################################################
+# 4. OAUTH AUTHENTICATION SETUP
+############################################################
+
+message("\n=== SETTING UP AUTHENTICATION ===")
+
+# Get access token
+access_token <- get_access_token(interactive = TRUE)
+
+# Test token if available
+if (!is.null(access_token)) {
+  if (!test_access_token(access_token)) {
+    message("\n⚠️  Invalid token. Proceeding without authentication.")
+    access_token <- NULL
+  }
+} else {
+  message("\n⚠️  No authentication. Requests will be rate-limited.")
+}
+
+############################################################
+# 5. USER SAMPLING AND DATA COLLECTION
+############################################################
+
+message("\n=== COMPREHENSIVE LICHESS USER SAMPLING ===")
+message("Sampling users across all rating tiers...")
 
 # Set target sample size
 set.seed(42) # For reproducibility
