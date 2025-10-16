@@ -631,8 +631,8 @@ for (i in seq_along(lichess_users)) {
 
   # Rate limiting: longer pause every 50 requests
   if (i %% 50 == 0) {
-    message("  → Rate limiting pause (30 seconds)...")
-    Sys.sleep(50)
+    message("  → Rate limiting pause (63 seconds)...")
+    Sys.sleep(63)
   }
 }
 
