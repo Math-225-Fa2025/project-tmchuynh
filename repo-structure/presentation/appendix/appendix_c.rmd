@@ -1,3 +1,17 @@
+---
+title: "Appendix C — Nonlinear Modeling of Chess Rating Growth"
+author: "Tina Huynh"
+date: "`r Sys.Date()`"
+output: 
+  pdf_document:
+    latex_engine: xelatex
+    toc: true
+    number_sections: true
+    fig_caption: true
+    citation_package: natbib
+    keep_tex: true
+---
+
 ## Appendix C — Nonlinear Modeling of Chess Rating Growth
 
 ### C.1 Conceptual Overview
@@ -150,7 +164,7 @@ knitr::kable(
 
 > For richer inference, we can estimate the same model in a Bayesian framework.
 
-```{r bayesian-model}
+```{r bayesian-model, eval=FALSE}
 library(brms)
 
 # Simple Bayesian nonlinear model example
