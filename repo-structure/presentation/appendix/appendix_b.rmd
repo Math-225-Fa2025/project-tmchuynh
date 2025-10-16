@@ -40,13 +40,16 @@ get_rating_history <- function(username) {
                 rename(date_index = X1, rating = X2) %>%
                 mutate(date = as_date("2013-01-01") + weeks(date_index)) # Lichess counts from 2013 start
         },
-        error = function(e) NULL
+        error = function(e) {
+            cat(paste0("  Error: ", e$message, "\n"))
+            return(NULL)
+        }
     )
 }
 
 # Collect rating histories
 rating_histories <- map_dfr(lichess_users, get_rating_history)
-write_csv(rating_histories, here::here("repo-structure/data/lichess_rating_history.csv"))
+write_csv(rating_histories, "../../data/lichess_rating_history.csv")
 glimpse(rating_histories)
 ```
 
