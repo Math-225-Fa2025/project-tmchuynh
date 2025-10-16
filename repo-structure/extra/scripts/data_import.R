@@ -640,16 +640,11 @@ get_lichess_data <- function(username, max_games = 20, access_token = NULL) {
             TRUE ~ NA_integer_
           ),
           datetime = as_datetime(
-            ifelse(!is.na(.data$createdAt), .data$createdAt, .data$lastMoveAt) /
-              1000,
+            ifelse(!is.na(createdAt), createdAt, lastMoveAt) / 1000,
             tz = "UTC"
           ),
           # Speed is already handled in the manual data frame construction
-          speed = ifelse(
-            is.na(.data$speed) | .data$speed == "",
-            "unknown",
-            .data$speed
-          )
+          speed = ifelse(is.na(speed) | speed == "", "unknown", speed)
         ) %>%
         select(
           user,
