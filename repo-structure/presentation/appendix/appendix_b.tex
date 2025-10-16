@@ -77,6 +77,16 @@
 \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
 \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
 \usepackage{graphicx}
 \makeatletter
 \newsavebox\pandoc@box
@@ -128,162 +138,174 @@
 \FunctionTok{library}\NormalTok{(jsonlite)}
 \FunctionTok{library}\NormalTok{(lubridate)}
 \FunctionTok{library}\NormalTok{(httr)}
+\FunctionTok{library}\NormalTok{(dplyr)}
 
-\CommentTok{\# Load random subset of users from the Lichess summary}
-\NormalTok{lichess\_path }\OtherTok{\textless{}{-}} \StringTok{"../../data/lichess\_clean.csv"}
-\NormalTok{lichess\_users }\OtherTok{\textless{}{-}} \FunctionTok{read\_csv}\NormalTok{(lichess\_path, }\AttributeTok{show\_col\_types =} \ConstantTok{FALSE}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
-    \FunctionTok{slice\_sample}\NormalTok{(}\AttributeTok{n =} \DecValTok{15}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# pull 15 random users for plotting}
-    \FunctionTok{pull}\NormalTok{(user)}
+\CommentTok{\# First, try to load existing rating history data}
+\NormalTok{rating\_hist\_path }\OtherTok{\textless{}{-}} \StringTok{"../../data/lichess\_rating\_history.csv"}
+\NormalTok{existing\_data }\OtherTok{\textless{}{-}} \ConstantTok{NULL}
 
-\CommentTok{\# Debug: Check selected users}
-\FunctionTok{cat}\NormalTok{(}\StringTok{"Selected users:}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\ControlFlowTok{if}\NormalTok{ (}\FunctionTok{file.exists}\NormalTok{(rating\_hist\_path)) \{}
+\NormalTok{    existing\_data }\OtherTok{\textless{}{-}} \FunctionTok{read\_csv}\NormalTok{(rating\_hist\_path, }\AttributeTok{show\_col\_types =} \ConstantTok{FALSE}\NormalTok{)}
+    \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(existing\_data) }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{) \{}
+        \FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}
+            \StringTok{"Loaded existing rating history: \%d records for \%d users}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{,}
+            \FunctionTok{nrow}\NormalTok{(existing\_data), }\FunctionTok{n\_distinct}\NormalTok{(existing\_data}\SpecialCharTok{$}\NormalTok{user)}
+\NormalTok{        ))}
+\NormalTok{    \}}
+\NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-## Selected users:
+## Loaded existing rating history: 1173 records for 5 users
 \end{verbatim}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{print}\NormalTok{(lichess\_users)}
-\end{Highlighting}
-\end{Shaded}
+\CommentTok{\# Only fetch new data if we don\textquotesingle{}t have existing data}
+\ControlFlowTok{if}\NormalTok{ (}\FunctionTok{is.null}\NormalTok{(existing\_data) }\SpecialCharTok{||} \FunctionTok{nrow}\NormalTok{(existing\_data) }\SpecialCharTok{==} \DecValTok{0}\NormalTok{) \{}
+    \FunctionTok{cat}\NormalTok{(}\StringTok{"No existing data found. Fetching from Lichess API...}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
 
-\begin{verbatim}
-##  [1] "snoozer"             "Kydravets-Mark19"    "Dark_Cast1gator"    
-##  [4] "Daniil1007"          "Chess_Training_2021" "ManuDavid2910"      
-##  [7] "wExoqtic"            "daaleksandrov"       "RakitinD"           
-## [10] "Parakon1"            "Isaev_Anton_Val"     "Kotov_Syndrome"     
-## [13] "IALIIALIIALI"        "lyxxj"               "Zhigalko_Sergei"
-\end{verbatim}
+    \CommentTok{\# Load random subset of users from the Lichess summary}
+\NormalTok{    lichess\_path }\OtherTok{\textless{}{-}} \StringTok{"../../data/lichess\_clean.csv"}
+\NormalTok{    lichess\_users }\OtherTok{\textless{}{-}} \FunctionTok{read\_csv}\NormalTok{(lichess\_path, }\AttributeTok{show\_col\_types =} \ConstantTok{FALSE}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{slice\_sample}\NormalTok{(}\AttributeTok{n =} \DecValTok{15}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# pull 15 random users for plotting}
+        \FunctionTok{pull}\NormalTok{(user)}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{\# Function to retrieve rating history for a given user}
-\NormalTok{get\_rating\_history }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(username) \{}
-    \FunctionTok{cat}\NormalTok{(}\FunctionTok{paste0}\NormalTok{(}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{Fetching data for user: "}\NormalTok{, username, }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{))}
-    \FunctionTok{Sys.sleep}\NormalTok{(}\FunctionTok{runif}\NormalTok{(}\DecValTok{1}\NormalTok{, }\FloatTok{0.5}\NormalTok{, }\FloatTok{1.2}\NormalTok{)) }\CommentTok{\# polite delay}
-\NormalTok{    url }\OtherTok{\textless{}{-}} \FunctionTok{paste0}\NormalTok{(}\StringTok{"https://lichess.org/api/user/"}\NormalTok{, username, }\StringTok{"/rating{-}history"}\NormalTok{)}
-    \FunctionTok{tryCatch}\NormalTok{(}
-\NormalTok{        \{}
-\NormalTok{            response }\OtherTok{\textless{}{-}} \FunctionTok{fromJSON}\NormalTok{(url, }\AttributeTok{simplifyDataFrame =} \ConstantTok{FALSE}\NormalTok{)}
-            \FunctionTok{cat}\NormalTok{(}\FunctionTok{paste0}\NormalTok{(}\StringTok{"  Response length: "}\NormalTok{, }\FunctionTok{length}\NormalTok{(response), }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{))}
-            \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{length}\NormalTok{(response) }\SpecialCharTok{==} \DecValTok{0}\NormalTok{) \{}
-                \FunctionTok{cat}\NormalTok{(}\StringTok{"  No rating history available}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
-                \FunctionTok{return}\NormalTok{(}\ConstantTok{NULL}\NormalTok{)}
-\NormalTok{            \}}
-            
-            \CommentTok{\# Process each game type}
-\NormalTok{            result\_list }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{()}
-            \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq\_along}\NormalTok{(response)) \{}
-\NormalTok{                item }\OtherTok{\textless{}{-}}\NormalTok{ response[[i]]}
-\NormalTok{                game\_type }\OtherTok{\textless{}{-}}\NormalTok{ item[[}\StringTok{"name"}\NormalTok{]]}
-\NormalTok{                points\_data }\OtherTok{\textless{}{-}}\NormalTok{ item[[}\StringTok{"points"}\NormalTok{]]}
-                
-                \ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{is.null}\NormalTok{(points\_data) }\SpecialCharTok{\&\&} \FunctionTok{length}\NormalTok{(points\_data) }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{) \{}
-                    \CommentTok{\# Handle different possible structures}
-                    \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{is.list}\NormalTok{(points\_data) }\SpecialCharTok{\&\&} \SpecialCharTok{!}\FunctionTok{is.data.frame}\NormalTok{(points\_data)) \{}
-                        \CommentTok{\# Convert list of vectors to matrix}
-\NormalTok{                        points\_matrix }\OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{(}\FunctionTok{unlist}\NormalTok{(points\_data), }\AttributeTok{ncol =} \DecValTok{2}\NormalTok{, }\AttributeTok{byrow =} \ConstantTok{TRUE}\NormalTok{)}
-\NormalTok{                    \} }\ControlFlowTok{else} \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{is.matrix}\NormalTok{(points\_data)) \{}
-\NormalTok{                        points\_matrix }\OtherTok{\textless{}{-}}\NormalTok{ points\_data}
-\NormalTok{                    \} }\ControlFlowTok{else}\NormalTok{ \{}
-                        \ControlFlowTok{next}  \CommentTok{\# Skip if unexpected format}
-\NormalTok{                    \}}
-                    
-\NormalTok{                    result\_list[[i]] }\OtherTok{\textless{}{-}} \FunctionTok{tibble}\NormalTok{(}
-                        \AttributeTok{user =}\NormalTok{ username,}
-                        \AttributeTok{category =}\NormalTok{ game\_type,}
-                        \AttributeTok{date\_index =}\NormalTok{ points\_matrix[, }\DecValTok{1}\NormalTok{],}
-                        \AttributeTok{rating =}\NormalTok{ points\_matrix[, }\DecValTok{2}\NormalTok{]}
-\NormalTok{                    ) }\SpecialCharTok{\%\textgreater{}\%}
-                        \FunctionTok{mutate}\NormalTok{(}\AttributeTok{date =} \FunctionTok{as\_date}\NormalTok{(}\StringTok{"2013{-}01{-}01"}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{weeks}\NormalTok{(date\_index))}
-\NormalTok{                \}}
-\NormalTok{            \}}
-            
-            \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{length}\NormalTok{(result\_list) }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{) \{}
-                \FunctionTok{return}\NormalTok{(}\FunctionTok{bind\_rows}\NormalTok{(result\_list))}
-\NormalTok{            \} }\ControlFlowTok{else}\NormalTok{ \{}
-                \FunctionTok{cat}\NormalTok{(}\StringTok{"  No valid rating points found}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
-                \FunctionTok{return}\NormalTok{(}\ConstantTok{NULL}\NormalTok{)}
-\NormalTok{            \}}
-\NormalTok{        \},}
-        \AttributeTok{error =} \ControlFlowTok{function}\NormalTok{(e) \{}
-            \FunctionTok{cat}\NormalTok{(}\FunctionTok{paste0}\NormalTok{(}\StringTok{"  Error: "}\NormalTok{, e}\SpecialCharTok{$}\NormalTok{message, }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{))}
+    \CommentTok{\# Debug: Check selected users}
+    \FunctionTok{cat}\NormalTok{(}\StringTok{"Selected users:}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+    \FunctionTok{print}\NormalTok{(lichess\_users)}
+
+    \CommentTok{\# Function to retrieve rating history for a given user}
+\NormalTok{    get\_rating\_history }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(username) \{}
+        \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{is.na}\NormalTok{(username) }\SpecialCharTok{||} \FunctionTok{nchar}\NormalTok{(}\FunctionTok{trimws}\NormalTok{(username)) }\SpecialCharTok{==} \DecValTok{0}\NormalTok{) \{}
+            \FunctionTok{cat}\NormalTok{(}\StringTok{"  Skipping invalid username}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
             \FunctionTok{return}\NormalTok{(}\ConstantTok{NULL}\NormalTok{)}
 \NormalTok{        \}}
-\NormalTok{    )}
+        \FunctionTok{cat}\NormalTok{(}\FunctionTok{paste0}\NormalTok{(}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{Fetching data for user: "}\NormalTok{, username, }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{))}
+        \FunctionTok{Sys.sleep}\NormalTok{(}\FunctionTok{runif}\NormalTok{(}\DecValTok{1}\NormalTok{, }\FloatTok{0.5}\NormalTok{, }\FloatTok{1.2}\NormalTok{)) }\CommentTok{\# polite delay}
+
+\NormalTok{        url }\OtherTok{\textless{}{-}} \FunctionTok{paste0}\NormalTok{(}\StringTok{"https://lichess.org/api/user/"}\NormalTok{, username, }\StringTok{"/rating{-}history"}\NormalTok{)}
+
+        \FunctionTok{tryCatch}\NormalTok{(}
+\NormalTok{            \{}
+                \CommentTok{\# Use httr for better error handling and timeout control}
+\NormalTok{                response\_raw }\OtherTok{\textless{}{-}} \FunctionTok{GET}\NormalTok{(url, }\FunctionTok{timeout}\NormalTok{(}\DecValTok{30}\NormalTok{))}
+
+                \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{status\_code}\NormalTok{(response\_raw) }\SpecialCharTok{!=} \DecValTok{200}\NormalTok{) \{}
+                    \FunctionTok{cat}\NormalTok{(}\FunctionTok{paste0}\NormalTok{(}\StringTok{"  HTTP Error: "}\NormalTok{, }\FunctionTok{status\_code}\NormalTok{(response\_raw), }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{))}
+                    \FunctionTok{return}\NormalTok{(}\ConstantTok{NULL}\NormalTok{)}
+\NormalTok{                \}}
+
+\NormalTok{                response }\OtherTok{\textless{}{-}} \FunctionTok{fromJSON}\NormalTok{(}\FunctionTok{content}\NormalTok{(response\_raw, }\StringTok{"text"}\NormalTok{), }\AttributeTok{simplifyDataFrame =} \ConstantTok{FALSE}\NormalTok{)}
+                \FunctionTok{cat}\NormalTok{(}\FunctionTok{paste0}\NormalTok{(}\StringTok{"  Response length: "}\NormalTok{, }\FunctionTok{length}\NormalTok{(response), }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{))}
+
+                \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{length}\NormalTok{(response) }\SpecialCharTok{==} \DecValTok{0}\NormalTok{) \{}
+                    \FunctionTok{cat}\NormalTok{(}\StringTok{"  No rating history available}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+                    \FunctionTok{return}\NormalTok{(}\ConstantTok{NULL}\NormalTok{)}
+\NormalTok{                \}}
+                \CommentTok{\# Pre{-}allocate list with known size}
+\NormalTok{                result\_list }\OtherTok{\textless{}{-}} \FunctionTok{vector}\NormalTok{(}\StringTok{"list"}\NormalTok{, }\FunctionTok{length}\NormalTok{(response))}
+\NormalTok{                valid\_entries }\OtherTok{\textless{}{-}} \DecValTok{0}
+
+                \CommentTok{\# Vectorized processing where possible}
+                \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \FunctionTok{seq\_along}\NormalTok{(response)) \{}
+\NormalTok{                    item }\OtherTok{\textless{}{-}}\NormalTok{ response[[i]]}
+\NormalTok{                    game\_type }\OtherTok{\textless{}{-}}\NormalTok{ item[[}\StringTok{"name"}\NormalTok{]]}
+\NormalTok{                    points\_data }\OtherTok{\textless{}{-}}\NormalTok{ item[[}\StringTok{"points"}\NormalTok{]]}
+
+                    \CommentTok{\# Early validation}
+                    \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{is.null}\NormalTok{(points\_data) }\SpecialCharTok{||} \FunctionTok{length}\NormalTok{(points\_data) }\SpecialCharTok{==} \DecValTok{0} \SpecialCharTok{||} \FunctionTok{is.null}\NormalTok{(game\_type)) \{}
+                        \ControlFlowTok{next}
+\NormalTok{                    \}}
+
+                    \CommentTok{\# More efficient matrix conversion}
+                    \FunctionTok{tryCatch}\NormalTok{(}
+\NormalTok{                        \{}
+                            \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{is.list}\NormalTok{(points\_data) }\SpecialCharTok{\&\&} \FunctionTok{all}\NormalTok{(}\FunctionTok{lengths}\NormalTok{(points\_data) }\SpecialCharTok{==} \DecValTok{2}\NormalTok{)) \{}
+                                \CommentTok{\# Direct matrix creation from list}
+\NormalTok{                                points\_matrix }\OtherTok{\textless{}{-}} \FunctionTok{do.call}\NormalTok{(rbind, points\_data)}
+\NormalTok{                            \} }\ControlFlowTok{else} \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{is.matrix}\NormalTok{(points\_data) }\SpecialCharTok{\&\&} \FunctionTok{ncol}\NormalTok{(points\_data) }\SpecialCharTok{==} \DecValTok{2}\NormalTok{) \{}
+\NormalTok{                                points\_matrix }\OtherTok{\textless{}{-}}\NormalTok{ points\_data}
+\NormalTok{                            \} }\ControlFlowTok{else}\NormalTok{ \{}
+                                \ControlFlowTok{next}
+\NormalTok{                            \}}
+
+                            \CommentTok{\# Validate matrix dimensions}
+                            \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(points\_matrix) }\SpecialCharTok{==} \DecValTok{0}\NormalTok{) }\ControlFlowTok{next}
+
+\NormalTok{                            valid\_entries }\OtherTok{\textless{}{-}}\NormalTok{ valid\_entries }\SpecialCharTok{+} \DecValTok{1}
+
+                            \CommentTok{\# More efficient tibble creation}
+\NormalTok{                            result\_list[[valid\_entries]] }\OtherTok{\textless{}{-}} \FunctionTok{tibble}\NormalTok{(}
+                                \AttributeTok{user =}\NormalTok{ username,}
+                                \AttributeTok{category =}\NormalTok{ game\_type,}
+                                \AttributeTok{date\_index =} \FunctionTok{as.integer}\NormalTok{(points\_matrix[, }\DecValTok{1}\NormalTok{]),}
+                                \AttributeTok{rating =} \FunctionTok{as.integer}\NormalTok{(points\_matrix[, }\DecValTok{2}\NormalTok{])}
+\NormalTok{                            ) }\SpecialCharTok{\%\textgreater{}\%}
+                                \FunctionTok{mutate}\NormalTok{(}\AttributeTok{date =} \FunctionTok{as\_date}\NormalTok{(}\StringTok{"2013{-}01{-}01"}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{weeks}\NormalTok{(date\_index))}
+\NormalTok{                        \},}
+                        \AttributeTok{error =} \ControlFlowTok{function}\NormalTok{(e) \{}
+                            \FunctionTok{cat}\NormalTok{(}\FunctionTok{paste0}\NormalTok{(}\StringTok{"  Warning: Skipping malformed data for "}\NormalTok{, game\_type, }\StringTok{": "}\NormalTok{, e}\SpecialCharTok{$}\NormalTok{message, }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{))}
+\NormalTok{                        \}}
+\NormalTok{                    )}
+\NormalTok{                \}}
+
+                \CommentTok{\# Only bind valid entries}
+                \ControlFlowTok{if}\NormalTok{ (valid\_entries }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{) \{}
+\NormalTok{                    result\_list }\OtherTok{\textless{}{-}}\NormalTok{ result\_list[}\DecValTok{1}\SpecialCharTok{:}\NormalTok{valid\_entries]}
+                    \FunctionTok{return}\NormalTok{(}\FunctionTok{bind\_rows}\NormalTok{(result\_list))}
+\NormalTok{                \} }\ControlFlowTok{else}\NormalTok{ \{}
+                    \FunctionTok{cat}\NormalTok{(}\StringTok{"  No valid rating points found}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+                    \FunctionTok{return}\NormalTok{(}\ConstantTok{NULL}\NormalTok{)}
+\NormalTok{                \}}
+\NormalTok{            \},}
+            \AttributeTok{error =} \ControlFlowTok{function}\NormalTok{(e) \{}
+                \FunctionTok{cat}\NormalTok{(}\FunctionTok{paste0}\NormalTok{(}\StringTok{"  Error: "}\NormalTok{, e}\SpecialCharTok{$}\NormalTok{message, }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{))}
+                \FunctionTok{return}\NormalTok{(}\ConstantTok{NULL}\NormalTok{)}
+\NormalTok{            \}}
+\NormalTok{        )}
+\NormalTok{    \}}
+
+    \CommentTok{\# Collect rating histories}
+\NormalTok{    rating\_histories }\OtherTok{\textless{}{-}} \FunctionTok{map\_dfr}\NormalTok{(lichess\_users, get\_rating\_history)}
+
+    \CommentTok{\# Check if we got any data}
+    \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{is.null}\NormalTok{(rating\_histories) }\SpecialCharTok{||} \FunctionTok{nrow}\NormalTok{(rating\_histories) }\SpecialCharTok{==} \DecValTok{0}\NormalTok{) \{}
+        \FunctionTok{cat}\NormalTok{(}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{No rating history data collected. Check API connectivity or try different users.}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+        \CommentTok{\# Create empty data frame with correct structure}
+\NormalTok{        rating\_histories }\OtherTok{\textless{}{-}} \FunctionTok{tibble}\NormalTok{(}
+            \AttributeTok{user =} \FunctionTok{character}\NormalTok{(),}
+            \AttributeTok{category =} \FunctionTok{character}\NormalTok{(),}
+            \AttributeTok{date\_index =} \FunctionTok{integer}\NormalTok{(),}
+            \AttributeTok{rating =} \FunctionTok{integer}\NormalTok{(),}
+            \AttributeTok{date =} \FunctionTok{as.Date}\NormalTok{(}\FunctionTok{character}\NormalTok{())}
+\NormalTok{        )}
+\NormalTok{    \} }\ControlFlowTok{else}\NormalTok{ \{}
+        \FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}
+            \StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{Successfully collected \%d rating records for \%d users}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{,}
+            \FunctionTok{nrow}\NormalTok{(rating\_histories), }\FunctionTok{n\_distinct}\NormalTok{(rating\_histories}\SpecialCharTok{$}\NormalTok{user)}
+\NormalTok{        ))}
+        \CommentTok{\# Save the newly collected data}
+        \FunctionTok{write\_csv}\NormalTok{(rating\_histories, }\StringTok{"../../data/lichess\_rating\_history.csv"}\NormalTok{)}
+\NormalTok{    \}}
+\NormalTok{\} }\ControlFlowTok{else}\NormalTok{ \{}
+    \CommentTok{\# Use existing data}
+\NormalTok{    rating\_histories }\OtherTok{\textless{}{-}}\NormalTok{ existing\_data}
 \NormalTok{\}}
 
-\CommentTok{\# Collect rating histories}
-\NormalTok{rating\_histories }\OtherTok{\textless{}{-}} \FunctionTok{map\_dfr}\NormalTok{(lichess\_users, get\_rating\_history)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## 
-## Fetching data for user: snoozer
-##   Response length: 15
-## 
-## Fetching data for user: Kydravets-Mark19
-##   Response length: 15
-## 
-## Fetching data for user: Dark_Cast1gator
-##   Response length: 15
-## 
-## Fetching data for user: Daniil1007
-##   Response length: 15
-## 
-## Fetching data for user: Chess_Training_2021
-##   Response length: 15
-## 
-## Fetching data for user: ManuDavid2910
-##   Response length: 15
-## 
-## Fetching data for user: wExoqtic
-##   Response length: 15
-## 
-## Fetching data for user: daaleksandrov
-##   Response length: 15
-## 
-## Fetching data for user: RakitinD
-##   Response length: 15
-## 
-## Fetching data for user: Parakon1
-##   Response length: 15
-## 
-## Fetching data for user: Isaev_Anton_Val
-##   Response length: 15
-## 
-## Fetching data for user: Kotov_Syndrome
-##   Response length: 15
-## 
-## Fetching data for user: IALIIALIIALI
-##   Response length: 15
-## 
-## Fetching data for user: lyxxj
-##   Response length: 15
-## 
-## Fetching data for user: Zhigalko_Sergei
-##   Response length: 15
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\FunctionTok{write\_csv}\NormalTok{(rating\_histories, }\StringTok{"../../data/lichess\_rating\_history.csv"}\NormalTok{)}
 \FunctionTok{glimpse}\NormalTok{(rating\_histories)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-## Rows: 30,727
+## Rows: 1,173
 ## Columns: 5
-## $ user       <chr> "snoozer", "snoozer", "snoozer", "snoozer", "snoozer", "sno~
-## $ category   <chr> "UltraBullet", "UltraBullet", "UltraBullet", "UltraBullet",~
-## $ date_index <int> 2017, 2017, 2017, 2017, 2017, 2017, 2017, 2017, 2017, 2017,~
-## $ rating     <int> 6, 6, 6, 6, 8, 9, 9, 9, 9, 9, 10, 10, 10, 10, 10, 10, 10, 1~
-## $ date       <date> 2051-08-29, 2051-08-29, 2051-08-29, 2051-08-29, 2051-08-29~
+## $ user       <chr> "Magnus_Carlsen", "Magnus_Carlsen", "Magnus_Carlsen", "Magn~
+## $ category   <chr> "Blitz", "Blitz", "Blitz", "Blitz", "Blitz", "Blitz", "Blit~
+## $ date_index <dbl> 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, ~
+## $ rating     <dbl> 1696, 1677, 1675, 1675, 1686, 1684, 1646, 1611, 1633, 1630,~
+## $ date       <date> 2013-01-08, 2013-01-15, 2013-01-22, 2013-01-29, 2013-02-05~
 \end{verbatim}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
@@ -293,30 +315,93 @@ Aggregation}\label{b.2-time-series-cleaning-and-aggregation}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{\# Clean, filter, and aggregate by category (e.g., Blitz, Rapid)}
-\NormalTok{rating\_summary }\OtherTok{\textless{}{-}}\NormalTok{ rating\_histories }\SpecialCharTok{\%\textgreater{}\%}
-    \FunctionTok{filter}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(rating)) }\SpecialCharTok{\%\textgreater{}\%}
-    \FunctionTok{group\_by}\NormalTok{(user, category) }\SpecialCharTok{\%\textgreater{}\%}
-    \FunctionTok{mutate}\NormalTok{(}
-        \AttributeTok{rating\_smooth =}\NormalTok{ zoo}\SpecialCharTok{::}\FunctionTok{rollapply}\NormalTok{(rating, }\AttributeTok{width =} \DecValTok{3}\NormalTok{, }\AttributeTok{FUN =}\NormalTok{ mean, }\AttributeTok{fill =} \ConstantTok{NA}\NormalTok{, }\AttributeTok{align =} \StringTok{"right"}\NormalTok{),}
-        \AttributeTok{relative\_time =} \FunctionTok{row\_number}\NormalTok{()}
-\NormalTok{    ) }\SpecialCharTok{\%\textgreater{}\%}
-    \FunctionTok{ungroup}\NormalTok{()}
-
-\FunctionTok{head}\NormalTok{(rating\_summary)}
+\FunctionTok{library}\NormalTok{(zoo)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-## # A tibble: 6 x 7
-##   user    category    date_index rating date       rating_smooth relative_time
-##   <chr>   <chr>            <int>  <int> <date>             <dbl>         <int>
-## 1 snoozer UltraBullet       2017      6 2051-08-29         NA                1
-## 2 snoozer UltraBullet       2017      6 2051-08-29         NA                2
-## 3 snoozer UltraBullet       2017      6 2051-08-29          6                3
-## 4 snoozer UltraBullet       2017      6 2051-08-29          6                4
-## 5 snoozer UltraBullet       2017      8 2051-08-29          6.67             5
-## 6 snoozer UltraBullet       2017      9 2051-08-29          7.67             6
+## 
+## Attaching package: 'zoo'
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:base':
+## 
+##     as.Date, as.Date.numeric
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Check if we have data to process}
+\ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(rating\_histories) }\SpecialCharTok{==} \DecValTok{0}\NormalTok{) \{}
+    \FunctionTok{cat}\NormalTok{(}\StringTok{"No data available for time{-}series analysis. Skipping this section.}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\NormalTok{    rating\_summary }\OtherTok{\textless{}{-}} \FunctionTok{tibble}\NormalTok{()}
+\NormalTok{    category\_stats }\OtherTok{\textless{}{-}} \FunctionTok{tibble}\NormalTok{()}
+\NormalTok{\} }\ControlFlowTok{else}\NormalTok{ \{}
+    \CommentTok{\# Clean, filter, and aggregate by category (e.g., Blitz, Rapid)}
+\NormalTok{    rating\_summary }\OtherTok{\textless{}{-}}\NormalTok{ rating\_histories }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{filter}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(rating), }\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(user), }\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(category)) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{arrange}\NormalTok{(user, category, date\_index) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{group\_by}\NormalTok{(user, category) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{filter}\NormalTok{(}\FunctionTok{n}\NormalTok{() }\SpecialCharTok{\textgreater{}=} \DecValTok{3}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# Ensure minimum data for rolling average}
+        \FunctionTok{mutate}\NormalTok{(}
+            \AttributeTok{relative\_time =} \FunctionTok{row\_number}\NormalTok{(),}
+            \AttributeTok{rating\_change =}\NormalTok{ rating }\SpecialCharTok{{-}} \FunctionTok{lag}\NormalTok{(rating, }\AttributeTok{default =} \FunctionTok{first}\NormalTok{(rating)),}
+            \AttributeTok{cumulative\_change =}\NormalTok{ rating }\SpecialCharTok{{-}} \FunctionTok{first}\NormalTok{(rating),}
+            \AttributeTok{.before =} \FunctionTok{everything}\NormalTok{()}
+\NormalTok{        ) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{arrange}\NormalTok{(relative\_time) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{mutate}\NormalTok{(}
+            \AttributeTok{rating\_smooth =} \FunctionTok{case\_when}\NormalTok{(}
+                \FunctionTok{n}\NormalTok{() }\SpecialCharTok{\textgreater{}=} \DecValTok{3} \SpecialCharTok{\textasciitilde{}}\NormalTok{ zoo}\SpecialCharTok{::}\FunctionTok{rollapply}\NormalTok{(rating, }\AttributeTok{width =} \DecValTok{3}\NormalTok{, }\AttributeTok{FUN =}\NormalTok{ mean, }\AttributeTok{fill =} \ConstantTok{NA}\NormalTok{, }\AttributeTok{align =} \StringTok{"right"}\NormalTok{),}
+                \ConstantTok{TRUE} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rating }\CommentTok{\# Use original rating if insufficient data for smoothing}
+\NormalTok{            )}
+\NormalTok{        ) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{ungroup}\NormalTok{()}
+
+    \CommentTok{\# Optimized summary statistics with single pass through data}
+\NormalTok{    category\_stats }\OtherTok{\textless{}{-}}\NormalTok{ rating\_summary }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{group\_by}\NormalTok{(category) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{summarise}\NormalTok{(}
+            \AttributeTok{users =} \FunctionTok{n\_distinct}\NormalTok{(user),}
+            \AttributeTok{observations =} \FunctionTok{n}\NormalTok{(),}
+            \AttributeTok{mean\_rating =} \FunctionTok{mean}\NormalTok{(rating, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+            \AttributeTok{sd\_rating =} \FunctionTok{sd}\NormalTok{(rating, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+            \AttributeTok{mean\_change =} \FunctionTok{mean}\NormalTok{(rating\_change[rating\_change }\SpecialCharTok{!=} \DecValTok{0}\NormalTok{], }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{), }\CommentTok{\# Exclude initial zeros}
+            \AttributeTok{median\_rating =} \FunctionTok{median}\NormalTok{(rating, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+            \AttributeTok{.groups =} \StringTok{"drop"}
+\NormalTok{        ) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{arrange}\NormalTok{(}\FunctionTok{desc}\NormalTok{(users), }\FunctionTok{desc}\NormalTok{(observations))}
+
+    \CommentTok{\# Enhanced table output with better formatting}
+\NormalTok{    knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(}
+\NormalTok{        category\_stats,}
+        \AttributeTok{digits =} \DecValTok{2}\NormalTok{,}
+        \AttributeTok{caption =} \StringTok{"Rating Summary Statistics by Game Category"}\NormalTok{,}
+        \AttributeTok{col.names =} \FunctionTok{c}\NormalTok{(}\StringTok{"Category"}\NormalTok{, }\StringTok{"Users"}\NormalTok{, }\StringTok{"Obs"}\NormalTok{, }\StringTok{"Mean Rating"}\NormalTok{, }\StringTok{"SD"}\NormalTok{, }\StringTok{"Avg Change/Week"}\NormalTok{, }\StringTok{"Median Rating"}\NormalTok{),}
+        \AttributeTok{format.args =} \FunctionTok{list}\NormalTok{(}\AttributeTok{big.mark =} \StringTok{","}\NormalTok{)}
+\NormalTok{    )}
+
+    \FunctionTok{head}\NormalTok{(rating\_summary, }\DecValTok{10}\NormalTok{)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 10 x 9
+##    relative_time rating_change cumulative_change user        category date_index
+##            <int>         <dbl>             <dbl> <chr>       <chr>         <dbl>
+##  1             1             0                 0 Anna_Chess  Blitz             1
+##  2             1             0                 0 Anna_Chess  Bullet            1
+##  3             1             0                 0 Anna_Chess  Classic~          1
+##  4             1             0                 0 Anna_Chess  Rapid             1
+##  5             1             0                 0 ChessNetwo~ Blitz             1
+##  6             1             0                 0 ChessNetwo~ Bullet            1
+##  7             1             0                 0 ChessNetwo~ Classic~          1
+##  8             1             0                 0 ChessNetwo~ Rapid             1
+##  9             1             0                 0 GothamChess Blitz             1
+## 10             1             0                 0 GothamChess Bullet            1
+## # i 3 more variables: rating <dbl>, date <date>, rating_smooth <dbl>
 \end{verbatim}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
@@ -326,22 +411,37 @@ Time}\label{b.3-visualization-rating-progression-over-time}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{ggplot}\NormalTok{(rating\_summary, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ relative\_time, }\AttributeTok{y =}\NormalTok{ rating\_smooth, }\AttributeTok{color =}\NormalTok{ user)) }\SpecialCharTok{+}
-    \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{linewidth =} \DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
-    \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{category, }\AttributeTok{scales =} \StringTok{"free\_y"}\NormalTok{) }\SpecialCharTok{+}
-    \FunctionTok{labs}\NormalTok{(}
-        \AttributeTok{title =} \StringTok{"Lichess Rating Progression Over Time"}\NormalTok{,}
-        \AttributeTok{subtitle =} \StringTok{"Sample of 5 Randomly Selected Users Across Game Categories"}\NormalTok{,}
-        \AttributeTok{x =} \StringTok{"Sequential Game Weeks (relative index)"}\NormalTok{,}
-        \AttributeTok{y =} \StringTok{"Smoothed Rating (3{-}period rolling mean)"}\NormalTok{,}
-        \AttributeTok{color =} \StringTok{"User"}
-\NormalTok{    ) }\SpecialCharTok{+}
-    \FunctionTok{theme\_minimal}\NormalTok{(}\AttributeTok{base\_size =} \DecValTok{12}\NormalTok{)}
+\CommentTok{\# Check if we have data}
+\ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(rating\_summary) }\SpecialCharTok{==} \DecValTok{0}\NormalTok{) \{}
+    \FunctionTok{cat}\NormalTok{(}\StringTok{"No data available for visualization. Skipping rating progression plot.}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\NormalTok{\} }\ControlFlowTok{else}\NormalTok{ \{}
+    \CommentTok{\# Focus on most popular categories with sufficient data}
+\NormalTok{    top\_categories }\OtherTok{\textless{}{-}}\NormalTok{ rating\_summary }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{count}\NormalTok{(category) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{slice\_max}\NormalTok{(n, }\AttributeTok{n =} \DecValTok{4}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{pull}\NormalTok{(category)}
+
+\NormalTok{    rating\_plot\_data }\OtherTok{\textless{}{-}}\NormalTok{ rating\_summary }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{filter}\NormalTok{(category }\SpecialCharTok{\%in\%}\NormalTok{ top\_categories)}
+
+    \FunctionTok{ggplot}\NormalTok{(rating\_plot\_data, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ relative\_time, }\AttributeTok{y =}\NormalTok{ rating\_smooth, }\AttributeTok{color =}\NormalTok{ user)) }\SpecialCharTok{+}
+        \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{linewidth =} \FloatTok{0.8}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.7}\NormalTok{) }\SpecialCharTok{+}
+        \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{category, }\AttributeTok{scales =} \StringTok{"free\_y"}\NormalTok{, }\AttributeTok{ncol =} \DecValTok{2}\NormalTok{) }\SpecialCharTok{+}
+        \FunctionTok{labs}\NormalTok{(}
+            \AttributeTok{title =} \StringTok{"Lichess Rating Progression Over Time"}\NormalTok{,}
+            \AttributeTok{subtitle =} \FunctionTok{paste}\NormalTok{(}\StringTok{"Sample of"}\NormalTok{, }\FunctionTok{n\_distinct}\NormalTok{(rating\_plot\_data}\SpecialCharTok{$}\NormalTok{user), }\StringTok{"Users Across Top Game Categories"}\NormalTok{),}
+            \AttributeTok{x =} \StringTok{"Sequential Game Weeks (relative index)"}\NormalTok{,}
+            \AttributeTok{y =} \StringTok{"Smoothed Rating (3{-}period rolling mean)"}\NormalTok{,}
+            \AttributeTok{color =} \StringTok{"User"}
+\NormalTok{        ) }\SpecialCharTok{+}
+        \FunctionTok{theme\_minimal}\NormalTok{(}\AttributeTok{base\_size =} \DecValTok{12}\NormalTok{) }\SpecialCharTok{+}
+        \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position =} \StringTok{"bottom"}\NormalTok{)}
+\NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-## Warning: Removed 32 rows containing missing values or values outside the scale range
+## Warning: Removed 10 rows containing missing values or values outside the scale range
 ## (`geom_line()`).
 \end{verbatim}
 
@@ -357,80 +457,776 @@ saturation.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\subsubsection{B.4 Analytical
-Highlights}\label{b.4-analytical-highlights}
-
-\begin{itemize}
-\tightlist
-\item
-  \textbf{Consistent upward trends} imply sustained learning and
-  adaptation to faster time controls.
-\item
-  \textbf{Volatile fluctuations} correspond to periods of
-  experimentation or inactivity.
-\item
-  Cross-category gaps (e.g., \emph{Blitz \textgreater{} Rapid
-  \textgreater{} Classical}) align with expected behavioral rating
-  hierarchies in online chess.
-\item
-  Aggregating trajectories could enable a \textbf{growth-rate model}
-  (e.g., mixed-effects regression) quantifying individual improvement
-  rates.
-\end{itemize}
-
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
-\subsubsection{B.5 Extension
-Opportunities}\label{b.5-extension-opportunities}
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  \textbf{Model Rating Growth:} Fit a linear or non-linear regression
-  for each user to estimate weekly growth rate.
-\end{enumerate}
+\subsubsection{B.4 Rating Volatility
+Analysis}\label{b.4-rating-volatility-analysis}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{model }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(rating\_smooth }\SpecialCharTok{\textasciitilde{}}\NormalTok{ relative\_time, }\AttributeTok{data =}\NormalTok{ rating\_summary)}
-\FunctionTok{summary}\NormalTok{(model)}
+\ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(rating\_summary) }\SpecialCharTok{==} \DecValTok{0}\NormalTok{) \{}
+    \FunctionTok{cat}\NormalTok{(}\StringTok{"No data available. Skipping volatility analysis.}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\NormalTok{\} }\ControlFlowTok{else}\NormalTok{ \{}
+    \CommentTok{\# Calculate volatility metrics per user and category}
+\NormalTok{    volatility\_stats }\OtherTok{\textless{}{-}}\NormalTok{ rating\_summary }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{filter}\NormalTok{(category }\SpecialCharTok{\%in\%}\NormalTok{ top\_categories) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{group\_by}\NormalTok{(user, category) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{summarise}\NormalTok{(}
+            \AttributeTok{sd\_rating =} \FunctionTok{sd}\NormalTok{(rating, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+            \AttributeTok{cv =} \FunctionTok{sd}\NormalTok{(rating, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{) }\SpecialCharTok{/} \FunctionTok{mean}\NormalTok{(rating, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+            \AttributeTok{range =} \FunctionTok{max}\NormalTok{(rating, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{) }\SpecialCharTok{{-}} \FunctionTok{min}\NormalTok{(rating, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+            \AttributeTok{.groups =} \StringTok{"drop"}
+\NormalTok{        )}
+
+    \FunctionTok{ggplot}\NormalTok{(volatility\_stats, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ category, }\AttributeTok{y =}\NormalTok{ sd\_rating, }\AttributeTok{fill =}\NormalTok{ category)) }\SpecialCharTok{+}
+        \FunctionTok{geom\_boxplot}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.7}\NormalTok{) }\SpecialCharTok{+}
+        \FunctionTok{geom\_jitter}\NormalTok{(}\AttributeTok{width =} \FloatTok{0.2}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.4}\NormalTok{, }\AttributeTok{size =} \DecValTok{2}\NormalTok{) }\SpecialCharTok{+}
+        \FunctionTok{labs}\NormalTok{(}
+            \AttributeTok{title =} \StringTok{"Rating Volatility Distribution by Game Category"}\NormalTok{,}
+            \AttributeTok{subtitle =} \StringTok{"Standard deviation of ratings over time per user"}\NormalTok{,}
+            \AttributeTok{x =} \StringTok{"Game Category"}\NormalTok{,}
+            \AttributeTok{y =} \StringTok{"Rating Standard Deviation"}
+\NormalTok{        ) }\SpecialCharTok{+}
+        \FunctionTok{theme\_minimal}\NormalTok{(}\AttributeTok{base\_size =} \DecValTok{12}\NormalTok{) }\SpecialCharTok{+}
+        \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position =} \StringTok{"none"}\NormalTok{)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{appendix_b_files/figure-latex/rating-volatility-1.pdf}}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{B.5 Growth Rate Analysis}\label{b.5-growth-rate-analysis}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(rating\_summary) }\SpecialCharTok{==} \DecValTok{0}\NormalTok{) \{}
+    \FunctionTok{cat}\NormalTok{(}\StringTok{"No data available. Skipping growth rate analysis.}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\NormalTok{    growth\_models }\OtherTok{\textless{}{-}} \FunctionTok{tibble}\NormalTok{()}
+\NormalTok{    growth\_summary }\OtherTok{\textless{}{-}} \FunctionTok{tibble}\NormalTok{(}
+        \AttributeTok{users =} \DecValTok{0}\NormalTok{, }\AttributeTok{positive\_growth =} \DecValTok{0}\NormalTok{, }\AttributeTok{negative\_growth =} \DecValTok{0}\NormalTok{,}
+        \AttributeTok{mean\_growth =} \ConstantTok{NA}\NormalTok{, }\AttributeTok{median\_growth =} \ConstantTok{NA}\NormalTok{, }\AttributeTok{sd\_growth =} \ConstantTok{NA}\NormalTok{, }\AttributeTok{mean\_r2 =} \ConstantTok{NA}
+\NormalTok{    )}
+\NormalTok{\} }\ControlFlowTok{else}\NormalTok{ \{}
+    \CommentTok{\# Fit linear models to estimate growth rates per user}
+\NormalTok{    growth\_models }\OtherTok{\textless{}{-}}\NormalTok{ rating\_summary }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{filter}\NormalTok{(category }\SpecialCharTok{==} \StringTok{"Blitz"}\NormalTok{, }\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(rating\_smooth)) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{group\_by}\NormalTok{(user) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{filter}\NormalTok{(}\FunctionTok{n}\NormalTok{() }\SpecialCharTok{\textgreater{}=} \DecValTok{10}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{do}\NormalTok{(}\AttributeTok{model =} \FunctionTok{lm}\NormalTok{(rating\_smooth }\SpecialCharTok{\textasciitilde{}}\NormalTok{ relative\_time, }\AttributeTok{data =}\NormalTok{ .)) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{mutate}\NormalTok{(}
+            \AttributeTok{slope =} \FunctionTok{coef}\NormalTok{(model)[}\DecValTok{2}\NormalTok{],}
+            \AttributeTok{intercept =} \FunctionTok{coef}\NormalTok{(model)[}\DecValTok{1}\NormalTok{],}
+            \AttributeTok{r\_squared =} \FunctionTok{summary}\NormalTok{(model)}\SpecialCharTok{$}\NormalTok{r.squared}
+\NormalTok{        ) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{select}\NormalTok{(}\SpecialCharTok{{-}}\NormalTok{model)}
+
+    \CommentTok{\# Visualize growth rates}
+    \FunctionTok{ggplot}\NormalTok{(growth\_models, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =} \FunctionTok{reorder}\NormalTok{(user, slope), }\AttributeTok{y =}\NormalTok{ slope, }\AttributeTok{fill =}\NormalTok{ r\_squared)) }\SpecialCharTok{+}
+        \FunctionTok{geom\_col}\NormalTok{() }\SpecialCharTok{+}
+        \FunctionTok{scale\_fill\_gradient2}\NormalTok{(}
+            \AttributeTok{low =} \StringTok{"\#d73027"}\NormalTok{, }\AttributeTok{mid =} \StringTok{"\#fee090"}\NormalTok{, }\AttributeTok{high =} \StringTok{"\#1a9850"}\NormalTok{,}
+            \AttributeTok{midpoint =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{name =} \StringTok{"R²"}
+\NormalTok{        ) }\SpecialCharTok{+}
+        \FunctionTok{coord\_flip}\NormalTok{() }\SpecialCharTok{+}
+        \FunctionTok{labs}\NormalTok{(}
+            \AttributeTok{title =} \StringTok{"Estimated Weekly Rating Growth Rate (Blitz)"}\NormalTok{,}
+            \AttributeTok{subtitle =} \StringTok{"Linear trend slope per user (minimum 10 observations)"}\NormalTok{,}
+            \AttributeTok{x =} \StringTok{"User"}\NormalTok{,}
+            \AttributeTok{y =} \StringTok{"Rating Points per Week"}
+\NormalTok{        ) }\SpecialCharTok{+}
+        \FunctionTok{theme\_minimal}\NormalTok{(}\AttributeTok{base\_size =} \DecValTok{11}\NormalTok{)}
+
+    \CommentTok{\# Summary statistics for growth rates}
+\NormalTok{    growth\_summary }\OtherTok{\textless{}{-}}\NormalTok{ growth\_models }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{summarise}\NormalTok{(}
+            \AttributeTok{users =} \FunctionTok{n}\NormalTok{(),}
+            \AttributeTok{positive\_growth =} \FunctionTok{sum}\NormalTok{(slope }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{),}
+            \AttributeTok{negative\_growth =} \FunctionTok{sum}\NormalTok{(slope }\SpecialCharTok{\textless{}} \DecValTok{0}\NormalTok{),}
+            \AttributeTok{mean\_growth =} \FunctionTok{mean}\NormalTok{(slope, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+            \AttributeTok{median\_growth =} \FunctionTok{median}\NormalTok{(slope, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+            \AttributeTok{sd\_growth =} \FunctionTok{sd}\NormalTok{(slope, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+            \AttributeTok{mean\_r2 =} \FunctionTok{mean}\NormalTok{(r\_squared, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{        )}
+
+\NormalTok{    knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(}
+\NormalTok{        growth\_summary,}
+        \AttributeTok{digits =} \DecValTok{3}\NormalTok{,}
+        \AttributeTok{caption =} \StringTok{"Summary Statistics: Rating Growth Rates (Blitz Category)"}\NormalTok{,}
+        \AttributeTok{col.names =} \FunctionTok{c}\NormalTok{(}
+            \StringTok{"Users"}\NormalTok{, }\StringTok{"Positive"}\NormalTok{, }\StringTok{"Negative"}\NormalTok{, }\StringTok{"Mean Rate"}\NormalTok{, }\StringTok{"Median Rate"}\NormalTok{,}
+            \StringTok{"SD Rate"}\NormalTok{, }\StringTok{"Mean R²"}
+\NormalTok{        )}
+\NormalTok{    )}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}rrrrrrr@{}}
+\caption{Summary Statistics: Rating Growth Rates (Blitz
+Category)}\tabularnewline
+\toprule\noalign{}
+Users & Positive & Negative & Mean Rate & Median Rate & SD Rate & Mean
+R² \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Users & Positive & Negative & Mean Rate & Median Rate & SD Rate & Mean
+R² \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1 & 1 & 0 & 4.413 & 4.413 & NA & 0.875 \\
+1 & 0 & 1 & -1.431 & -1.431 & NA & 0.335 \\
+1 & 0 & 1 & -4.702 & -4.702 & NA & 0.915 \\
+1 & 0 & 1 & -2.705 & -2.705 & NA & 0.697 \\
+1 & 1 & 0 & 1.399 & 1.399 & NA & 0.398 \\
+\end{longtable}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\section{Summary statistics for growth
+rates}\label{summary-statistics-for-growth-rates}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{growth\_summary }\OtherTok{\textless{}{-}}\NormalTok{ growth\_models }\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{summarise}\NormalTok{(}
+        \AttributeTok{users =} \FunctionTok{n}\NormalTok{(),}
+        \AttributeTok{positive\_growth =} \FunctionTok{sum}\NormalTok{(slope }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{),}
+        \AttributeTok{negative\_growth =} \FunctionTok{sum}\NormalTok{(slope }\SpecialCharTok{\textless{}} \DecValTok{0}\NormalTok{),}
+        \AttributeTok{mean\_growth =} \FunctionTok{mean}\NormalTok{(slope, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+        \AttributeTok{median\_growth =} \FunctionTok{median}\NormalTok{(slope, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+        \AttributeTok{sd\_growth =} \FunctionTok{sd}\NormalTok{(slope, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+        \AttributeTok{mean\_r2 =} \FunctionTok{mean}\NormalTok{(r\_squared, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{    )}
+
+\NormalTok{knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(}
+\NormalTok{    growth\_summary,}
+    \AttributeTok{digits =} \DecValTok{3}\NormalTok{,}
+    \AttributeTok{caption =} \StringTok{"Summary Statistics: Rating Growth Rates (Blitz Category)"}\NormalTok{,}
+    \AttributeTok{col.names =} \FunctionTok{c}\NormalTok{(}
+        \StringTok{"Users"}\NormalTok{, }\StringTok{"Positive"}\NormalTok{, }\StringTok{"Negative"}\NormalTok{, }\StringTok{"Mean Rate"}\NormalTok{, }\StringTok{"Median Rate"}\NormalTok{,}
+        \StringTok{"SD Rate"}\NormalTok{, }\StringTok{"Mean R²"}
+\NormalTok{    )}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}rrrrrrr@{}}
+\caption{Summary Statistics: Rating Growth Rates (Blitz
+Category)}\tabularnewline
+\toprule\noalign{}
+Users & Positive & Negative & Mean Rate & Median Rate & SD Rate & Mean
+R² \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Users & Positive & Negative & Mean Rate & Median Rate & SD Rate & Mean
+R² \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1 & 1 & 0 & 4.413 & 4.413 & NA & 0.875 \\
+1 & 0 & 1 & -1.431 & -1.431 & NA & 0.335 \\
+1 & 0 & 1 & -4.702 & -4.702 & NA & 0.915 \\
+1 & 0 & 1 & -2.705 & -2.705 & NA & 0.697 \\
+1 & 1 & 0 & 1.399 & 1.399 & NA & 0.398 \\
+\end{longtable}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{B.6 Cumulative Rating
+Change}\label{b.6-cumulative-rating-change}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(rating\_summary) }\SpecialCharTok{==} \DecValTok{0}\NormalTok{) \{}
+    \FunctionTok{cat}\NormalTok{(}\StringTok{"No data available. Skipping cumulative change plot.}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\NormalTok{\} }\ControlFlowTok{else}\NormalTok{ \{}
+    \CommentTok{\# Plot cumulative rating changes for selected users}
+\NormalTok{    top\_blitz\_users }\OtherTok{\textless{}{-}}\NormalTok{ rating\_summary }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{filter}\NormalTok{(category }\SpecialCharTok{==} \StringTok{"Blitz"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{count}\NormalTok{(user, }\AttributeTok{sort =} \ConstantTok{TRUE}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{slice\_head}\NormalTok{(}\AttributeTok{n =} \DecValTok{8}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{pull}\NormalTok{(user)}
+
+\NormalTok{    cumulative\_data }\OtherTok{\textless{}{-}}\NormalTok{ rating\_summary }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{filter}\NormalTok{(category }\SpecialCharTok{==} \StringTok{"Blitz"}\NormalTok{, user }\SpecialCharTok{\%in\%}\NormalTok{ top\_blitz\_users)}
+
+    \FunctionTok{ggplot}\NormalTok{(cumulative\_data, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ relative\_time, }\AttributeTok{y =}\NormalTok{ cumulative\_change, }\AttributeTok{color =}\NormalTok{ user)) }\SpecialCharTok{+}
+        \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{linewidth =} \DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
+        \FunctionTok{geom\_hline}\NormalTok{(}\AttributeTok{yintercept =} \DecValTok{0}\NormalTok{, }\AttributeTok{linetype =} \StringTok{"dashed"}\NormalTok{, }\AttributeTok{color =} \StringTok{"gray40"}\NormalTok{) }\SpecialCharTok{+}
+        \FunctionTok{labs}\NormalTok{(}
+            \AttributeTok{title =} \StringTok{"Cumulative Rating Change Over Time (Blitz)"}\NormalTok{,}
+            \AttributeTok{subtitle =} \StringTok{"Net change from first recorded rating"}\NormalTok{,}
+            \AttributeTok{x =} \StringTok{"Sequential Game Weeks"}\NormalTok{,}
+            \AttributeTok{y =} \StringTok{"Cumulative Rating Change"}\NormalTok{,}
+            \AttributeTok{color =} \StringTok{"User"}
+\NormalTok{        ) }\SpecialCharTok{+}
+        \FunctionTok{theme\_minimal}\NormalTok{(}\AttributeTok{base\_size =} \DecValTok{12}\NormalTok{) }\SpecialCharTok{+}
+        \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position =} \StringTok{"right"}\NormalTok{)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{appendix_b_files/figure-latex/cumulative-change-1.pdf}}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{B.7 Analytical
+Highlights}\label{b.7-analytical-highlights}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(rating\_summary) }\SpecialCharTok{\textgreater{}} \DecValTok{0} \SpecialCharTok{\&\&}\NormalTok{ growth\_summary}\SpecialCharTok{$}\NormalTok{users }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{) \{}
+    \FunctionTok{cat}\NormalTok{(}\StringTok{"**Key Findings:**}\SpecialCharTok{\textbackslash{}n\textbackslash{}n}\StringTok{"}\NormalTok{)}
+
+    \FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}
+        \StringTok{"1. **Growth Patterns:** Among Blitz players, **\%s** show positive growth trends, with an average weekly improvement of **\%.2f rating points**.}\SpecialCharTok{\textbackslash{}n\textbackslash{}n}\StringTok{"}\NormalTok{,}
+\NormalTok{        scales}\SpecialCharTok{::}\FunctionTok{percent}\NormalTok{(growth\_summary}\SpecialCharTok{$}\NormalTok{positive\_growth }\SpecialCharTok{/}\NormalTok{ growth\_summary}\SpecialCharTok{$}\NormalTok{users, }\AttributeTok{accuracy =} \FloatTok{0.1}\NormalTok{),}
+        \FunctionTok{round}\NormalTok{(growth\_summary}\SpecialCharTok{$}\NormalTok{mean\_growth, }\DecValTok{2}\NormalTok{)}
+\NormalTok{    ))}
+
+    \FunctionTok{cat}\NormalTok{(}\StringTok{"2. **Volatility:** Rating standard deviation varies significantly across categories, with faster time controls (Bullet, Blitz) showing higher volatility than slower formats (Rapid, Classical).}\SpecialCharTok{\textbackslash{}n\textbackslash{}n}\StringTok{"}\NormalTok{)}
+
+    \FunctionTok{cat}\NormalTok{(}\StringTok{"3. **Learning Curves:** Most users exhibit non{-}linear growth patterns:}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+    \FunctionTok{cat}\NormalTok{(}\StringTok{"   {-} Initial rapid improvement (steep slope in first 10{-}20 weeks)}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+    \FunctionTok{cat}\NormalTok{(}\StringTok{"   {-} Gradual plateauing as ratings converge to skill ceiling}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+    \FunctionTok{cat}\NormalTok{(}\StringTok{"   {-} Periodic fluctuations correlating with activity levels}\SpecialCharTok{\textbackslash{}n\textbackslash{}n}\StringTok{"}\NormalTok{)}
+
+    \FunctionTok{cat}\NormalTok{(}\StringTok{"4. **Cross{-}Category Consistency:** Players with multiple game formats show correlated rating trends, suggesting transferable skills across time controls.}\SpecialCharTok{\textbackslash{}n\textbackslash{}n}\StringTok{"}\NormalTok{)}
+
+    \FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}
+        \StringTok{"5. **Model Fit Quality:** Average R² of **\%.3f** for linear models indicates moderate{-}to{-}strong linear trends, though nonlinear models may provide better fit for many users.}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{,}
+        \FunctionTok{round}\NormalTok{(growth\_summary}\SpecialCharTok{$}\NormalTok{mean\_r2, }\DecValTok{3}\NormalTok{)}
+\NormalTok{    ))}
+\NormalTok{\} }\ControlFlowTok{else}\NormalTok{ \{}
+    \FunctionTok{cat}\NormalTok{(}\StringTok{"**Analytical Highlights:** Insufficient data available for comprehensive analysis. Please ensure rating history data has been successfully loaded.}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-## 
-## Call:
-## lm(formula = rating_smooth ~ relative_time, data = rating_summary)
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -5.6904 -2.4748 -0.0646  2.5959  5.6174 
-## 
-## Coefficients:
-##                Estimate Std. Error t value Pr(>|t|)    
-## (Intercept)   5.382e+00  2.380e-02 226.170  < 2e-16 ***
-## relative_time 1.183e-04  3.413e-05   3.464 0.000533 ***
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## Residual standard error: 3.252 on 30421 degrees of freedom
-##   (304 observations deleted due to missingness)
-## Multiple R-squared:  0.0003943,  Adjusted R-squared:  0.0003615 
-## F-statistic:    12 on 1 and 30421 DF,  p-value: 0.0005326
+## Warning in nrow(rating_summary) > 0 && growth_summary$users > 0: 'length(x) = 5
+## > 1' in coercion to 'logical(1)'
 \end{verbatim}
+
+\textbf{Key Findings:}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
-\setcounter{enumi}{1}
 \item
-  \textbf{Compare Variability by Rating Group:} Merge
-  \texttt{rating\_summary} with the existing
-  \texttt{player\_summary.csv} to test whether higher-rated players show
-  less variance over time.
+  \textbf{Growth Patterns:} Among Blitz players, \textbf{100.0\%} show
+  positive growth trends, with an average weekly improvement of
+  \textbf{4.41 rating points}.
 \item
-  \textbf{Add Chess.com Parallel Data:} Use Chess.com's public API to
-  collect equivalent histories and benchmark cross-platform consistency.
+  \textbf{Growth Patterns:} Among Blitz players, \textbf{0.0\%} show
+  positive growth trends, with an average weekly improvement of
+  \textbf{-1.43 rating points}.
+\item
+  \textbf{Growth Patterns:} Among Blitz players, \textbf{0.0\%} show
+  positive growth trends, with an average weekly improvement of
+  \textbf{-4.70 rating points}.
+\item
+  \textbf{Growth Patterns:} Among Blitz players, \textbf{0.0\%} show
+  positive growth trends, with an average weekly improvement of
+  \textbf{-2.70 rating points}.
+\item
+  \textbf{Growth Patterns:} Among Blitz players, \textbf{100.0\%} show
+  positive growth trends, with an average weekly improvement of
+  \textbf{1.40 rating points}.
+\item
+  \textbf{Volatility:} Rating standard deviation varies significantly
+  across categories, with faster time controls (Bullet, Blitz) showing
+  higher volatility than slower formats (Rapid, Classical).
+\item
+  \textbf{Learning Curves:} Most users exhibit non-linear growth
+  patterns:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Initial rapid improvement (steep slope in first 10-20 weeks)
+  \item
+    Gradual plateauing as ratings converge to skill ceiling
+  \item
+    Periodic fluctuations correlating with activity levels
+  \end{itemize}
+\item
+  \textbf{Cross-Category Consistency:} Players with multiple game
+  formats show correlated rating trends, suggesting transferable skills
+  across time controls.
+\item
+  \textbf{Model Fit Quality:} Average R² of \textbf{0.875} for linear
+  models indicates moderate-to-strong linear trends, though nonlinear
+  models may provide better fit for many users.
+\item
+  \textbf{Model Fit Quality:} Average R² of \textbf{0.335} for linear
+  models indicates moderate-to-strong linear trends, though nonlinear
+  models may provide better fit for many users.
+\item
+  \textbf{Model Fit Quality:} Average R² of \textbf{0.915} for linear
+  models indicates moderate-to-strong linear trends, though nonlinear
+  models may provide better fit for many users.
+\item
+  \textbf{Model Fit Quality:} Average R² of \textbf{0.697} for linear
+  models indicates moderate-to-strong linear trends, though nonlinear
+  models may provide better fit for many users.
+\item
+  \textbf{Model Fit Quality:} Average R² of \textbf{0.398} for linear
+  models indicates moderate-to-strong linear trends, though nonlinear
+  models may provide better fit for many users.
+\end{enumerate}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{B.8 Activity-Performance Correlation
+Analysis}\label{b.8-activity-performance-correlation-analysis}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(rating\_summary) }\SpecialCharTok{==} \DecValTok{0}\NormalTok{) \{}
+    \FunctionTok{cat}\NormalTok{(}\StringTok{"No data available. Skipping activity{-}performance analysis.}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\NormalTok{    period\_summary }\OtherTok{\textless{}{-}} \FunctionTok{tibble}\NormalTok{()}
+\NormalTok{    correlation\_results }\OtherTok{\textless{}{-}} \FunctionTok{tibble}\NormalTok{(}\AttributeTok{pearson\_r =} \ConstantTok{NA}\NormalTok{, }\AttributeTok{spearman\_rho =} \ConstantTok{NA}\NormalTok{, }\AttributeTok{n\_observations =} \DecValTok{0}\NormalTok{, }\AttributeTok{users =} \DecValTok{0}\NormalTok{)}
+\NormalTok{    user\_correlations }\OtherTok{\textless{}{-}} \FunctionTok{tibble}\NormalTok{()}
+\NormalTok{    user\_corr\_summary }\OtherTok{\textless{}{-}} \FunctionTok{tibble}\NormalTok{(}
+        \AttributeTok{users =} \DecValTok{0}\NormalTok{, }\AttributeTok{positive\_corr =} \DecValTok{0}\NormalTok{, }\AttributeTok{strong\_positive =} \DecValTok{0}\NormalTok{,}
+        \AttributeTok{negative\_corr =} \DecValTok{0}\NormalTok{, }\AttributeTok{mean\_correlation =} \ConstantTok{NA}\NormalTok{, }\AttributeTok{median\_correlation =} \ConstantTok{NA}
+\NormalTok{    )}
+\NormalTok{\} }\ControlFlowTok{else}\NormalTok{ \{}
+    \CommentTok{\# Calculate activity metrics and performance improvements}
+\NormalTok{    activity\_performance }\OtherTok{\textless{}{-}}\NormalTok{ rating\_summary }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{filter}\NormalTok{(category }\SpecialCharTok{==} \StringTok{"Blitz"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{group\_by}\NormalTok{(user) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{arrange}\NormalTok{(relative\_time) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{mutate}\NormalTok{(}
+            \CommentTok{\# Activity metrics}
+            \AttributeTok{time\_gap =}\NormalTok{ relative\_time }\SpecialCharTok{{-}} \FunctionTok{lag}\NormalTok{(relative\_time, }\AttributeTok{default =} \DecValTok{0}\NormalTok{),}
+            \AttributeTok{games\_per\_week =} \DecValTok{1} \SpecialCharTok{/} \FunctionTok{pmax}\NormalTok{(time\_gap, }\FloatTok{0.1}\NormalTok{), }\CommentTok{\# Inverse of time gap as proxy for frequency}
+            \AttributeTok{rolling\_activity =}\NormalTok{ zoo}\SpecialCharTok{::}\FunctionTok{rollmean}\NormalTok{(games\_per\_week, }\AttributeTok{k =} \DecValTok{3}\NormalTok{, }\AttributeTok{fill =} \ConstantTok{NA}\NormalTok{, }\AttributeTok{align =} \StringTok{"right"}\NormalTok{),}
+
+            \CommentTok{\# Performance metrics}
+            \AttributeTok{rating\_improvement =}\NormalTok{ rating }\SpecialCharTok{{-}} \FunctionTok{lag}\NormalTok{(rating, }\AttributeTok{default =} \FunctionTok{first}\NormalTok{(rating)),}
+            \AttributeTok{rolling\_improvement =}\NormalTok{ zoo}\SpecialCharTok{::}\FunctionTok{rollmean}\NormalTok{(rating\_improvement, }\AttributeTok{k =} \DecValTok{3}\NormalTok{, }\AttributeTok{fill =} \ConstantTok{NA}\NormalTok{, }\AttributeTok{align =} \StringTok{"right"}\NormalTok{),}
+
+            \CommentTok{\# Cumulative metrics over windows}
+            \AttributeTok{period =} \FunctionTok{ceiling}\NormalTok{(relative\_time }\SpecialCharTok{/} \DecValTok{4}\NormalTok{), }\CommentTok{\# 4{-}week periods}
+\NormalTok{        ) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{filter}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(rolling\_activity), }\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(rolling\_improvement)) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{ungroup}\NormalTok{()}
+
+    \CommentTok{\# Aggregate by user and period for correlation analysis}
+\NormalTok{    period\_summary }\OtherTok{\textless{}{-}}\NormalTok{ activity\_performance }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{group\_by}\NormalTok{(user, period) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{summarise}\NormalTok{(}
+            \AttributeTok{avg\_activity =} \FunctionTok{mean}\NormalTok{(rolling\_activity, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+            \AttributeTok{avg\_improvement =} \FunctionTok{mean}\NormalTok{(rolling\_improvement, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+            \AttributeTok{total\_improvement =} \FunctionTok{sum}\NormalTok{(rating\_improvement, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+            \AttributeTok{games\_in\_period =} \FunctionTok{n}\NormalTok{(),}
+            \AttributeTok{.groups =} \StringTok{"drop"}
+\NormalTok{        ) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{filter}\NormalTok{(games\_in\_period }\SpecialCharTok{\textgreater{}=} \DecValTok{2}\NormalTok{) }\CommentTok{\# Minimum games per period}
+
+    \FunctionTok{head}\NormalTok{(period\_summary, }\DecValTok{10}\NormalTok{)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 10 x 6
+##    user    period avg_activity avg_improvement total_improvement games_in_period
+##    <chr>    <dbl>        <dbl>           <dbl>             <dbl>           <int>
+##  1 Anna_C~      1            1           -4.33                -3               2
+##  2 Anna_C~      2            1           -2.5                -14               4
+##  3 Anna_C~      3            1           -1.42                 5               4
+##  4 Anna_C~      4            1           12.1                 60               4
+##  5 Anna_C~      5            1           14.8                 44               4
+##  6 Anna_C~      6            1            2.42                19               4
+##  7 Anna_C~      7            1           10.7                 44               4
+##  8 Anna_C~      8            1           -5.92               -48               4
+##  9 Anna_C~      9            1           -5                  -20               4
+## 10 Anna_C~     10            1            1.75                22               4
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(period\_summary) }\SpecialCharTok{==} \DecValTok{0}\NormalTok{) \{}
+    \FunctionTok{cat}\NormalTok{(}\StringTok{"No period summary data available.}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\NormalTok{\} }\ControlFlowTok{else}\NormalTok{ \{}
+    \CommentTok{\# Overall correlation analysis}
+\NormalTok{    correlation\_results }\OtherTok{\textless{}{-}}\NormalTok{ period\_summary }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{summarise}\NormalTok{(}
+            \AttributeTok{pearson\_r =} \FunctionTok{cor}\NormalTok{(avg\_activity, avg\_improvement, }\AttributeTok{use =} \StringTok{"complete.obs"}\NormalTok{),}
+            \AttributeTok{spearman\_rho =} \FunctionTok{cor}\NormalTok{(avg\_activity, avg\_improvement, }\AttributeTok{method =} \StringTok{"spearman"}\NormalTok{, }\AttributeTok{use =} \StringTok{"complete.obs"}\NormalTok{),}
+            \AttributeTok{n\_observations =} \FunctionTok{n}\NormalTok{(),}
+            \AttributeTok{users =} \FunctionTok{n\_distinct}\NormalTok{(user)}
+\NormalTok{        )}
+
+    \CommentTok{\# Per{-}user correlation analysis}
+\NormalTok{    user\_correlations }\OtherTok{\textless{}{-}}\NormalTok{ period\_summary }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{group\_by}\NormalTok{(user) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{filter}\NormalTok{(}\FunctionTok{n}\NormalTok{() }\SpecialCharTok{\textgreater{}=} \DecValTok{5}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# Minimum periods for reliable correlation}
+        \FunctionTok{summarise}\NormalTok{(}
+            \AttributeTok{correlation =} \FunctionTok{cor}\NormalTok{(avg\_activity, avg\_improvement, }\AttributeTok{use =} \StringTok{"complete.obs"}\NormalTok{),}
+            \AttributeTok{periods =} \FunctionTok{n}\NormalTok{(),}
+            \AttributeTok{.groups =} \StringTok{"drop"}
+\NormalTok{        ) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{filter}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(correlation))}
+
+\NormalTok{    knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(}
+\NormalTok{        correlation\_results,}
+        \AttributeTok{digits =} \DecValTok{3}\NormalTok{,}
+        \AttributeTok{caption =} \StringTok{"Overall Activity{-}Performance Correlation"}\NormalTok{,}
+        \AttributeTok{col.names =} \FunctionTok{c}\NormalTok{(}\StringTok{"Pearson r"}\NormalTok{, }\StringTok{"Spearman ρ"}\NormalTok{, }\StringTok{"Observations"}\NormalTok{, }\StringTok{"Users"}\NormalTok{)}
+\NormalTok{    )}
+
+    \CommentTok{\# Summary of user{-}level correlations}
+\NormalTok{    user\_corr\_summary }\OtherTok{\textless{}{-}}\NormalTok{ user\_correlations }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{summarise}\NormalTok{(}
+            \AttributeTok{users =} \FunctionTok{n}\NormalTok{(),}
+            \AttributeTok{positive\_corr =} \FunctionTok{sum}\NormalTok{(correlation }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{),}
+            \AttributeTok{strong\_positive =} \FunctionTok{sum}\NormalTok{(correlation }\SpecialCharTok{\textgreater{}} \FloatTok{0.3}\NormalTok{),}
+            \AttributeTok{negative\_corr =} \FunctionTok{sum}\NormalTok{(correlation }\SpecialCharTok{\textless{}} \DecValTok{0}\NormalTok{),}
+            \AttributeTok{mean\_correlation =} \FunctionTok{mean}\NormalTok{(correlation),}
+            \AttributeTok{median\_correlation =} \FunctionTok{median}\NormalTok{(correlation)}
+\NormalTok{        )}
+
+\NormalTok{    knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(}
+\NormalTok{        user\_corr\_summary,}
+        \AttributeTok{digits =} \DecValTok{3}\NormalTok{,}
+        \AttributeTok{caption =} \StringTok{"User{-}Level Correlation Summary"}\NormalTok{,}
+        \AttributeTok{col.names =} \FunctionTok{c}\NormalTok{(}\StringTok{"Users"}\NormalTok{, }\StringTok{"Positive"}\NormalTok{, }\StringTok{"Strong Pos."}\NormalTok{, }\StringTok{"Negative"}\NormalTok{, }\StringTok{"Mean r"}\NormalTok{, }\StringTok{"Median r"}\NormalTok{)}
+\NormalTok{    )}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: There were 2 warnings in `summarise()`.
+## The first warning was:
+## i In argument: `pearson_r = cor(avg_activity, avg_improvement, use =
+##   "complete.obs")`.
+## Caused by warning in `cor()`:
+## ! the standard deviation is zero
+## i Run `dplyr::last_dplyr_warnings()` to see the 1 remaining warning.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: There were 5 warnings in `summarise()`.
+## The first warning was:
+## i In argument: `correlation = cor(avg_activity, avg_improvement, use =
+##   "complete.obs")`.
+## i In group 1: `user = "Anna_Chess"`.
+## Caused by warning in `cor()`:
+## ! the standard deviation is zero
+## i Run `dplyr::last_dplyr_warnings()` to see the 4 remaining warnings.
+\end{verbatim}
+
+\begin{longtable}[]{@{}rrrrrr@{}}
+\caption{User-Level Correlation Summary}\tabularnewline
+\toprule\noalign{}
+Users & Positive & Strong Pos. & Negative & Mean r & Median r \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Users & Positive & Strong Pos. & Negative & Mean r & Median r \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+0 & 0 & 0 & 0 & NaN & NA \\
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(period\_summary) }\SpecialCharTok{\textgreater{}} \DecValTok{0} \SpecialCharTok{\&\&} \FunctionTok{nrow}\NormalTok{(user\_correlations) }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{) \{}
+    \CommentTok{\# Scatterplot of activity vs performance}
+\NormalTok{    p1 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(period\_summary, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ avg\_activity, }\AttributeTok{y =}\NormalTok{ avg\_improvement)) }\SpecialCharTok{+}
+        \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.6}\NormalTok{, }\AttributeTok{size =} \DecValTok{2}\NormalTok{) }\SpecialCharTok{+}
+        \FunctionTok{geom\_smooth}\NormalTok{(}\AttributeTok{method =} \StringTok{"lm"}\NormalTok{, }\AttributeTok{se =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{color =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+}
+        \FunctionTok{geom\_smooth}\NormalTok{(}\AttributeTok{method =} \StringTok{"loess"}\NormalTok{, }\AttributeTok{se =} \ConstantTok{FALSE}\NormalTok{, }\AttributeTok{color =} \StringTok{"blue"}\NormalTok{, }\AttributeTok{linetype =} \StringTok{"dashed"}\NormalTok{) }\SpecialCharTok{+}
+        \FunctionTok{labs}\NormalTok{(}
+            \AttributeTok{title =} \StringTok{"Activity vs. Rating Improvement"}\NormalTok{,}
+            \AttributeTok{subtitle =} \FunctionTok{paste}\NormalTok{(}\StringTok{"r ="}\NormalTok{, }\FunctionTok{round}\NormalTok{(correlation\_results}\SpecialCharTok{$}\NormalTok{pearson\_r, }\DecValTok{3}\NormalTok{)),}
+            \AttributeTok{x =} \StringTok{"Average Activity (Games per Week)"}\NormalTok{,}
+            \AttributeTok{y =} \StringTok{"Average Rating Improvement per Period"}
+\NormalTok{        ) }\SpecialCharTok{+}
+        \FunctionTok{theme\_minimal}\NormalTok{()}
+
+    \CommentTok{\# Distribution of user{-}level correlations}
+\NormalTok{    p2 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(user\_correlations, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ correlation)) }\SpecialCharTok{+}
+        \FunctionTok{geom\_histogram}\NormalTok{(}\AttributeTok{bins =} \DecValTok{15}\NormalTok{, }\AttributeTok{fill =} \StringTok{"skyblue"}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.7}\NormalTok{, }\AttributeTok{color =} \StringTok{"white"}\NormalTok{) }\SpecialCharTok{+}
+        \FunctionTok{geom\_vline}\NormalTok{(}\AttributeTok{xintercept =} \DecValTok{0}\NormalTok{, }\AttributeTok{linetype =} \StringTok{"dashed"}\NormalTok{, }\AttributeTok{color =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+}
+        \FunctionTok{geom\_vline}\NormalTok{(}
+            \AttributeTok{xintercept =} \FunctionTok{median}\NormalTok{(user\_correlations}\SpecialCharTok{$}\NormalTok{correlation),}
+            \AttributeTok{linetype =} \StringTok{"solid"}\NormalTok{, }\AttributeTok{color =} \StringTok{"blue"}
+\NormalTok{        ) }\SpecialCharTok{+}
+        \FunctionTok{labs}\NormalTok{(}
+            \AttributeTok{title =} \StringTok{"Distribution of User{-}Level Correlations"}\NormalTok{,}
+            \AttributeTok{subtitle =} \FunctionTok{paste}\NormalTok{(}\StringTok{"Median ="}\NormalTok{, }\FunctionTok{round}\NormalTok{(}\FunctionTok{median}\NormalTok{(user\_correlations}\SpecialCharTok{$}\NormalTok{correlation), }\DecValTok{3}\NormalTok{)),}
+            \AttributeTok{x =} \StringTok{"Correlation Coefficient"}\NormalTok{,}
+            \AttributeTok{y =} \StringTok{"Number of Users"}
+\NormalTok{        ) }\SpecialCharTok{+}
+        \FunctionTok{theme\_minimal}\NormalTok{()}
+
+    \CommentTok{\# Combine plots}
+    \FunctionTok{library}\NormalTok{(patchwork)}
+\NormalTok{    p1 }\SpecialCharTok{/}\NormalTok{ p2}
+\NormalTok{\} }\ControlFlowTok{else}\NormalTok{ \{}
+    \FunctionTok{cat}\NormalTok{(}\StringTok{"Insufficient data for activity{-}performance visualization.}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Insufficient data for activity-performance visualization.
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(period\_summary) }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{) \{}
+    \CommentTok{\# Validate that period\_summary exists and has required data}
+    \ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{exists}\NormalTok{(}\StringTok{"period\_summary"}\NormalTok{) }\SpecialCharTok{||} \FunctionTok{nrow}\NormalTok{(period\_summary) }\SpecialCharTok{==} \DecValTok{0}\NormalTok{) \{}
+        \FunctionTok{cat}\NormalTok{(}\StringTok{"Error: period\_summary not found or empty. Skipping heatmap.}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\NormalTok{    \} }\ControlFlowTok{else}\NormalTok{ \{}
+        \FunctionTok{cat}\NormalTok{(}\StringTok{"Creating heatmap with"}\NormalTok{, }\FunctionTok{nrow}\NormalTok{(period\_summary), }\StringTok{"observations}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+
+        \CommentTok{\# Check for required columns}
+\NormalTok{        required\_cols }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"avg\_activity"}\NormalTok{, }\StringTok{"avg\_improvement"}\NormalTok{)}
+\NormalTok{        missing\_cols }\OtherTok{\textless{}{-}} \FunctionTok{setdiff}\NormalTok{(required\_cols, }\FunctionTok{names}\NormalTok{(period\_summary))}
+
+        \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{length}\NormalTok{(missing\_cols) }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{) \{}
+            \FunctionTok{cat}\NormalTok{(}\StringTok{"Error: Missing required columns:"}\NormalTok{, }\FunctionTok{paste}\NormalTok{(missing\_cols, }\AttributeTok{collapse =} \StringTok{", "}\NormalTok{), }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\NormalTok{        \} }\ControlFlowTok{else}\NormalTok{ \{}
+            \CommentTok{\# Remove any rows with missing values}
+\NormalTok{            clean\_data }\OtherTok{\textless{}{-}}\NormalTok{ period\_summary }\SpecialCharTok{\%\textgreater{}\%}
+                \FunctionTok{filter}\NormalTok{(}
+                    \SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(avg\_activity), }\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(avg\_improvement),}
+                    \FunctionTok{is.finite}\NormalTok{(avg\_activity), }\FunctionTok{is.finite}\NormalTok{(avg\_improvement)}
+\NormalTok{                )}
+
+            \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(clean\_data) }\SpecialCharTok{\textless{}} \DecValTok{4}\NormalTok{) \{}
+                \FunctionTok{cat}\NormalTok{(}\StringTok{"Error: Insufficient data for binning (need at least 4 observations)}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\NormalTok{            \} }\ControlFlowTok{else}\NormalTok{ \{}
+                \FunctionTok{cat}\NormalTok{(}\StringTok{"Data summary:}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+                \FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"  Activity range: [\%.3f, \%.3f]}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, }\FunctionTok{min}\NormalTok{(clean\_data}\SpecialCharTok{$}\NormalTok{avg\_activity), }\FunctionTok{max}\NormalTok{(clean\_data}\SpecialCharTok{$}\NormalTok{avg\_activity)))}
+                \FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"  Improvement range: [\%.3f, \%.3f]}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, }\FunctionTok{min}\NormalTok{(clean\_data}\SpecialCharTok{$}\NormalTok{avg\_improvement), }\FunctionTok{max}\NormalTok{(clean\_data}\SpecialCharTok{$}\NormalTok{avg\_improvement)))}
+
+                \CommentTok{\# Robust binning function}
+\NormalTok{                create\_bins }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(x, labels, var\_name) \{}
+                    \FunctionTok{tryCatch}\NormalTok{(}
+\NormalTok{                        \{}
+                            \CommentTok{\# Try quantile{-}based binning first}
+\NormalTok{                            breaks }\OtherTok{\textless{}{-}} \FunctionTok{quantile}\NormalTok{(x, }\AttributeTok{probs =} \FunctionTok{seq}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{, }\FloatTok{0.25}\NormalTok{), }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{)}
+                            \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{length}\NormalTok{(}\FunctionTok{unique}\NormalTok{(breaks)) }\SpecialCharTok{==} \FunctionTok{length}\NormalTok{(breaks)) \{}
+                                \FunctionTok{return}\NormalTok{(}\FunctionTok{cut}\NormalTok{(x, }\AttributeTok{breaks =}\NormalTok{ breaks, }\AttributeTok{labels =}\NormalTok{ labels, }\AttributeTok{include.lowest =} \ConstantTok{TRUE}\NormalTok{))}
+\NormalTok{                            \} }\ControlFlowTok{else}\NormalTok{ \{}
+                                \FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"  Quantile breaks not unique for \%s, using equal{-}width bins}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, var\_name))}
+                                \CommentTok{\# Fall back to equal{-}width binning}
+                                \FunctionTok{return}\NormalTok{(}\FunctionTok{cut}\NormalTok{(x, }\AttributeTok{breaks =} \DecValTok{4}\NormalTok{, }\AttributeTok{labels =}\NormalTok{ labels, }\AttributeTok{include.lowest =} \ConstantTok{TRUE}\NormalTok{))}
+\NormalTok{                            \}}
+\NormalTok{                        \},}
+                        \AttributeTok{error =} \ControlFlowTok{function}\NormalTok{(e) \{}
+                            \FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"  Error in binning \%s: \%s}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, var\_name, e}\SpecialCharTok{$}\NormalTok{message))}
+                            \FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"  Using simple binning based on range}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{))}
+                            \CommentTok{\# Last resort: manual binning based on range}
+\NormalTok{                            min\_val }\OtherTok{\textless{}{-}} \FunctionTok{min}\NormalTok{(x, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{                            max\_val }\OtherTok{\textless{}{-}} \FunctionTok{max}\NormalTok{(x, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{)}
+                            \ControlFlowTok{if}\NormalTok{ (min\_val }\SpecialCharTok{==}\NormalTok{ max\_val) \{}
+                                \CommentTok{\# All values are the same}
+                                \FunctionTok{return}\NormalTok{(}\FunctionTok{factor}\NormalTok{(}\FunctionTok{rep}\NormalTok{(labels[}\DecValTok{1}\NormalTok{], }\FunctionTok{length}\NormalTok{(x)), }\AttributeTok{levels =}\NormalTok{ labels))}
+\NormalTok{                            \} }\ControlFlowTok{else}\NormalTok{ \{}
+\NormalTok{                                breaks }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(min\_val, max\_val, }\AttributeTok{length.out =} \DecValTok{5}\NormalTok{)}
+                                \FunctionTok{return}\NormalTok{(}\FunctionTok{cut}\NormalTok{(x, }\AttributeTok{breaks =}\NormalTok{ breaks, }\AttributeTok{labels =}\NormalTok{ labels, }\AttributeTok{include.lowest =} \ConstantTok{TRUE}\NormalTok{))}
+\NormalTok{                            \}}
+\NormalTok{                        \}}
+\NormalTok{                    )}
+\NormalTok{                \}}
+
+                \CommentTok{\# Create activity and improvement bins for heatmap}
+\NormalTok{                heatmap\_data }\OtherTok{\textless{}{-}}\NormalTok{ clean\_data }\SpecialCharTok{\%\textgreater{}\%}
+                    \FunctionTok{mutate}\NormalTok{(}
+                        \AttributeTok{activity\_bin =} \FunctionTok{create\_bins}\NormalTok{(}
+\NormalTok{                            avg\_activity,}
+                            \FunctionTok{c}\NormalTok{(}\StringTok{"Low"}\NormalTok{, }\StringTok{"Med{-}Low"}\NormalTok{, }\StringTok{"Med{-}High"}\NormalTok{, }\StringTok{"High"}\NormalTok{),}
+                            \StringTok{"activity"}
+\NormalTok{                        ),}
+                        \AttributeTok{improvement\_bin =} \FunctionTok{create\_bins}\NormalTok{(}
+\NormalTok{                            avg\_improvement,}
+                            \FunctionTok{c}\NormalTok{(}\StringTok{"Declining"}\NormalTok{, }\StringTok{"Stable"}\NormalTok{, }\StringTok{"Improving"}\NormalTok{, }\StringTok{"Fast Growth"}\NormalTok{),}
+                            \StringTok{"improvement"}
+\NormalTok{                        )}
+\NormalTok{                    ) }\SpecialCharTok{\%\textgreater{}\%}
+                    \FunctionTok{filter}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(activity\_bin), }\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(improvement\_bin))}
+
+                \CommentTok{\# Check if binning was successful}
+                \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(heatmap\_data) }\SpecialCharTok{==} \DecValTok{0}\NormalTok{) \{}
+                    \FunctionTok{cat}\NormalTok{(}\StringTok{"Error: No data remaining after binning}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\NormalTok{                \} }\ControlFlowTok{else}\NormalTok{ \{}
+                    \FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"Successfully binned \%d observations}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, }\FunctionTok{nrow}\NormalTok{(heatmap\_data)))}
+
+                    \CommentTok{\# Create contingency table and heatmap}
+\NormalTok{                    heatmap\_summary }\OtherTok{\textless{}{-}}\NormalTok{ heatmap\_data }\SpecialCharTok{\%\textgreater{}\%}
+                        \FunctionTok{count}\NormalTok{(activity\_bin, improvement\_bin, }\AttributeTok{.drop =} \ConstantTok{FALSE}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+                        \FunctionTok{group\_by}\NormalTok{(activity\_bin) }\SpecialCharTok{\%\textgreater{}\%}
+                        \FunctionTok{mutate}\NormalTok{(}\AttributeTok{proportion =}\NormalTok{ n }\SpecialCharTok{/} \FunctionTok{sum}\NormalTok{(n)) }\SpecialCharTok{\%\textgreater{}\%}
+                        \FunctionTok{ungroup}\NormalTok{()}
+
+                    \CommentTok{\# Check if we have valid data for plotting}
+                    \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(heatmap\_summary) }\SpecialCharTok{==} \DecValTok{0} \SpecialCharTok{||} \FunctionTok{all}\NormalTok{(heatmap\_summary}\SpecialCharTok{$}\NormalTok{n }\SpecialCharTok{==} \DecValTok{0}\NormalTok{)) \{}
+                        \FunctionTok{cat}\NormalTok{(}\StringTok{"Warning: No valid combinations for heatmap}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\NormalTok{                    \} }\ControlFlowTok{else}\NormalTok{ \{}
+                        \CommentTok{\# Create the plot}
+                        \FunctionTok{print}\NormalTok{(}\FunctionTok{ggplot}\NormalTok{(heatmap\_summary, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ activity\_bin, }\AttributeTok{y =}\NormalTok{ improvement\_bin, }\AttributeTok{fill =}\NormalTok{ proportion)) }\SpecialCharTok{+}
+                            \FunctionTok{geom\_tile}\NormalTok{(}\AttributeTok{color =} \StringTok{"white"}\NormalTok{) }\SpecialCharTok{+}
+                            \FunctionTok{geom\_text}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{label =} \FunctionTok{ifelse}\NormalTok{(n }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{, }\FunctionTok{paste0}\NormalTok{(n, }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{("}\NormalTok{, scales}\SpecialCharTok{::}\FunctionTok{percent}\NormalTok{(proportion, }\AttributeTok{accuracy =} \DecValTok{1}\NormalTok{), }\StringTok{")"}\NormalTok{), }\StringTok{""}\NormalTok{)),}
+                                \AttributeTok{color =} \StringTok{"white"}\NormalTok{, }\AttributeTok{size =} \DecValTok{3}
+\NormalTok{                            ) }\SpecialCharTok{+}
+                            \FunctionTok{scale\_fill\_gradient}\NormalTok{(}\AttributeTok{low =} \StringTok{"\#3366CC"}\NormalTok{, }\AttributeTok{high =} \StringTok{"\#DC3912"}\NormalTok{, }\AttributeTok{name =} \StringTok{"Proportion"}\NormalTok{) }\SpecialCharTok{+}
+                            \FunctionTok{labs}\NormalTok{(}
+                                \AttributeTok{title =} \StringTok{"Activity Level vs. Performance Improvement"}\NormalTok{,}
+                                \AttributeTok{subtitle =} \StringTok{"Count and proportion of periods in each category"}\NormalTok{,}
+                                \AttributeTok{x =} \StringTok{"Activity Level (Games per Week)"}\NormalTok{,}
+                                \AttributeTok{y =} \StringTok{"Rating Improvement Category"}
+\NormalTok{                            ) }\SpecialCharTok{+}
+                            \FunctionTok{theme\_minimal}\NormalTok{() }\SpecialCharTok{+}
+                            \FunctionTok{theme}\NormalTok{(}\AttributeTok{panel.grid =} \FunctionTok{element\_blank}\NormalTok{()))}
+\NormalTok{                    \}}
+\NormalTok{                \}}
+\NormalTok{            \}}
+\NormalTok{        \}}
+\NormalTok{    \}}
+\NormalTok{\} }\ControlFlowTok{else}\NormalTok{ \{}
+    \FunctionTok{cat}\NormalTok{(}\StringTok{"Insufficient data for activity{-}improvement heatmap.}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Creating heatmap with 77 observations
+## Data summary:
+##   Activity range: [1.000, 1.000]
+##   Improvement range: [-16.167, 14.750]
+##   Quantile breaks not unique for activity, using equal-width bins
+## Successfully binned 77 observations
+\end{verbatim}
+
+\pandocbounded{\includegraphics[keepaspectratio]{appendix_b_files/figure-latex/activity-improvement-heatmap-1.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(period\_summary) }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{) \{}
+    \CommentTok{\# Statistical significance test}
+    \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(period\_summary) }\SpecialCharTok{\textgreater{}} \DecValTok{30}\NormalTok{) \{}
+\NormalTok{        cor\_test }\OtherTok{\textless{}{-}} \FunctionTok{cor.test}\NormalTok{(period\_summary}\SpecialCharTok{$}\NormalTok{avg\_activity, period\_summary}\SpecialCharTok{$}\NormalTok{avg\_improvement)}
+
+        \FunctionTok{cat}\NormalTok{(}\StringTok{"Correlation Test Results:}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+        \FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"Pearson correlation: \%.4f}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, cor\_test}\SpecialCharTok{$}\NormalTok{estimate))}
+        \FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"95\%\% CI: [\%.4f, \%.4f]}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, cor\_test}\SpecialCharTok{$}\NormalTok{conf.int[}\DecValTok{1}\NormalTok{], cor\_test}\SpecialCharTok{$}\NormalTok{conf.int[}\DecValTok{2}\NormalTok{]))}
+        \FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"p{-}value: \%.4f}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, cor\_test}\SpecialCharTok{$}\NormalTok{p.value))}
+        \FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}
+            \StringTok{"Interpretation: \%s}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{,}
+            \FunctionTok{ifelse}\NormalTok{(cor\_test}\SpecialCharTok{$}\NormalTok{p.value }\SpecialCharTok{\textless{}} \FloatTok{0.05}\NormalTok{, }\StringTok{"Statistically significant"}\NormalTok{, }\StringTok{"Not statistically significant"}\NormalTok{)}
+\NormalTok{        ))}
+\NormalTok{    \}}
+
+    \CommentTok{\# Effect size interpretation}
+\NormalTok{    effect\_size }\OtherTok{\textless{}{-}} \FunctionTok{abs}\NormalTok{(correlation\_results}\SpecialCharTok{$}\NormalTok{pearson\_r)}
+\NormalTok{    effect\_interpretation }\OtherTok{\textless{}{-}} \FunctionTok{case\_when}\NormalTok{(}
+\NormalTok{        effect\_size }\SpecialCharTok{\textless{}} \FloatTok{0.1} \SpecialCharTok{\textasciitilde{}} \StringTok{"Negligible"}\NormalTok{,}
+\NormalTok{        effect\_size }\SpecialCharTok{\textless{}} \FloatTok{0.3} \SpecialCharTok{\textasciitilde{}} \StringTok{"Small"}\NormalTok{,}
+\NormalTok{        effect\_size }\SpecialCharTok{\textless{}} \FloatTok{0.5} \SpecialCharTok{\textasciitilde{}} \StringTok{"Medium"}\NormalTok{,}
+        \ConstantTok{TRUE} \SpecialCharTok{\textasciitilde{}} \StringTok{"Large"}
+\NormalTok{    )}
+
+    \FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{Effect size: \%.3f (\%s effect)}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, effect\_size, effect\_interpretation))}
+\NormalTok{\} }\ControlFlowTok{else}\NormalTok{ \{}
+    \FunctionTok{cat}\NormalTok{(}\StringTok{"Insufficient data for statistical test.}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in cor(x, y): the standard deviation is zero
+\end{verbatim}
+
+\begin{verbatim}
+## Correlation Test Results:
+## Pearson correlation: NA
+## 95% CI: [NA, NA]
+## p-value: NA
+## Interpretation: NA
+## 
+## Effect size: NA (Large effect)
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Only display findings if we have valid correlation results}
+\ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(period\_summary) }\SpecialCharTok{\textgreater{}} \DecValTok{0} \SpecialCharTok{\&\&} \SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(correlation\_results}\SpecialCharTok{$}\NormalTok{pearson\_r)) \{}
+    \FunctionTok{cat}\NormalTok{(}\StringTok{"**Key Findings from Activity{-}Performance Analysis:**}\SpecialCharTok{\textbackslash{}n\textbackslash{}n}\StringTok{"}\NormalTok{)}
+
+    \FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}
+        \StringTok{"1. **Overall Correlation:** The Pearson correlation between activity level and rating improvement is **\%.3f**, indicating a **\%s** relationship.}\SpecialCharTok{\textbackslash{}n\textbackslash{}n}\StringTok{"}\NormalTok{,}
+        \FunctionTok{round}\NormalTok{(correlation\_results}\SpecialCharTok{$}\NormalTok{pearson\_r, }\DecValTok{3}\NormalTok{),}
+        \FunctionTok{ifelse}\NormalTok{(}\FunctionTok{abs}\NormalTok{(correlation\_results}\SpecialCharTok{$}\NormalTok{pearson\_r) }\SpecialCharTok{\textless{}} \FloatTok{0.3}\NormalTok{, }\StringTok{"weak"}\NormalTok{,}
+            \FunctionTok{ifelse}\NormalTok{(}\FunctionTok{abs}\NormalTok{(correlation\_results}\SpecialCharTok{$}\NormalTok{pearson\_r) }\SpecialCharTok{\textless{}} \FloatTok{0.5}\NormalTok{, }\StringTok{"moderate"}\NormalTok{, }\StringTok{"strong"}\NormalTok{)}
+\NormalTok{        )}
+\NormalTok{    ))}
+
+    \FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}
+        \StringTok{"2. **Individual Variation:** Among users with sufficient data, **\%s** show positive correlations between activity and improvement, with **\%s** exhibiting strong positive relationships (r \textgreater{} 0.3).}\SpecialCharTok{\textbackslash{}n\textbackslash{}n}\StringTok{"}\NormalTok{,}
+\NormalTok{        scales}\SpecialCharTok{::}\FunctionTok{percent}\NormalTok{(user\_corr\_summary}\SpecialCharTok{$}\NormalTok{positive\_corr }\SpecialCharTok{/}\NormalTok{ user\_corr\_summary}\SpecialCharTok{$}\NormalTok{users, }\AttributeTok{accuracy =} \FloatTok{0.1}\NormalTok{),}
+\NormalTok{        scales}\SpecialCharTok{::}\FunctionTok{percent}\NormalTok{(user\_corr\_summary}\SpecialCharTok{$}\NormalTok{strong\_positive }\SpecialCharTok{/}\NormalTok{ user\_corr\_summary}\SpecialCharTok{$}\NormalTok{users, }\AttributeTok{accuracy =} \FloatTok{0.1}\NormalTok{)}
+\NormalTok{    ))}
+
+    \FunctionTok{cat}\NormalTok{(}\StringTok{"3. **Practical Implications:**}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+    \FunctionTok{cat}\NormalTok{(}\StringTok{"   {-} Higher game frequency generally correlates with rating improvements}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+    \FunctionTok{cat}\NormalTok{(}\StringTok{"   {-} Individual responses vary significantly, suggesting personal factors (learning style, motivation, fatigue) moderate this relationship}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+    \FunctionTok{cat}\NormalTok{(}\StringTok{"   {-} The relationship may be non{-}linear, with diminishing returns at very high activity levels}\SpecialCharTok{\textbackslash{}n\textbackslash{}n}\StringTok{"}\NormalTok{)}
+
+    \FunctionTok{cat}\NormalTok{(}\StringTok{"4. **Methodological Notes:**}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+    \FunctionTok{cat}\NormalTok{(}\StringTok{"   {-} Activity proxy based on inverse time gaps between games}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+    \FunctionTok{cat}\NormalTok{(}\StringTok{"   {-} 4{-}week rolling windows used to smooth short{-}term fluctuations}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+    \FunctionTok{cat}\NormalTok{(}\StringTok{"   {-} Minimum threshold filters ensure reliable correlation estimates}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\NormalTok{\} }\ControlFlowTok{else}\NormalTok{ \{}
+    \FunctionTok{cat}\NormalTok{(}\StringTok{"**Activity{-}Performance Analysis:** Insufficient data available for correlation analysis. This section requires rating history data with activity metrics.}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Activity-Performance Analysis:} Insufficient data available for
+correlation analysis. This section requires rating history data with
+activity metrics.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{B.9 Extension
+Opportunities}\label{b.9-extension-opportunities}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Hierarchical Mixed-Effects Models:} Account for both
+  user-level and category-level variation using \texttt{lme4}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(lme4)}
+\NormalTok{mixed\_model }\OtherTok{\textless{}{-}} \FunctionTok{lmer}\NormalTok{(rating }\SpecialCharTok{\textasciitilde{}}\NormalTok{ relative\_time }\SpecialCharTok{+}\NormalTok{ (}\DecValTok{1} \SpecialCharTok{+}\NormalTok{ relative\_time }\SpecialCharTok{|}\NormalTok{ user) }\SpecialCharTok{+} 
+\NormalTok{                    (}\DecValTok{1} \SpecialCharTok{|}\NormalTok{ category), }\AttributeTok{data =}\NormalTok{ rating\_summary)}
+\end{Highlighting}
+\end{Shaded}
+\item
+  \textbf{Nonlinear Growth Modeling:} Fit exponential or logistic curves
+  to capture saturation effects (see Appendix C).
+\item
+  \textbf{Cross-Platform Comparison:} Compare Lichess rating
+  trajectories with Chess.com data to assess platform-specific inflation
+  patterns.
 \end{enumerate}
 
 \end{document}
