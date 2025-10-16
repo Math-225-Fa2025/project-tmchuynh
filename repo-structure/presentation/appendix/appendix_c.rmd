@@ -27,9 +27,11 @@ library(tidyverse)
 library(broom)
 library(minpack.lm) # for nlsLM (robust nonlinear fitting)
 
+rating_history_path <- "../../data/lichess_rating_history.csv"
+
 # Load the same dataset from Appendix B
 rating_summary <- read_csv(
-  here::here("repo-structure/data/lichess_rating_history.csv"),
+  rating_history_path,
   show_col_types = FALSE
 )
 
