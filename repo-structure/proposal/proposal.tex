@@ -436,13 +436,26 @@ Data will be stored in tibbles and manipulated with \texttt{dplyr} and
       \CommentTok{\# Rating difference (user {-} opponent)}
       \AttributeTok{rating\_diff =}\NormalTok{ user\_rating }\SpecialCharTok{{-}}\NormalTok{ opponent\_rating,}
 
-      \CommentTok{\# Game type categorization}
+      \CommentTok{\# Game type categorization (expanded)}
       \AttributeTok{time\_control =} \FunctionTok{case\_when}\NormalTok{(}
+\NormalTok{        speed }\SpecialCharTok{==} \StringTok{"ultraBullet"} \SpecialCharTok{\textasciitilde{}} \StringTok{"UltraBullet"}\NormalTok{,}
 \NormalTok{        speed }\SpecialCharTok{==} \StringTok{"bullet"} \SpecialCharTok{\textasciitilde{}} \StringTok{"Bullet"}\NormalTok{,}
 \NormalTok{        speed }\SpecialCharTok{==} \StringTok{"blitz"} \SpecialCharTok{\textasciitilde{}} \StringTok{"Blitz"}\NormalTok{,}
 \NormalTok{        speed }\SpecialCharTok{==} \StringTok{"rapid"} \SpecialCharTok{\textasciitilde{}} \StringTok{"Rapid"}\NormalTok{,}
 \NormalTok{        speed }\SpecialCharTok{==} \StringTok{"classical"} \SpecialCharTok{\textasciitilde{}} \StringTok{"Classical"}\NormalTok{,}
-        \ConstantTok{TRUE} \SpecialCharTok{\textasciitilde{}} \StringTok{"Other"}
+\NormalTok{        speed }\SpecialCharTok{==} \StringTok{"correspondence"} \SpecialCharTok{\textasciitilde{}} \StringTok{"Correspondence"}\NormalTok{,}
+\NormalTok{        perf }\SpecialCharTok{==} \StringTok{"puzzle"} \SpecialCharTok{\textasciitilde{}} \StringTok{"Puzzle"}\NormalTok{,}
+\NormalTok{        perf }\SpecialCharTok{==} \StringTok{"storm"} \SpecialCharTok{\textasciitilde{}} \StringTok{"Puzzle Storm"}\NormalTok{,}
+\NormalTok{        perf }\SpecialCharTok{==} \StringTok{"racer"} \SpecialCharTok{\textasciitilde{}} \StringTok{"Puzzle Racer"}\NormalTok{,}
+\NormalTok{        perf }\SpecialCharTok{==} \StringTok{"crazyhouse"} \SpecialCharTok{\textasciitilde{}} \StringTok{"Crazyhouse"}\NormalTok{,}
+\NormalTok{        perf }\SpecialCharTok{==} \StringTok{"chess960"} \SpecialCharTok{\textasciitilde{}} \StringTok{"Chess960"}\NormalTok{,}
+\NormalTok{        perf }\SpecialCharTok{==} \StringTok{"kingOfTheHill"} \SpecialCharTok{\textasciitilde{}} \StringTok{"King of the Hill"}\NormalTok{,}
+\NormalTok{        perf }\SpecialCharTok{==} \StringTok{"threeCheck"} \SpecialCharTok{\textasciitilde{}} \StringTok{"Three{-}check"}\NormalTok{,}
+\NormalTok{        perf }\SpecialCharTok{==} \StringTok{"antichess"} \SpecialCharTok{\textasciitilde{}} \StringTok{"Antichess"}\NormalTok{,}
+\NormalTok{        perf }\SpecialCharTok{==} \StringTok{"atomic"} \SpecialCharTok{\textasciitilde{}} \StringTok{"Atomic"}\NormalTok{,}
+\NormalTok{        perf }\SpecialCharTok{==} \StringTok{"horde"} \SpecialCharTok{\textasciitilde{}} \StringTok{"Horde"}\NormalTok{,}
+\NormalTok{        perf }\SpecialCharTok{==} \StringTok{"racingKings"} \SpecialCharTok{\textasciitilde{}} \StringTok{"Racing Kings"}\NormalTok{,}
+        \ConstantTok{TRUE} \SpecialCharTok{\textasciitilde{}} \StringTok{"Standard"}
 \NormalTok{      ),}
 
       \CommentTok{\# Opening categorization (expanded)}
@@ -486,7 +499,7 @@ Data will be stored in tibbles and manipulated with \texttt{dplyr} and
     \AttributeTok{user\_rating =} \FunctionTok{sample}\NormalTok{(}\DecValTok{2400}\SpecialCharTok{:}\DecValTok{2900}\NormalTok{, }\DecValTok{100}\NormalTok{, }\AttributeTok{replace =} \ConstantTok{TRUE}\NormalTok{),}
     \AttributeTok{opponent\_rating =} \FunctionTok{sample}\NormalTok{(}\DecValTok{2200}\SpecialCharTok{:}\DecValTok{2800}\NormalTok{, }\DecValTok{100}\NormalTok{, }\AttributeTok{replace =} \ConstantTok{TRUE}\NormalTok{),}
     \AttributeTok{user\_result =} \FunctionTok{sample}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"win"}\NormalTok{, }\StringTok{"loss"}\NormalTok{, }\StringTok{"draw"}\NormalTok{), }\DecValTok{100}\NormalTok{, }\AttributeTok{replace =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{prob =} \FunctionTok{c}\NormalTok{(}\FloatTok{0.4}\NormalTok{, }\FloatTok{0.35}\NormalTok{, }\FloatTok{0.25}\NormalTok{)),}
-    \AttributeTok{time\_control =} \FunctionTok{sample}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Blitz"}\NormalTok{, }\StringTok{"Rapid"}\NormalTok{, }\StringTok{"Classical"}\NormalTok{), }\DecValTok{100}\NormalTok{, }\AttributeTok{replace =} \ConstantTok{TRUE}\NormalTok{),}
+    \AttributeTok{time\_control =} \FunctionTok{sample}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"UltraBullet"}\NormalTok{, }\StringTok{"Bullet"}\NormalTok{, }\StringTok{"Blitz"}\NormalTok{, }\StringTok{"Rapid"}\NormalTok{, }\StringTok{"Classical"}\NormalTok{, }\StringTok{"Chess960"}\NormalTok{), }\DecValTok{100}\NormalTok{, }\AttributeTok{replace =} \ConstantTok{TRUE}\NormalTok{),}
     \AttributeTok{opening\_family =} \FunctionTok{sample}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Sicilian Defense"}\NormalTok{, }\StringTok{"Scandinavian"}\NormalTok{, }\StringTok{"Pirc"}\NormalTok{, }\StringTok{"Queen\textquotesingle{}s Gambit"}\NormalTok{, }\StringTok{"Nimzo{-}Indian"}\NormalTok{, }\StringTok{"Ruy Lopez"}\NormalTok{, }\StringTok{"Other"}\NormalTok{), }\DecValTok{100}\NormalTok{, }\AttributeTok{replace =} \ConstantTok{TRUE}\NormalTok{),}
     \AttributeTok{user\_accuracy =} \FunctionTok{runif}\NormalTok{(}\DecValTok{100}\NormalTok{, }\DecValTok{75}\NormalTok{, }\DecValTok{95}\NormalTok{),}
     \AttributeTok{rating\_diff =}\NormalTok{ user\_rating }\SpecialCharTok{{-}}\NormalTok{ opponent\_rating}
@@ -514,9 +527,9 @@ Data will be stored in tibbles and manipulated with \texttt{dplyr} and
 ## $ user_rating     <int> 2481, 2807, 2768, 2801, 2724, 2509, 2759, 2838, 2695, ~
 ## $ opponent_rating <int> 2547, 2306, 2516, 2213, 2361, 2743, 2236, 2337, 2568, ~
 ## $ user_result     <chr> "draw", "win", "draw", "win", "win", "draw", "loss", "~
-## $ time_control    <chr> "Blitz", "Classical", "Blitz", "Rapid", "Rapid", "Clas~
-## $ opening_family  <chr> "Queen's Gambit", "Sicilian Defense", "Other", "Queen'~
-## $ user_accuracy   <dbl> 83.79288, 83.78116, 87.03657, 83.07814, 94.16637, 94.4~
+## $ time_control    <chr> "Classical", "UltraBullet", "Chess960", "Rapid", "Ches~
+## $ opening_family  <chr> "Sicilian Defense", "Other", "Queen's Gambit", "Pirc",~
+## $ user_accuracy   <dbl> 83.78116, 87.03657, 83.07814, 94.16637, 94.41536, 93.2~
 ## $ rating_diff     <int> -66, 501, 252, 588, 363, -234, 523, 501, 127, -198, 60~
 \end{verbatim}
 
@@ -581,9 +594,9 @@ Data will be stored in tibbles and manipulated with \texttt{dplyr} and
 \begin{verbatim}
 ##   user_rating   opponent_rating  rating_diff     user_accuracy  
 ##  Min.   :2400   Min.   :2201    Min.   :-352.0   Min.   :75.18  
-##  1st Qu.:2526   1st Qu.:2345    1st Qu.: -69.0   1st Qu.:79.52  
+##  1st Qu.:2526   1st Qu.:2345    1st Qu.: -69.0   1st Qu.:79.36  
 ##  Median :2668   Median :2461    Median : 164.0   Median :85.03  
-##  Mean   :2655   Mean   :2497    Mean   : 158.1   Mean   :84.93  
+##  Mean   :2655   Mean   :2497    Mean   : 158.1   Mean   :84.85  
 ##  3rd Qu.:2768   3rd Qu.:2675    3rd Qu.: 341.8   3rd Qu.:89.60  
 ##  Max.   :2886   Max.   :2786    Max.   : 606.0   Max.   :94.85
 \end{verbatim}
@@ -620,8 +633,8 @@ Data will be stored in tibbles and manipulated with \texttt{dplyr} and
 
 \begin{verbatim}
 ## 
-##     Blitz Classical     Rapid 
-##        31        32        37
+##       Blitz      Bullet    Chess960   Classical       Rapid UltraBullet 
+##          17          16          21          12          15          19
 \end{verbatim}
 
 \begin{Shaded}
@@ -916,7 +929,7 @@ Analysis}\label{exploratory-data-analysis}
 ##   user_color games  wins losses draws win_rate avg_rating avg_accuracy
 ##   <chr>      <int> <int>  <int> <int>    <dbl>      <dbl>        <dbl>
 ## 1 black         56    22     22    12    0.393      2643.         85.3
-## 2 white         44    20     12    12    0.455      2671.         84.4
+## 2 white         44    20     12    12    0.455      2671.         84.3
 \end{verbatim}
 
 \begin{Shaded}
@@ -1116,13 +1129,13 @@ Analysis}\label{exploratory-data-analysis}
 ## # A tibble: 7 x 7
 ##   opening_family   total_games overall_win_rate white_games black_games
 ##   <chr>                  <int>            <dbl>       <int>       <int>
-## 1 Nimzo-Indian              20            0.55            5          15
-## 2 Scandinavian              15            0.533           7           8
-## 3 Sicilian Defense           8            0.5             4           4
-## 4 Pirc                      19            0.474           7          12
-## 5 Queen's Gambit            12            0.333           7           5
-## 6 Ruy Lopez                 11            0.273           6           5
-## 7 Other                     15            0.2             8           7
+## 1 Sicilian Defense           8            0.625           1           7
+## 2 Scandinavian              15            0.6             8           7
+## 3 Pirc                      19            0.526          12           7
+## 4 Other                     15            0.467           8           7
+## 5 Queen's Gambit            11            0.364           4           7
+## 6 Ruy Lopez                 11            0.273           2           9
+## 7 Nimzo-Indian              21            0.190           9          12
 ## # i 2 more variables: white_win_rate <dbl>, black_win_rate <dbl>
 \end{verbatim}
 
@@ -1349,29 +1362,32 @@ Strategies}\label{data-analysis-methods-strategies}
 ## 
 ## Deviance Residuals: 
 ##     Min       1Q   Median       3Q      Max  
-## -1.5599  -0.9536  -0.5690   1.0746   1.8627  
+## -1.7372  -1.0338  -0.5635   1.0887   1.9839  
 ## 
 ## Coefficients:
 ##                                Estimate Std. Error z value Pr(>|z|)  
-## (Intercept)                     0.96622    0.69320   1.394   0.1634  
-## rating_advantage               -0.03629    0.09170  -0.396   0.6923  
-## white                           0.50576    0.46240   1.094   0.2741  
-## time_controlClassical          -1.36380    0.60129  -2.268   0.0233 *
-## time_controlRapid              -0.38675    0.54199  -0.714   0.4755  
-## opening_familyOther            -1.98551    0.85394  -2.325   0.0201 *
-## opening_familyPirc             -0.79068    0.72187  -1.095   0.2734  
-## opening_familyQueen's Gambit   -1.42292    0.83390  -1.706   0.0879 .
-## opening_familyRuy Lopez        -1.94141    0.90803  -2.138   0.0325 *
-## opening_familyScandinavian     -0.31374    0.73918  -0.424   0.6712  
-## opening_familySicilian Defense -0.70561    0.90332  -0.781   0.4347  
+## (Intercept)                    -1.73653    0.74539  -2.330   0.0198 *
+## rating_advantage               -0.05863    0.09326  -0.629   0.5296  
+## white                           0.19133    0.50259   0.381   0.7034  
+## time_controlBullet             -0.29100    0.86904  -0.335   0.7377  
+## time_controlChess960            0.07624    0.79696   0.096   0.9238  
+## time_controlClassical          -0.29803    0.93471  -0.319   0.7498  
+## time_controlRapid              -0.17810    0.85152  -0.209   0.8343  
+## time_controlUltraBullet         1.25349    0.81112   1.545   0.1223  
+## opening_familyOther             1.40055    0.83759   1.672   0.0945 .
+## opening_familyPirc              1.92258    0.78056   2.463   0.0138 *
+## opening_familyQueen's Gambit    0.86922    0.87796   0.990   0.3222  
+## opening_familyRuy Lopez         0.59627    0.94154   0.633   0.5265  
+## opening_familyScandinavian      1.90596    0.82368   2.314   0.0207 *
+## opening_familySicilian Defense  2.34236    1.03147   2.271   0.0232 *
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
 ##     Null deviance: 136.06  on 99  degrees of freedom
-## Residual deviance: 121.44  on 89  degrees of freedom
-## AIC: 143.44
+## Residual deviance: 119.21  on 86  degrees of freedom
+## AIC: 147.21
 ## 
 ## Number of Fisher Scoring iterations: 4
 \end{verbatim}
@@ -1393,29 +1409,35 @@ Strategies}\label{data-analysis-methods-strategies}
 
 \begin{verbatim}
 ##                                                      Variable Odds_Ratio
-## (Intercept)                                       (Intercept)      2.628
-## rating_advantage                             rating_advantage      0.964
-## white                                                   white      1.658
-## time_controlClassical                   time_controlClassical      0.256
-## time_controlRapid                           time_controlRapid      0.679
-## opening_familyOther                       opening_familyOther      0.137
-## opening_familyPirc                         opening_familyPirc      0.454
-## opening_familyQueen's Gambit     opening_familyQueen's Gambit      0.241
-## opening_familyRuy Lopez               opening_familyRuy Lopez      0.144
-## opening_familyScandinavian         opening_familyScandinavian      0.731
-## opening_familySicilian Defense opening_familySicilian Defense      0.494
+## (Intercept)                                       (Intercept)      0.176
+## rating_advantage                             rating_advantage      0.943
+## white                                                   white      1.211
+## time_controlBullet                         time_controlBullet      0.748
+## time_controlChess960                     time_controlChess960      1.079
+## time_controlClassical                   time_controlClassical      0.742
+## time_controlRapid                           time_controlRapid      0.837
+## time_controlUltraBullet               time_controlUltraBullet      3.503
+## opening_familyOther                       opening_familyOther      4.057
+## opening_familyPirc                         opening_familyPirc      6.839
+## opening_familyQueen's Gambit     opening_familyQueen's Gambit      2.385
+## opening_familyRuy Lopez               opening_familyRuy Lopez      1.815
+## opening_familyScandinavian         opening_familyScandinavian      6.726
+## opening_familySicilian Defense opening_familySicilian Defense     10.406
 ##                                Lower_CI Upper_CI
-## (Intercept)                       0.687   10.619
-## rating_advantage                  0.803    1.154
-## white                             0.677    4.197
-## time_controlClassical             0.075    0.805
-## time_controlRapid                 0.230    1.955
-## opening_familyOther               0.022    0.664
-## opening_familyPirc                0.106    1.837
-## opening_familyQueen's Gambit      0.043    1.177
-## opening_familyRuy Lopez           0.021    0.781
-## opening_familyScandinavian        0.167    3.124
-## opening_familySicilian Defense    0.079    2.932
+## (Intercept)                       0.035    0.676
+## rating_advantage                  0.782    1.131
+## white                             0.449    3.265
+## time_controlBullet                0.131    4.139
+## time_controlChess960              0.226    5.360
+## time_controlClassical             0.114    4.672
+## time_controlRapid                 0.152    4.501
+## time_controlUltraBullet           0.738   18.431
+## opening_familyOther               0.823   22.990
+## opening_familyPirc                1.583   35.186
+## opening_familyQueen's Gambit      0.416   13.990
+## opening_familyRuy Lopez           0.267   11.758
+## opening_familyScandinavian        1.428   37.616
+## opening_familySicilian Defense    1.476   89.721
 \end{verbatim}
 
 \begin{Shaded}
@@ -1469,12 +1491,15 @@ Strategies}\label{data-analysis-methods-strategies}
 \end{Shaded}
 
 \begin{verbatim}
-## # A tibble: 3 x 2
+## # A tibble: 6 x 2
 ##   time_control win_rate
 ##   <chr>           <dbl>
-## 1 Blitz           0.516
-## 2 Classical       0.281
-## 3 Rapid           0.459
+## 1 Blitz           0.294
+## 2 Bullet          0.375
+## 3 Chess960        0.429
+## 4 Classical       0.417
+## 5 Rapid           0.333
+## 6 UltraBullet     0.632
 \end{verbatim}
 
 \begin{Shaded}
@@ -1494,7 +1519,7 @@ Strategies}\label{data-analysis-methods-strategies}
 ##  Pearson's Chi-squared test
 ## 
 ## data:  contingency_table
-## X-squared = 5.569, df = 4, p-value = 0.2337
+## X-squared = 13.362, df = 10, p-value = 0.2041
 \end{verbatim}
 
 \begin{Shaded}
@@ -1598,8 +1623,8 @@ Strategies}\label{data-analysis-methods-strategies}
 ## === MODEL COMPARISON ===
 ##      Model      AIC
 ## 1   Simple 140.0560
-## 2 Standard 143.4414
-## 3  Complex 145.3868
+## 2 Standard 147.2106
+## 3  Complex 149.1624
 \end{verbatim}
 
 \textbf{Enhanced Expected Results:}
