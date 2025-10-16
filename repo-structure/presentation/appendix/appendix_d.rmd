@@ -230,3 +230,36 @@ datatable(
 ```
 
 ---
+
+### D.8 Fitted Growth Curves Visualization
+
+```{r growth-curves, fig.height=6, fig.width=10}
+predicted_curves <- nonlinear_models %>%
+  select(user, term, estimate) %>%
+  pivot_wider(names_from = term, values_from = estimate) %>%
+  left_join(rating_nl_df %>% filter(user %in% target_users), by = "user") %>%
+  mutate(predicted = A - B * exp(-k * time_index))
+
+# Add tooltip column to data
+predicted_curves <- predicted_curves %>%
+  mutate(
+    tooltip_actual = paste0("User: ", user, "<br>Game: ", time_index, "<br>Actual: ", round(rating, 0)),
+    tooltip_pred = paste0("User: ", user, "<br>Game: ", time_index, "<br>Predicted: ", round(predicted, 0))
+  )
+
+p4 <- ggplot(predicted_curves, aes(x = time_index, y = rating, color = user)) +
+  geom_point(alpha = 0.3, size = 1) +
+  geom_line(aes(y = predicted), linewidth = 1.2) +
+  facet_wrap(~user, scales = "free") +
+  labs(
+    title = "Nonlinear Rating Growth Models - Actual vs Fitted",
+    x = "Game Sequence",
+    y = "Rating",
+    color = "User"
+  ) +
+  theme_minimal(base_size = 11)
+
+ggplotly(p4)
+```
+
+---
