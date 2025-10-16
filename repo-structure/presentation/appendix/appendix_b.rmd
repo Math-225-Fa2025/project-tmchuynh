@@ -9,18 +9,28 @@ library(lubridate)
 library(httr)
 
 # Load random subset of users from the Lichess summary
-lichess_path <- here::here("repo-structure/data/lichess_clean.csv")
+lichess_path <- "../../data/lichess_clean.csv"
 lichess_users <- read_csv(lichess_path, show_col_types = FALSE) %>%
     slice_sample(n = 5) %>% # pull 5 random users for plotting
     pull(user)
 
+# Debug: Check selected users
+cat("Selected users:\n")
+print(lichess_users)
+
 # Function to retrieve rating history for a given user
 get_rating_history <- function(username) {
+    cat(paste0("\nFetching data for user: ", username, "\n"))
     Sys.sleep(runif(1, 0.5, 1.2)) # polite delay
     url <- paste0("https://lichess.org/api/user/", username, "/rating-history")
     tryCatch(
         {
             response <- fromJSON(url)
+            cat(paste0("  Response length: ", length(response), "\n"))
+            if (length(response) == 0) {
+                cat("  No rating history available\n")
+                return(NULL)
+            }
             tibble(
                 user = username,
                 category = map_chr(response, "name"),
