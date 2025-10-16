@@ -435,40 +435,10 @@ get_lichess_data <- function(username, max_games = 20, access_token = NULL) {
       ))
 
       # Safely combine data frames with potentially different structures
-      df <- tryCatch(
-        {
-          # First, check if all games have the required basic structure
-          required_fields <- c("id", "rated", "speed", "players")
+      # Use manual construction directly since bind_rows often fails with nested data
+      message("Constructing data frame from game data...")
 
-          # Filter games that have required fields
-          valid_games <- json_games[sapply(json_games, function(game) {
-            all(required_fields %in% names(game))
-          })]
-
-          if (length(valid_games) == 0) {
-            message(paste("No games with required fields for user:", username))
-            return(NULL)
-          }
-
-          message(paste(
-            "Found",
-            length(valid_games),
-            "valid games with required fields"
-          ))
-
-          # Use bind_rows with error handling
-          bind_rows(valid_games)
-        },
-        error = function(e) {
-          message(paste("Error combining games data:", e$message))
-          message(paste("Error class:", class(e)[1]))
-          if (!is.null(e$call)) {
-            message(paste("Error call:", deparse(e$call)[1]))
-          }
-          message("Attempting manual data frame construction...")
-
-          # Manual fallback - extract key fields from each game
-          game_list <- list()
+      # Manual extraction - extract key fields from each game
 
           for (i in seq_along(json_games)) {
             tryCatch(
