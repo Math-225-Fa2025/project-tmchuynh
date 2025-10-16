@@ -73,7 +73,7 @@ player_summary_long <- player_summary %>%
     lichess_avg_rating = "Lichess (Online)"
   ))
 
-ggplot(player_summary_long, aes(x = rating_group, y = rating, fill = source)) +
+p1 <- ggplot(player_summary_long, aes(x = rating_group, y = rating, fill = source)) +
   geom_col(position = "dodge", width = 0.7) +
   geom_text(aes(label = round(rating, 0)), position = position_dodge(width = 0.7), vjust = -0.5, size = 3.2) +
   scale_fill_manual(values = c("#2E86AB", "#E67E22")) +
@@ -85,6 +85,8 @@ ggplot(player_summary_long, aes(x = rating_group, y = rating, fill = source)) +
     fill = "Data Source"
   ) +
   theme_minimal(base_size = 12)
+print(p1)
+ggsave("../../presentation/presentation_files/rating_comparison.png", plot = p1, width = 10, height = 6, dpi = 300)
 ```
 
 > **Observation:**
@@ -96,7 +98,7 @@ ggplot(player_summary_long, aes(x = rating_group, y = rating, fill = source)) +
 ### A.4 Visualization: Win Rate and Game Volume by Tier
 
 ```{r winrate-games, fig.height=4.5, fig.width=7}
-ggplot(player_summary, aes(x = rating_group, y = lichess_avg_win_rate)) +
+p2 <- ggplot(player_summary, aes(x = rating_group, y = lichess_avg_win_rate)) +
   geom_col(fill = "#16A085", width = 0.6, alpha = 0.8) +
   geom_text(aes(label = percent(lichess_avg_win_rate, accuracy = 0.1)), vjust = -0.3, size = 3.5) +
   labs(
@@ -106,6 +108,8 @@ ggplot(player_summary, aes(x = rating_group, y = lichess_avg_win_rate)) +
     y = "Average Win Rate"
   ) +
   theme_minimal(base_size = 12)
+print(p2)
+ggsave("../../presentation/presentation_files/winrate_by_tier.png", plot = p2, width = 10, height = 6, dpi = 300)
 ```
 
 ```{r games-volume, fig.height=4.5, fig.width=7}
@@ -119,7 +123,7 @@ if ("lichess_avg_games" %in% names(player_summary)) {
   games_col <- player_summary$lichess_players
 }
 
-ggplot(player_summary, aes(x = rating_group, y = games_col)) +
+p3 <- ggplot(player_summary, aes(x = rating_group, y = games_col)) +
   geom_point(size = 4, color = "#2980B9") +
   geom_line(aes(group = 1), color = "#2980B9", linewidth = 1) +
   labs(
@@ -129,6 +133,8 @@ ggplot(player_summary, aes(x = rating_group, y = games_col)) +
     y = "Average Games Played"
   ) +
   theme_light(base_size = 12)
+print(p3)
+ggsave("../../presentation/presentation_files/games_by_tier.png", plot = p3, width = 10, height = 6, dpi = 300)
 ```
 
 ---
@@ -158,7 +164,7 @@ knitr::kable(
 ```
 
 ```{r rating-gap-dist, fig.height=4, fig.width=7}
-ggplot(player_summary, aes(x = rating_group, y = rating_gap_standard)) +
+p5 <- ggplot(player_summary, aes(x = rating_group, y = rating_gap_standard)) +
   geom_col(fill = "#8E44AD", alpha = 0.7, width = 0.6) +
   geom_hline(yintercept = 0, linetype = "dashed", color = "red", linewidth = 0.8) +
   geom_text(aes(label = round(rating_gap_standard, 0)), vjust = -0.3, size = 3.5) +
@@ -169,25 +175,49 @@ ggplot(player_summary, aes(x = rating_group, y = rating_gap_standard)) +
     y = "Rating Gap (Lichess - FIDE)"
   ) +
   theme_minimal(base_size = 12)
+print(p5)
+ggsave("../../presentation/presentation_files/rating_gap_distribution.png", plot = p5, width = 10, height = 6, dpi = 300)
 ```
 
 ---
 
 ### A.6 Correlation Analysis
 
-```{r correlation-plot, fig.height=5, fig.width=8, message=FALSE}
-library(GGally)
+```{r correlation-plot, fig.height=6, fig.width=8, message=FALSE, warning=FALSE}
+library(corrplot)
 
-player_summary %>%
+# Select variables for correlation analysis
+corr_data <- player_summary %>%
   select(lichess_avg_rating, lichess_avg_win_rate, 
          rating_gap_standard, lichess_players) %>%
-  ggpairs(
-    title = "Pairwise Correlations: Rating Metrics",
-    columnLabels = c("Lichess Rating", "Win Rate", "Rating Gap", "Sample Size"),
-    upper = list(continuous = wrap("cor", size = 3.5)),
-    lower = list(continuous = wrap("points", alpha = 0.5, size = 2))
-  ) +
-  theme_minimal(base_size = 10)
+  na.omit()
+
+# Calculate correlation matrix
+cor_matrix <- cor(corr_data)
+
+# Create correlation matrix visualization
+png("../../presentation/presentation_files/pairwise-correlations.png", 
+    width = 10, height = 8, units = "in", res = 300)
+corrplot(cor_matrix, 
+         method = "color",
+         type = "upper",
+         addCoef.col = "black",
+         tl.col = "black",
+         tl.srt = 45,
+         title = "Pairwise Correlations: Rating Metrics",
+         mar = c(0, 0, 2, 0),
+         number.cex = 1.2,
+         tl.cex = 1.0,
+         cl.cex = 1.0)
+dev.off()
+
+# Display correlation values
+knitr::kable(
+  cor_matrix,
+  caption = "Correlation Matrix: Rating Metrics",
+  digits = 3,
+  col.names = c("Lichess Rating", "Win Rate", "Rating Gap", "Sample Size")
+)
 ```
 
 ---
