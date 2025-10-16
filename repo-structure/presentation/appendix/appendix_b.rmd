@@ -142,7 +142,7 @@ rating_summary <- rating_histories %>%
     filter(!is.na(rating), !is.na(user), !is.na(category)) %>%
     arrange(user, category, date_index) %>%
     group_by(user, category) %>%
-    filter(n() >= 3) %>%  # Ensure minimum data for rolling average
+    filter(n() >= 3) %>% # Ensure minimum data for rolling average
     mutate(
         relative_time = row_number(),
         rating_change = rating - lag(rating, default = first(rating)),
@@ -153,7 +153,7 @@ rating_summary <- rating_histories %>%
     mutate(
         rating_smooth = case_when(
             n() >= 3 ~ zoo::rollapply(rating, width = 3, FUN = mean, fill = NA, align = "right"),
-            TRUE ~ rating  # Use original rating if insufficient data for smoothing
+            TRUE ~ rating # Use original rating if insufficient data for smoothing
         )
     ) %>%
     ungroup()
@@ -166,7 +166,7 @@ category_stats <- rating_summary %>%
         observations = n(),
         mean_rating = mean(rating, na.rm = TRUE),
         sd_rating = sd(rating, na.rm = TRUE),
-        mean_change = mean(rating_change[rating_change != 0], na.rm = TRUE),  # Exclude initial zeros
+        mean_change = mean(rating_change[rating_change != 0], na.rm = TRUE), # Exclude initial zeros
         median_rating = median(rating, na.rm = TRUE),
         .groups = "drop"
     ) %>%
@@ -209,7 +209,7 @@ ggplot(rating_plot_data, aes(x = relative_time, y = rating_smooth, color = user)
         color = "User"
     ) +
     theme_minimal(base_size = 12) +
-        theme(legend.position = "bottom")
+    theme(legend.position = "bottom")
 ```
 
 > **Interpretation:**
@@ -267,8 +267,10 @@ growth_models <- rating_summary %>%
 # Visualize growth rates
 ggplot(growth_models, aes(x = reorder(user, slope), y = slope, fill = r_squared)) +
     geom_col() +
-    scale_fill_gradient2(low = "#d73027", mid = "#fee090", high = "#1a9850", 
-                         midpoint = 0.5, name = "R²") +
+    scale_fill_gradient2(
+        low = "#d73027", mid = "#fee090", high = "#1a9850",
+        midpoint = 0.5, name = "R²"
+    ) +
     coord_flip() +
     labs(
         title = "Estimated Weekly Rating Growth Rate (Blitz)",
@@ -296,8 +298,10 @@ knitr::kable(
     growth_summary,
     digits = 3,
     caption = "Summary Statistics: Rating Growth Rates (Blitz Category)",
-    col.names = c("Users", "Positive", "Negative", "Mean Rate", "Median Rate", 
-                  "SD Rate", "Mean R²")
+    col.names = c(
+        "Users", "Positive", "Negative", "Mean Rate", "Median Rate",
+        "SD Rate", "Mean R²"
+    )
 )
 ```
 
@@ -364,11 +368,11 @@ activity_performance <- rating_summary %>%
         time_gap = relative_time - lag(relative_time, default = 0),
         games_per_week = 1 / pmax(time_gap, 0.1), # Inverse of time gap as proxy for frequency
         rolling_activity = zoo::rollmean(games_per_week, k = 3, fill = NA, align = "right"),
-        
+
         # Performance metrics
         rating_improvement = rating - lag(rating, default = first(rating)),
         rolling_improvement = zoo::rollmean(rating_improvement, k = 3, fill = NA, align = "right"),
-        
+
         # Cumulative metrics over windows
         period = ceiling(relative_time / 4), # 4-week periods
     ) %>%
