@@ -51,11 +51,32 @@ load_dotenv()
 collection_start <- Sys.time()
 
 ############################################################
+# OAUTH CONFIGURATION
+############################################################
+
+# Lichess OAuth endpoints
+LICHESS_AUTH_URL <- "https://lichess.org/oauth"
+LICHESS_TOKEN_URL <- "https://lichess.org/api/token"
+LICHESS_API_BASE <- "https://lichess.org/api"
+
+# OAuth scopes for data collection
+REQUIRED_SCOPES <- c(
+  "preference:read",
+  "challenge:read",
+  "puzzle:read",
+  "tournament:read",
+  "study:read",
+  "follow:read"
+)
+
+############################################################
 # 1. PROJECT DIRECTORY CONFIGURATION
 ############################################################
 
 # Set working directory relative to your repo structure
-setwd("/home/tmchuynh/Documents/Data Science/project-tmchuynh/repo-structure/extra/scripts")
+setwd(
+  "/home/tmchuynh/Documents/Data Science/project-tmchuynh/repo-structure/extra/scripts"
+)
 
 root_dir <- "../../" # relative to repo-structure/
 data_dir <- paste0(root_dir, "data/")
