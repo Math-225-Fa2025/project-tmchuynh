@@ -1,3 +1,17 @@
+---
+title: "Appendix B — Longitudinal Analysis of Rating Growth (Lichess)"
+author: "Tina Huynh"
+date: "`r Sys.Date()`"
+output: 
+  pdf_document:
+    latex_engine: xelatex
+    toc: true
+    number_sections: true
+    fig_caption: true
+    citation_package: natbib
+    keep_tex: true
+---
+
 ## Appendix B — Longitudinal Analysis of Rating Growth (Lichess)
 
 ### B.1 Data Acquisition
@@ -137,10 +151,10 @@ ggplot(rating_summary, aes(x = relative_time, y = rating_smooth, color = user)) 
 1. **Model Rating Growth:**
    Fit a linear or non-linear regression for each user to estimate weekly growth rate.
 
-   ```r
-   model <- lm(rating_smooth ~ relative_time, data = rating_summary)
-   summary(model)
-   ```
+```{r}
+model <- lm(rating_smooth ~ relative_time, data = rating_summary)
+summary(model)
+```
 
 2. **Compare Variability by Rating Group:**
    Merge `rating_summary` with the existing `player_summary.csv` to test whether higher-rated players show less variance over time.
