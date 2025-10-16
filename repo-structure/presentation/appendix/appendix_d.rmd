@@ -3,13 +3,13 @@ title: "Appendix D — Interactive Dashboard: Chess Performance Analytics"
 author: "Tina Huynh"
 date: "`r Sys.Date()`"
 output: 
-  pdf_document:
-    latex_engine: xelatex
+  html_document:
     toc: true
+    toc_float: true
     number_sections: true
-    fig_caption: true
-    citation_package: natbib
-    keep_tex: true
+    theme: cosmo
+    highlight: tango
+    code_folding: hide
 ---
 
 ## Appendix D — Interactive Dashboard: Chess Performance Analytics
@@ -26,8 +26,8 @@ output:
 ### D.1 Setup and Required Packages
 
 ```{r dashboard-setup, message=FALSE, warning=FALSE}
-# Install once if not already
-install.packages(c("flexdashboard", "plotly", "DT", "broom", "here", "minpack.lm", "lme4", "zoo"))
+# Install once if not already (uncomment to install):
+# install.packages(c("flexdashboard", "plotly", "DT", "broom", "here", "minpack.lm", "lme4", "zoo"))
 
 library(flexdashboard)
 library(plotly)
@@ -284,7 +284,7 @@ ggplotly(p4)
 
 **To deploy this dashboard:**
 
-```{r}
+```r
 # Option 1: Render as standalone HTML
 rmarkdown::render("appendix_d.rmd", output_format = "flexdashboard::flex_dashboard")
 
