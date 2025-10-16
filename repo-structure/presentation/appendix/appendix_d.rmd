@@ -93,6 +93,8 @@ p1 <- ggplot(rating_comparison, aes(x = rating_group, y = rating, fill = source,
   theme_minimal(base_size = 12)
 
 ggplotly(p1, tooltip = "text")
+print(p1)
+ggsave("../../presentation/presentation_files/rating_distribution_comparison.png", plot = p1, width = 9, height = 6, dpi = 300)
 ```
 
 ---
@@ -113,6 +115,8 @@ p2 <- ggplot(player_summary, aes(x = rating_group, y = lichess_avg_win_rate,
   theme_minimal(base_size = 12)
 
 ggplotly(p2, tooltip = "text")
+print(p2)
+ggsave("../../presentation/presentation_files/winrate_by_rating_group.png", plot = p2, width = 9, height = 5, dpi = 300)
 ```
 
 ---
@@ -120,32 +124,90 @@ ggplotly(p2, tooltip = "text")
 ### D.5 Time-Series Rating Progression (Sample Users)
 
 ```{r rating-timeseries, fig.height=6, fig.width=10}
-# Select top 5 users with most rating history
-top_users <- rating_history %>%
-  count(user, sort = TRUE) %>%
-  slice_head(n = 5) %>%
-  pull(user)
-
-rating_ts_data <- rating_history %>%
-  filter(user %in% top_users, category == "Blitz") %>%
-  group_by(user) %>%
-  mutate(rating_smooth = zoo::rollmean(rating, k = 3, fill = NA, align = "right")) %>%
-  ungroup()
-
-p3 <- ggplot(rating_ts_data, aes(x = date, y = rating_smooth, color = user,
-                                  text = paste0("User: ", user,
-                                               "<br>Date: ", date,
-                                               "<br>Rating: ", round(rating_smooth, 0)))) +
-  geom_line(linewidth = 1, alpha = 0.8) +
-  labs(
-    title = "Rating Progression Over Time (Blitz, Top 5 Active Users)",
-    x = "Date",
-    y = "Smoothed Rating",
-    color = "User"
-  ) +
-  theme_minimal(base_size = 12)
-
-ggplotly(p3, tooltip = "text")
+# Check if rating_history has data
+if (nrow(rating_history) == 0) {
+  cat("No rating history data available. Skipping time series plot.\n")
+  plot.new()
+  text(0.5, 0.5, "No rating history data available", cex = 1.5)
+} else {
+  # Debug: Check available data
+  cat("Rating history contains", nrow(rating_history), "records\n")
+  cat("Users:", n_distinct(rating_history$user), "\n")
+  cat("Categories:", unique(rating_history$category), "\n")
+  
+  # Select top 5 users with most rating history in Blitz category
+  top_users <- rating_history %>%
+    filter(!is.na(rating), !is.na(date), category == "Blitz") %>%
+    count(user, sort = TRUE) %>%
+    slice_head(n = 5) %>%
+    pull(user)
+  
+  cat("Top users:", paste(top_users, collapse = ", "), "\n")
+  
+  if (length(top_users) == 0) {
+    cat("No users found with Blitz rating history. Trying all categories...\n")
+    # Fallback: use any category
+    top_users <- rating_history %>%
+      filter(!is.na(rating), !is.na(date)) %>%
+      count(user, sort = TRUE) %>%
+      slice_head(n = 5) %>%
+      pull(user)
+    
+    rating_ts_data <- rating_history %>%
+      filter(user %in% top_users, !is.na(rating), !is.na(date)) %>%
+      group_by(user) %>%
+      arrange(date) %>%
+      mutate(rating_smooth = if(n() >= 3) {
+        zoo::rollmean(rating, k = 3, fill = NA, align = "right")
+      } else {
+        rating  # Use raw rating if insufficient data for smoothing
+      }) %>%
+      ungroup() %>%
+      filter(!is.na(rating_smooth))
+    
+    plot_title <- "Rating Progression Over Time (All Categories, Top 5 Active Users)"
+  } else {
+    rating_ts_data <- rating_history %>%
+      filter(user %in% top_users, category == "Blitz", !is.na(rating), !is.na(date)) %>%
+      group_by(user) %>%
+      arrange(date) %>%
+      mutate(rating_smooth = if(n() >= 3) {
+        zoo::rollmean(rating, k = 3, fill = NA, align = "right")
+      } else {
+        rating  # Use raw rating if insufficient data for smoothing
+      }) %>%
+      ungroup() %>%
+      filter(!is.na(rating_smooth))
+    
+    plot_title <- "Rating Progression Over Time (Blitz, Top 5 Active Users)"
+  }
+  
+  cat("Plot data contains", nrow(rating_ts_data), "points\n")
+  
+  if (nrow(rating_ts_data) == 0) {
+    cat("No valid data points after filtering. Skipping plot.\n")
+    plot.new()
+    text(0.5, 0.5, "No valid rating data for plotting", cex = 1.5)
+  } else {
+    p3 <- ggplot(rating_ts_data, aes(x = date, y = rating_smooth, color = user,
+                                      text = paste0("User: ", user,
+                                                   "<br>Date: ", date,
+                                                   "<br>Rating: ", round(rating_smooth, 0)))) +
+      geom_line(linewidth = 1, alpha = 0.8) +
+      geom_point(size = 0.5, alpha = 0.5) +  # Add points to make data visible
+      labs(
+        title = plot_title,
+        x = "Date",
+        y = "Smoothed Rating",
+        color = "User"
+      ) +
+      theme_minimal(base_size = 12) +
+          theme(legend.position = "right")
+    print(p3)
+    ggplotly(p3, tooltip = "text")
+    ggsave("../../presentation/presentation_files/rating_progression_timeseries.png", plot = p3, width = 10, height = 6, dpi = 300)
+  }
+}
 ```
 
 ---
@@ -260,6 +322,8 @@ p4 <- ggplot(predicted_curves, aes(x = time_index, y = rating, color = user)) +
   theme_minimal(base_size = 11)
 
 ggplotly(p4)
+print(p4)
+ggsave("../../presentation/presentation_files/nonlinear_growth_models.png", plot = p4, width = 10, height = 6, dpi = 300)
 ```
 
 ---
