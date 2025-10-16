@@ -37,11 +37,19 @@ get_rating_history <- function(username) {
             for (i in seq_along(response)) {
                 item <- response[[i]]
                 game_type <- item[["name"]]
-                points_list <- item[["points"]]
+                points_data <- item[["points"]]
                 
-                if (!is.null(points_list) && length(points_list) > 0) {
-                    # Convert list of points to data frame
-                    points_matrix <- do.call(rbind, points_list)
+                if (!is.null(points_data) && length(points_data) > 0) {
+                    # Handle different possible structures
+                    if (is.list(points_data) && !is.data.frame(points_data)) {
+                        # Convert list of vectors to matrix
+                        points_matrix <- matrix(unlist(points_data), ncol = 2, byrow = TRUE)
+                    } else if (is.matrix(points_data)) {
+                        points_matrix <- points_data
+                    } else {
+                        next  # Skip if unexpected format
+                    }
+                    
                     result_list[[i]] <- tibble(
                         user = username,
                         category = game_type,
