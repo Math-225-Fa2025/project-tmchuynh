@@ -140,27 +140,33 @@ get_rating_history <- function(username) {
     )
 }
 
-# Collect rating histories
-rating_histories <- map_dfr(lichess_users, get_rating_history)
-# Check if we got any data
-if (is.null(rating_histories) || nrow(rating_histories) == 0) {
-    cat("\nNo rating history data collected. Check API connectivity or try different users.\n")
-    # Create empty data frame with correct structure
-    rating_histories <- tibble(
-        user = character(),
-        category = character(),
-        date_index = integer(),
-        rating = integer(),
-        date = as.Date(character())
-    )
+    # Collect rating histories
+    rating_histories <- map_dfr(lichess_users, get_rating_history)
+
+    # Check if we got any data
+    if (is.null(rating_histories) || nrow(rating_histories) == 0) {
+        cat("\nNo rating history data collected. Check API connectivity or try different users.\n")
+        # Create empty data frame with correct structure
+        rating_histories <- tibble(
+            user = character(),
+            category = character(),
+            date_index = integer(),
+            rating = integer(),
+            date = as.Date(character())
+        )
+    } else {
+        cat(sprintf(
+            "\nSuccessfully collected %d rating records for %d users\n",
+            nrow(rating_histories), n_distinct(rating_histories$user)
+        ))
+        # Save the newly collected data
+        write_csv(rating_histories, "../../data/lichess_rating_history.csv")
+    }
 } else {
-    cat(sprintf(
-        "\nSuccessfully collected %d rating records for %d users\n",
-        nrow(rating_histories), n_distinct(rating_histories$user)
-    ))
+    # Use existing data
+    rating_histories <- existing_data
 }
 
-write_csv(rating_histories, "../../data/lichess_rating_history.csv")
 glimpse(rating_histories)
 ```
 
