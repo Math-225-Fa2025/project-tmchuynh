@@ -253,13 +253,26 @@ if (nrow(lichess_df) > 0) {
       # Rating difference (user - opponent)
       rating_diff = user_rating - opponent_rating,
 
-      # Game type categorization
+      # Game type categorization (expanded)
       time_control = case_when(
+        speed == "ultraBullet" ~ "UltraBullet",
         speed == "bullet" ~ "Bullet",
         speed == "blitz" ~ "Blitz",
         speed == "rapid" ~ "Rapid",
         speed == "classical" ~ "Classical",
-        TRUE ~ "Other"
+        speed == "correspondence" ~ "Correspondence",
+        perf == "puzzle" ~ "Puzzle",
+        perf == "storm" ~ "Puzzle Storm",
+        perf == "racer" ~ "Puzzle Racer",
+        perf == "crazyhouse" ~ "Crazyhouse",
+        perf == "chess960" ~ "Chess960",
+        perf == "kingOfTheHill" ~ "King of the Hill",
+        perf == "threeCheck" ~ "Three-check",
+        perf == "antichess" ~ "Antichess",
+        perf == "atomic" ~ "Atomic",
+        perf == "horde" ~ "Horde",
+        perf == "racingKings" ~ "Racing Kings",
+        TRUE ~ "Standard"
       ),
 
       # Opening categorization (expanded)
@@ -303,7 +316,7 @@ if (nrow(lichess_df) > 0) {
     user_rating = sample(2400:2900, 100, replace = TRUE),
     opponent_rating = sample(2200:2800, 100, replace = TRUE),
     user_result = sample(c("win", "loss", "draw"), 100, replace = TRUE, prob = c(0.4, 0.35, 0.25)),
-    time_control = sample(c("Blitz", "Rapid", "Classical"), 100, replace = TRUE),
+    time_control = sample(c("UltraBullet", "Bullet", "Blitz", "Rapid", "Classical", "Chess960"), 100, replace = TRUE),
     opening_family = sample(c("Sicilian Defense", "Scandinavian", "Pirc", "Queen's Gambit", "Nimzo-Indian", "Ruy Lopez", "Other"), 100, replace = TRUE),
     user_accuracy = runif(100, 75, 95),
     rating_diff = user_rating - opponent_rating
