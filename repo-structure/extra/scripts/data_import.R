@@ -433,6 +433,156 @@ get_lichess_data <- function(username, max_games = 20, access_token = NULL) {
         "games for user:",
         username
       ))
+
+      # Safely combine data frames with potentially different structures
+      df <- tryCatch(
+        {
+          # First, check if all games have the required basic structure
+          required_fields <- c("id", "rated", "speed", "players")
+
+          # Filter games that have required fields
+          valid_games <- json_games[sapply(json_games, function(game) {
+            all(required_fields %in% names(game))
+          })]
+
+          if (length(valid_games) == 0) {
+            message(paste("No games with required fields for user:", username))
+            return(NULL)
+          }
+
+          message(paste(
+            "Found",
+            length(valid_games),
+            "valid games with required fields"
+          ))
+
+          # Use bind_rows with error handling
+          bind_rows(valid_games)
+        },
+        error = function(e) {
+          message(paste("Error combining games data:", e$message))
+          message(paste("Error class:", class(e)[1]))
+          if (!is.null(e$call)) {
+            message(paste("Error call:", deparse(e$call)[1]))
+          }
+          message("Attempting manual data frame construction...")
+
+          # Manual fallback - extract key fields from each game
+          game_list <- list()
+
+          for (i in seq_along(json_games)) {
+            tryCatch(
+              {
+                game <- json_games[[i]]
+
+                # Helper function to safely extract player data
+                safe_extract <- function(obj, path, default = NA) {
+                  tryCatch(
+                    {
+                      result <- obj
+                      for (key in path) {
+                        if (is.list(result) && key %in% names(result)) {
+                          result <- result[[key]]
+                        } else {
+                          return(default)
+                        }
+                      }
+                      return(result)
+                    },
+                    error = function(e) default
+                  )
+                }
+
+                # Extract game data with consistent types
+                game_row <- data.frame(
+                  id = as.character(safe_extract(
+                    game,
+                    "id",
+                    paste0("unknown_", i)
+                  )),
+                  rated = as.logical(safe_extract(game, "rated", TRUE)),
+                  speed = as.character(safe_extract(
+                    game,
+                    "speed",
+                    safe_extract(game, "perf", "unknown")
+                  )),
+                  winner = as.character(safe_extract(
+                    game,
+                    "winner",
+                    NA_character_
+                  )),
+                  createdAt = as.numeric(safe_extract(
+                    game,
+                    "createdAt",
+                    NA_real_
+                  )),
+                  lastMoveAt = as.numeric(safe_extract(
+                    game,
+                    "lastMoveAt",
+                    NA_real_
+                  )),
+                  players.white.user.id = as.character(safe_extract(
+                    game,
+                    c("players", "white", "user", "id"),
+                    NA_character_
+                  )),
+                  players.white.user.name = as.character(safe_extract(
+                    game,
+                    c("players", "white", "user", "name"),
+                    NA_character_
+                  )),
+                  players.white.rating = as.integer(safe_extract(
+                    game,
+                    c("players", "white", "rating"),
+                    NA_integer_
+                  )),
+                  players.white.ratingDiff = as.integer(safe_extract(
+                    game,
+                    c("players", "white", "ratingDiff"),
+                    NA_integer_
+                  )),
+                  players.black.user.id = as.character(safe_extract(
+                    game,
+                    c("players", "black", "user", "id"),
+                    NA_character_
+                  )),
+                  players.black.user.name = as.character(safe_extract(
+                    game,
+                    c("players", "black", "user", "name"),
+                    NA_character_
+                  )),
+                  players.black.rating = as.integer(safe_extract(
+                    game,
+                    c("players", "black", "rating"),
+                    NA_integer_
+                  )),
+                  players.black.ratingDiff = as.integer(safe_extract(
+                    game,
+                    c("players", "black", "ratingDiff"),
+                    NA_integer_
+                  )),
+                  stringsAsFactors = FALSE
+                )
+
+                game_list[[i]] <- game_row
+              },
+              error = function(e) {
+                message(paste(
+                  "Error processing game",
+                  i,
+                  "for user",
+                  username,
+                  ":",
+                  e$message
+                ))
+                return(NULL)
+              }
+            )
+          }
+      )
+
+      if (is.null(df) || nrow(df) == 0) {
+        message(paste("No valid data extracted for user:", username))
         return(NULL)
       }
 
