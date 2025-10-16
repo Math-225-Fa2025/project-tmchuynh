@@ -299,6 +299,7 @@ ggplot(volatility_stats, aes(x = category, y = sd_rating, fill = category)) +
     ) +
     theme_minimal(base_size = 12) +
     theme(legend.position = "none")
+}
 ```
 
 ---
@@ -306,8 +307,14 @@ ggplot(volatility_stats, aes(x = category, y = sd_rating, fill = category)) +
 ### B.5 Growth Rate Analysis
 
 ```{r growth-rate-analysis, fig.height=5, fig.width=9}
-# Fit linear models to estimate growth rates per user
-growth_models <- rating_summary %>%
+if (nrow(rating_summary) == 0) {
+    cat("No data available. Skipping growth rate analysis.\n")
+    growth_models <- tibble()
+    growth_summary <- tibble(users = 0, positive_growth = 0, negative_growth = 0, 
+                             mean_growth = NA, median_growth = NA, sd_growth = NA, mean_r2 = NA)
+} else {
+    # Fit linear models to estimate growth rates per user
+    growth_models <- rating_summary %>%
     filter(category == "Blitz", !is.na(rating_smooth)) %>%
     group_by(user) %>%
     filter(n() >= 10) %>%
