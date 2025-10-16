@@ -263,3 +263,19 @@ ggplotly(p4)
 ```
 
 ---
+
+### D.9 Key Insights Summary
+
+**Dashboard Highlights:**
+
+1. **Rating Offset:** Lichess ratings are systematically higher than FIDE across most rating groups, likely due to rating inflation in online platforms.
+
+2. **Win Rate Consistency:** Win rates remain relatively stable across tiers (~50%), with slight increases at higher levels reflecting reduced variance.
+
+3. **Growth Patterns:** Most users follow exponential saturation curves, with rapid initial improvement followed by plateauing after 20-40 games.
+
+4. **Learning Rates:** Higher learning rates (k) indicate faster improvement but earlier plateaus, while lower k values suggest steady, sustained growth.
+
+5. **Activity Correlation:** More active players (higher game counts) tend to have more stable ratings and lower variance over time.
+
+---
