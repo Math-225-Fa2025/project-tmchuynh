@@ -192,7 +192,10 @@ The dataset structure is organized with the following columns: user, category, d
 * **Peak Growth Rate:** **+22 points/week** (observed between weeks 7–9).
 * **Inflection Point:** **Week 18**, where improvement rate begins to slow and the curve transitions toward stabilization.
 * **Mathematical Model:**
-  ( \text{rating}(t) = 1520 + 45 \times \ln(t + 1) ) with **R² = 0.91**, indicating strong model reliability and a logarithmic growth pattern reflecting diminishing returns over time.
+  ```
+  rating(t) = 1520 + 45 × ln(t + 1)
+  ```
+  with **R² = 0.91**, indicating strong model reliability and a logarithmic growth pattern reflecting diminishing returns over time.
 * **Interpretation:** Exhibits an **accelerated early learning curve** typical of structured, feedback-driven play, followed by a **gradual performance taper** as cognitive load increases and tactical gains saturate.
 
 **Anna_Chess (Rapid):**
@@ -202,7 +205,10 @@ The dataset structure is organized with the following columns: user, category, d
 * **Characteristic:** **Slower but sustained growth** curve, emphasizing consistency over burst performance.
 * **Peak Growth Rate:** **+18 points/week** (noted between weeks 8–12).
 * **Mathematical Model:**
-  ( \text{rating}(t) = 1680 + 38 \times \ln(t + 1) ) with **R² = 0.87**, reflecting a moderately strong fit and a predictable nonlinear progression.
+  ```
+  rating(t) = 1680 + 38 × ln(t + 1)
+  ```
+  with **R² = 0.87**, reflecting a moderately strong fit and a predictable nonlinear progression.
 * **Interpretation:** Represents a **steady improvement profile** driven by methodical study habits and strategic reinforcement rather than rapid volume-based acceleration.
 
 **Psychological Interpretation:**
@@ -366,7 +372,7 @@ By understanding these aspects, players can better navigate their performance tr
   Accounts for **approximately 60–70% of total variance**, representing **stochastic variability** introduced by uncontrollable factors such as opponent strength, psychological state, and random game outcomes. This component underscores the **intrinsic unpredictability of performance data**, even in highly structured competitive environments.
 
 
-**Signal vs. Noise Decomposition:**
+**Signal vs. Noise Decomposition:
 ```r
 # Variance attribution
 Long-term trend: 15-25%
