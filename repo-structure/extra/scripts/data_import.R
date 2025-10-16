@@ -866,16 +866,28 @@ for (i in seq_along(lichess_users)) {
 
   # Progress update every 50 users
   if (i %% 50 == 0 || i == length(lichess_users)) {
-    elapsed <- as.numeric(difftime(Sys.time(), collection_start, units = "mins"))
+    elapsed <- as.numeric(difftime(
+      Sys.time(),
+      collection_start,
+      units = "mins"
+    ))
     message(sprintf(
       "Progress: %d/%d users (%.1f%%) | Success: %d | Failed: %d | Elapsed: %.1f min",
-      i, length(lichess_users), (i / length(lichess_users)) * 100,
-      success_count, fail_count, elapsed
+      i,
+      length(lichess_users),
+      (i / length(lichess_users)) * 25,
+      success_count,
+      fail_count,
+      elapsed
     ))
   }
 
-  # Collect user data
-  user_data <- get_lichess_data(username, max_games = 15)
+  # Collect user data with OAuth token
+  user_data <- get_lichess_data(
+    username,
+    max_games = 15,
+    access_token = access_token
+  )
 
   if (!is.null(user_data) && nrow(user_data) > 0) {
     all_game_data[[username]] <- user_data
