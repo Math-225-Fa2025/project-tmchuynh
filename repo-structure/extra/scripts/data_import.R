@@ -929,7 +929,10 @@ merged_summary <- lichess_clean %>%
       group_by(rating_group) %>%
       summarise(
         fide_players = n(),
-        fide_avg_rating_standard = round(mean(rating_standard, na.rm = TRUE), 1),
+        fide_avg_rating_standard = round(
+          mean(rating_standard, na.rm = TRUE),
+          1
+        ),
         fide_avg_rating_blitz = round(mean(rating_blitz, na.rm = TRUE), 1),
         fide_rating_sd = round(sd(rating_standard, na.rm = TRUE), 1),
         fide_avg_games = round(mean(games_played, na.rm = TRUE), 1),
