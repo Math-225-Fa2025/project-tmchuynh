@@ -126,6 +126,24 @@ get_rating_history <- function(username) {
 
 # Collect rating histories
 rating_histories <- map_dfr(lichess_users, get_rating_history)
+# Check if we got any data
+if (is.null(rating_histories) || nrow(rating_histories) == 0) {
+    cat("\nNo rating history data collected. Check API connectivity or try different users.\n")
+    # Create empty data frame with correct structure
+    rating_histories <- tibble(
+        user = character(),
+        category = character(),
+        date_index = integer(),
+        rating = integer(),
+        date = as.Date(character())
+    )
+} else {
+    cat(sprintf(
+        "\nSuccessfully collected %d rating records for %d users\n",
+        nrow(rating_histories), n_distinct(rating_histories$user)
+    ))
+}
+
 write_csv(rating_histories, "../../data/lichess_rating_history.csv")
 glimpse(rating_histories)
 ```
@@ -137,79 +155,89 @@ glimpse(rating_histories)
 ```{r rating-history-clean}
 library(zoo)
 
-# Clean, filter, and aggregate by category (e.g., Blitz, Rapid)
-rating_summary <- rating_histories %>%
-    filter(!is.na(rating), !is.na(user), !is.na(category)) %>%
-    arrange(user, category, date_index) %>%
-    group_by(user, category) %>%
-    filter(n() >= 3) %>% # Ensure minimum data for rolling average
-    mutate(
-        relative_time = row_number(),
-        rating_change = rating - lag(rating, default = first(rating)),
-        cumulative_change = rating - first(rating),
-        .before = everything()
-    ) %>%
-    arrange(relative_time) %>%
-    mutate(
-        rating_smooth = case_when(
-            n() >= 3 ~ zoo::rollapply(rating, width = 3, FUN = mean, fill = NA, align = "right"),
-            TRUE ~ rating # Use original rating if insufficient data for smoothing
-        )
-    ) %>%
-    ungroup()
+# Check if we have data to process
+if (nrow(rating_histories) == 0) {
+    cat("No data available for time-series analysis. Skipping this section.\n")
+    rating_summary <- tibble()
+    category_stats <- tibble()
+} else {
+    # Clean, filter, and aggregate by category (e.g., Blitz, Rapid)
+    rating_summary <- rating_histories %>%
+        filter(!is.na(rating), !is.na(user), !is.na(category)) %>%
+        arrange(user, category, date_index) %>%
+        group_by(user, category) %>%
+        filter(n() >= 3) %>% # Ensure minimum data for rolling average
+        mutate(
+            relative_time = row_number(),
+            rating_change = rating - lag(rating, default = first(rating)),
+            cumulative_change = rating - first(rating),
+            .before = everything()
+        ) %>%
+        arrange(relative_time) %>%
+        mutate(
+            rating_smooth = case_when(
+                n() >= 3 ~ zoo::rollapply(rating, width = 3, FUN = mean, fill = NA, align = "right"),
+                TRUE ~ rating # Use original rating if insufficient data for smoothing
+            )
+        ) %>%
+        ungroup()
 
-# Optimized summary statistics with single pass through data
-category_stats <- rating_summary %>%
-    group_by(category) %>%
-    summarise(
-        users = n_distinct(user),
-        observations = n(),
-        mean_rating = mean(rating, na.rm = TRUE),
-        sd_rating = sd(rating, na.rm = TRUE),
-        mean_change = mean(rating_change[rating_change != 0], na.rm = TRUE), # Exclude initial zeros
-        median_rating = median(rating, na.rm = TRUE),
-        .groups = "drop"
-    ) %>%
-    arrange(desc(users), desc(observations))
+    # Optimized summary statistics with single pass through data
+    category_stats <- rating_summary %>%
+        group_by(category) %>%
+        summarise(
+            users = n_distinct(user),
+            observations = n(),
+            mean_rating = mean(rating, na.rm = TRUE),
+            sd_rating = sd(rating, na.rm = TRUE),
+            mean_change = mean(rating_change[rating_change != 0], na.rm = TRUE), # Exclude initial zeros
+            median_rating = median(rating, na.rm = TRUE),
+            .groups = "drop"
+        ) %>%
+        arrange(desc(users), desc(observations))
 
-# Enhanced table output with better formatting
-knitr::kable(
-    category_stats,
-    digits = 2,
-    caption = "Rating Summary Statistics by Game Category",
-    col.names = c("Category", "Users", "Obs", "Mean Rating", "SD", "Avg Change/Week", "Median Rating"),
-    format.args = list(big.mark = ",")
-)
+    # Enhanced table output with better formatting
+    knitr::kable(
+        category_stats,
+        digits = 2,
+        caption = "Rating Summary Statistics by Game Category",
+        col.names = c("Category", "Users", "Obs", "Mean Rating", "SD", "Avg Change/Week", "Median Rating"),
+        format.args = list(big.mark = ",")
+    )
 
-head(rating_summary, 10)
-```
-
----
+    head(rating_summary, 10)
+}
+```---
 
 ### B.3 Visualization: Rating Progression Over Time
 
 ```{r rating-time-series, fig.height=6, fig.width=10}
-# Focus on most popular categories with sufficient data
-top_categories <- rating_summary %>%
-    count(category) %>%
-    slice_max(n, n = 4) %>%
-    pull(category)
+# Check if we have data
+if (nrow(rating_summary) == 0) {
+    cat("No data available for visualization. Skipping rating progression plot.\n")
+} else {
+    # Focus on most popular categories with sufficient data
+    top_categories <- rating_summary %>%
+        count(category) %>%
+        slice_max(n, n = 4) %>%
+        pull(category)
 
-rating_plot_data <- rating_summary %>%
-    filter(category %in% top_categories)
+    rating_plot_data <- rating_summary %>%
+        filter(category %in% top_categories)
 
-ggplot(rating_plot_data, aes(x = relative_time, y = rating_smooth, color = user)) +
-    geom_line(linewidth = 0.8, alpha = 0.7) +
-    facet_wrap(~category, scales = "free_y", ncol = 2) +
-    labs(
-        title = "Lichess Rating Progression Over Time",
-        subtitle = paste("Sample of", n_distinct(rating_plot_data$user), "Users Across Top Game Categories"),
-        x = "Sequential Game Weeks (relative index)",
-        y = "Smoothed Rating (3-period rolling mean)",
-        color = "User"
-    ) +
-    theme_minimal(base_size = 12) +
-    theme(legend.position = "bottom")
+    ggplot(rating_plot_data, aes(x = relative_time, y = rating_smooth, color = user)) +
+        geom_line(linewidth = 0.8, alpha = 0.7) +
+        facet_wrap(~category, scales = "free_y", ncol = 2) +
+        labs(
+            title = "Lichess Rating Progression Over Time",
+            subtitle = paste("Sample of", n_distinct(rating_plot_data$user), "Users Across Top Game Categories"),
+            x = "Sequential Game Weeks (relative index)",
+            y = "Smoothed Rating (3-period rolling mean)",
+            color = "User"
+        ) +
+        theme_minimal(base_size = 12) +
+        theme(legend.position = "bottom")
+}
 ```
 
 > **Interpretation:**
