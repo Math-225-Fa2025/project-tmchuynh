@@ -11,7 +11,7 @@ library(httr)
 # Load random subset of users from the Lichess summary
 lichess_path <- "../../data/lichess_clean.csv"
 lichess_users <- read_csv(lichess_path, show_col_types = FALSE) %>%
-    slice_sample(n = 5) %>% # pull 5 random users for plotting
+    slice_sample(n = 15) %>% # pull 15 random users for plotting
     pull(user)
 
 # Debug: Check selected users
@@ -31,14 +31,30 @@ get_rating_history <- function(username) {
                 cat("  No rating history available\n")
                 return(NULL)
             }
-            tibble(
-                user = username,
-                category = map_chr(response, "name"),
-                points = map(response, "points")
-            ) %>%
-                unnest(points) %>%
-                rename(date_index = X1, rating = X2) %>%
-                mutate(date = as_date("2013-01-01") + weeks(date_index)) # Lichess counts from 2013 start
+            
+            # Process each game type
+            result_list <- list()
+            for (i in seq_along(response)) {
+                game_type <- response[[i]]$name
+                points_df <- response[[i]]$points
+                
+                if (!is.null(points_df) && nrow(points_df) > 0) {
+                    result_list[[i]] <- tibble(
+                        user = username,
+                        category = game_type,
+                        date_index = points_df[, 1],
+                        rating = points_df[, 2]
+                    ) %>%
+                        mutate(date = as_date("2013-01-01") + weeks(date_index))
+                }
+            }
+            
+            if (length(result_list) > 0) {
+                return(bind_rows(result_list))
+            } else {
+                cat("  No valid rating points found\n")
+                return(NULL)
+            }
         },
         error = function(e) {
             cat(paste0("  Error: ", e$message, "\n"))
