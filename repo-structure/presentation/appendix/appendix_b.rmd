@@ -386,6 +386,53 @@ period_summary <- activity_performance %>%
 head(period_summary, 10)
 ```
 
+```{r correlation-analysis}
+# Overall correlation analysis
+correlation_results <- period_summary %>%
+    summarise(
+        pearson_r = cor(avg_activity, avg_improvement, use = "complete.obs"),
+        spearman_rho = cor(avg_activity, avg_improvement, method = "spearman", use = "complete.obs"),
+        n_observations = n(),
+        users = n_distinct(user)
+    )
+
+# Per-user correlation analysis
+user_correlations <- period_summary %>%
+    group_by(user) %>%
+    filter(n() >= 5) %>% # Minimum periods for reliable correlation
+    summarise(
+        correlation = cor(avg_activity, avg_improvement, use = "complete.obs"),
+        periods = n(),
+        .groups = "drop"
+    ) %>%
+    filter(!is.na(correlation))
+
+knitr::kable(
+    correlation_results,
+    digits = 3,
+    caption = "Overall Activity-Performance Correlation",
+    col.names = c("Pearson r", "Spearman ρ", "Observations", "Users")
+)
+
+# Summary of user-level correlations
+user_corr_summary <- user_correlations %>%
+    summarise(
+        users = n(),
+        positive_corr = sum(correlation > 0),
+        strong_positive = sum(correlation > 0.3),
+        negative_corr = sum(correlation < 0),
+        mean_correlation = mean(correlation),
+        median_correlation = median(correlation)
+    )
+
+knitr::kable(
+    user_corr_summary,
+    digits = 3,
+    caption = "User-Level Correlation Summary",
+    col.names = c("Users", "Positive", "Strong Pos.", "Negative", "Mean r", "Median r")
+)
+```
+
 1. **Hierarchical Mixed-Effects Models:**
    Account for both user-level and category-level variation using `lme4`:
    
