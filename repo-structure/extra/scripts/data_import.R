@@ -276,6 +276,36 @@ get_access_token <- function(interactive = TRUE) {
   message("Proceeding without authentication (rate-limited requests)")
   return(NULL)
 }
+
+# Test access token validity
+test_access_token <- function(token) {
+  if (is.null(token) || nchar(token) == 0) {
+    return(FALSE)
+  }
+
+  tryCatch(
+    {
+      response <- GET(
+        paste0(LICHESS_API_BASE, "/account"),
+        add_headers(Authorization = paste("Bearer", token)),
+        timeout(10)
+      )
+
+      if (status_code(response) == 200) {
+        user_data <- content(response, as = "parsed")
+        message("✓ Token valid for user: ", user_data$username)
+        return(TRUE)
+      } else {
+        message("✗ Token invalid or expired")
+        return(FALSE)
+      }
+    },
+    error = function(e) {
+      message("✗ Error testing token: ", e$message)
+      return(FALSE)
+    }
+  )
+}
   Sys.sleep(runif(1, 0.5, 1.2)) # polite pause between calls
   url <- paste0(
     "https://lichess.org/api/games/user/", username,
