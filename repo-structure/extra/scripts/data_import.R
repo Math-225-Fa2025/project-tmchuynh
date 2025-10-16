@@ -340,11 +340,35 @@ check_lichess_user <- function(username) {
     }
   )
 }
+
+# Helper: safely fetch user games from Lichess with OAuth support
+get_lichess_data <- function(username, max_games = 20, access_token = NULL) {
+  # First check if user exists
+  if (!check_lichess_user(username)) {
+    return(NULL)
+  }
+
   Sys.sleep(runif(1, 0.5, 1.2)) # polite pause between calls
+
+  # Use games export endpoint for better data access
   url <- paste0(
-    "https://lichess.org/api/games/user/", username,
-    "?max=", max_games, "&rated=true&perfType=blitz,rapid,classical,bullet"
+    "https://lichess.org/api/games/user/",
+    username,
+    "?max=",
+    max_games,
+    "&rated=true&perfType=blitz,rapid,classical,bullet&format=ndjson"
   )
+
+  # Prepare headers
+  headers <- add_headers("Accept" = "application/x-ndjson")
+
+  # Add OAuth token if available
+  if (!is.null(access_token) && nchar(access_token) > 0) {
+    headers <- add_headers(
+      "Accept" = "application/x-ndjson",
+      "Authorization" = paste("Bearer", access_token)
+    )
+  }
 
   tryCatch(
     {
