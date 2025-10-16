@@ -152,6 +152,62 @@ generate_auth_url <- function(
   query_string <- paste(names(params), params, sep = "=", collapse = "&")
   paste0(LICHESS_AUTH_URL, "?", query_string)
 }
+
+# Exchange authorization code for access token
+exchange_code_for_token <- function(
+  client_id,
+  redirect_uri,
+  auth_code,
+  code_verifier = NULL
+) {
+  if (is.null(code_verifier)) {
+    code_verifier <- Sys.getenv("OAUTH_CODE_VERIFIER")
+  }
+
+  if (nchar(code_verifier) == 0) {
+    stop("Code verifier not found. Make sure to generate auth URL first.")
+  }
+
+  body <- list(
+    grant_type = "authorization_code",
+    code = auth_code,
+    code_verifier = code_verifier,
+    redirect_uri = redirect_uri,
+    client_id = client_id
+  )
+
+  tryCatch(
+    {
+      response <- POST(
+        LICHESS_TOKEN_URL,
+        body = body,
+        encode = "form",
+        timeout(30)
+      )
+
+      if (status_code(response) == 200) {
+        token_data <- content(response, as = "parsed")
+
+        # Store token securely
+        Sys.setenv(LICHESS_ACCESS_TOKEN = token_data$access_token)
+
+        message("✓ OAuth token obtained successfully!")
+        message("Token expires in:", token_data$expires_in, "seconds")
+
+        return(token_data$access_token)
+      } else {
+        error_data <- content(response, as = "parsed")
+        stop(
+          "Failed to obtain token: ",
+          error_data$error_description %||% "Unknown error"
+        )
+      }
+    },
+    error = function(e) {
+      stop("Error exchanging code for token: ", e$message)
+    }
+  )
+}
   Sys.sleep(runif(1, 0.5, 1.2)) # polite pause between calls
   url <- paste0(
     "https://lichess.org/api/games/user/", username,
