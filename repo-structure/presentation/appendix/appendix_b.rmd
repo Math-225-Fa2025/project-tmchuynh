@@ -470,10 +470,14 @@ period_summary <- activity_performance %>%
     ) %>%
     filter(games_in_period >= 2) # Minimum games per period
 
-head(period_summary, 10)
+    head(period_summary, 10)
+}
 ```
 
 ```{r correlation-analysis}
+if (nrow(period_summary) == 0) {
+    cat(\"No period summary data available.\\n\")
+} else {
 # Overall correlation analysis
 correlation_results <- period_summary %>%
     summarise(
