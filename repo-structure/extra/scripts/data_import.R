@@ -914,13 +914,25 @@ merged_summary <- lichess_clean %>%
     lichess_avg_rating_change = round(mean(avg_rating_change, na.rm = TRUE), 2),
 
     # Activity patterns
-    pct_high_activity = round(mean(activity_level %in% c("High", "Very High"), na.rm = TRUE), 3),
+    pct_high_activity = round(
+      mean(activity_level %in% c("High", "Very High"), na.rm = TRUE),
+      3
+    ),
     avg_days_active = round(mean(days_active, na.rm = TRUE), 1),
 
     # Time control preferences
-    pct_prefer_blitz = round(mean(preferred_time_control == "Blitz", na.rm = TRUE), 3),
-    pct_prefer_rapid = round(mean(preferred_time_control == "Rapid", na.rm = TRUE), 3),
-    pct_prefer_bullet = round(mean(preferred_time_control == "Bullet", na.rm = TRUE), 3),
+    pct_prefer_blitz = round(
+      mean(preferred_time_control == "Blitz", na.rm = TRUE),
+      3
+    ),
+    pct_prefer_rapid = round(
+      mean(preferred_time_control == "Rapid", na.rm = TRUE),
+      3
+    ),
+    pct_prefer_bullet = round(
+      mean(preferred_time_control == "Bullet", na.rm = TRUE),
+      3
+    ),
     .groups = "drop"
   ) %>%
   # Merge with FIDE statistics
