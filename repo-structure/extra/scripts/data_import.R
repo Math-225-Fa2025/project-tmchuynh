@@ -697,23 +697,29 @@ if (is.null(lichess_all) || nrow(lichess_all) == 0) {
     ),
     rating_diff = sample(-80:80, total_games, replace = TRUE),
     rating_post = pmax(800, rating_pre + rating_diff), # Minimum rating floor
-    opponent_rating = rating_pre + sample(-200:200, total_games, replace = TRUE),
-    datetime = sample(seq(
-      from = as_datetime("2024-01-01"),
-      to = as_datetime("2024-12-31"),
-      by = "hour"
-    ), total_games)
+    opponent_rating = rating_pre +
+      sample(-200:200, total_games, replace = TRUE),
+    datetime = sample(
+      seq(
+        from = as_datetime("2024-01-01"),
+        to = as_datetime("2024-12-31"),
+        by = "hour"
+      ),
+      total_games
+    )
   ) %>%
     arrange(user, datetime)
 
   message(sprintf(
     "✓ Sample data created: %d games from %d users across all rating tiers",
-    nrow(lichess_all), length(sample_users)
+    nrow(lichess_all),
+    length(sample_users)
   ))
 } else {
   message(sprintf(
     "✓ Real API data collected: %d games from %d users",
-    nrow(lichess_all), length(unique(lichess_all$user))
+    nrow(lichess_all),
+    length(unique(lichess_all$user))
   ))
 }
 
