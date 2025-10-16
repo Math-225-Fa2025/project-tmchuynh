@@ -460,41 +460,43 @@ if (nrow(rating_summary) == 0) {
     period_summary <- tibble()
     correlation_results <- tibble(pearson_r = NA, spearman_rho = NA, n_observations = 0, users = 0)
     user_correlations <- tibble()
-    user_corr_summary <- tibble(users = 0, positive_corr = 0, strong_positive = 0, 
-                                 negative_corr = 0, mean_correlation = NA, median_correlation = NA)
+    user_corr_summary <- tibble(
+        users = 0, positive_corr = 0, strong_positive = 0,
+        negative_corr = 0, mean_correlation = NA, median_correlation = NA
+    )
 } else {
     # Calculate activity metrics and performance improvements
     activity_performance <- rating_summary %>%
-    filter(category == "Blitz") %>%
-    group_by(user) %>%
-    arrange(relative_time) %>%
-    mutate(
-        # Activity metrics
-        time_gap = relative_time - lag(relative_time, default = 0),
-        games_per_week = 1 / pmax(time_gap, 0.1), # Inverse of time gap as proxy for frequency
-        rolling_activity = zoo::rollmean(games_per_week, k = 3, fill = NA, align = "right"),
+        filter(category == "Blitz") %>%
+        group_by(user) %>%
+        arrange(relative_time) %>%
+        mutate(
+            # Activity metrics
+            time_gap = relative_time - lag(relative_time, default = 0),
+            games_per_week = 1 / pmax(time_gap, 0.1), # Inverse of time gap as proxy for frequency
+            rolling_activity = zoo::rollmean(games_per_week, k = 3, fill = NA, align = "right"),
 
-        # Performance metrics
-        rating_improvement = rating - lag(rating, default = first(rating)),
-        rolling_improvement = zoo::rollmean(rating_improvement, k = 3, fill = NA, align = "right"),
+            # Performance metrics
+            rating_improvement = rating - lag(rating, default = first(rating)),
+            rolling_improvement = zoo::rollmean(rating_improvement, k = 3, fill = NA, align = "right"),
 
-        # Cumulative metrics over windows
-        period = ceiling(relative_time / 4), # 4-week periods
-    ) %>%
-    filter(!is.na(rolling_activity), !is.na(rolling_improvement)) %>%
-    ungroup()
+            # Cumulative metrics over windows
+            period = ceiling(relative_time / 4), # 4-week periods
+        ) %>%
+        filter(!is.na(rolling_activity), !is.na(rolling_improvement)) %>%
+        ungroup()
 
-# Aggregate by user and period for correlation analysis
-period_summary <- activity_performance %>%
-    group_by(user, period) %>%
-    summarise(
-        avg_activity = mean(rolling_activity, na.rm = TRUE),
-        avg_improvement = mean(rolling_improvement, na.rm = TRUE),
-        total_improvement = sum(rating_improvement, na.rm = TRUE),
-        games_in_period = n(),
-        .groups = "drop"
-    ) %>%
-    filter(games_in_period >= 2) # Minimum games per period
+    # Aggregate by user and period for correlation analysis
+    period_summary <- activity_performance %>%
+        group_by(user, period) %>%
+        summarise(
+            avg_activity = mean(rolling_activity, na.rm = TRUE),
+            avg_improvement = mean(rolling_improvement, na.rm = TRUE),
+            total_improvement = sum(rating_improvement, na.rm = TRUE),
+            games_in_period = n(),
+            .groups = "drop"
+        ) %>%
+        filter(games_in_period >= 2) # Minimum games per period
 
     head(period_summary, 10)
 }
@@ -502,52 +504,52 @@ period_summary <- activity_performance %>%
 
 ```{r correlation-analysis}
 if (nrow(period_summary) == 0) {
-    cat(\"No period summary data available.\\n\")
+    cat("No period summary data available.\n")
 } else {
-# Overall correlation analysis
-correlation_results <- period_summary %>%
-    summarise(
-        pearson_r = cor(avg_activity, avg_improvement, use = "complete.obs"),
-        spearman_rho = cor(avg_activity, avg_improvement, method = "spearman", use = "complete.obs"),
-        n_observations = n(),
-        users = n_distinct(user)
+    # Overall correlation analysis
+    correlation_results <- period_summary %>%
+        summarise(
+            pearson_r = cor(avg_activity, avg_improvement, use = "complete.obs"),
+            spearman_rho = cor(avg_activity, avg_improvement, method = "spearman", use = "complete.obs"),
+            n_observations = n(),
+            users = n_distinct(user)
+        )
+
+    # Per-user correlation analysis
+    user_correlations <- period_summary %>%
+        group_by(user) %>%
+        filter(n() >= 5) %>% # Minimum periods for reliable correlation
+        summarise(
+            correlation = cor(avg_activity, avg_improvement, use = "complete.obs"),
+            periods = n(),
+            .groups = "drop"
+        ) %>%
+        filter(!is.na(correlation))
+
+    knitr::kable(
+        correlation_results,
+        digits = 3,
+        caption = "Overall Activity-Performance Correlation",
+        col.names = c("Pearson r", "Spearman ρ", "Observations", "Users")
     )
 
-# Per-user correlation analysis
-user_correlations <- period_summary %>%
-    group_by(user) %>%
-    filter(n() >= 5) %>% # Minimum periods for reliable correlation
-    summarise(
-        correlation = cor(avg_activity, avg_improvement, use = "complete.obs"),
-        periods = n(),
-        .groups = "drop"
-    ) %>%
-    filter(!is.na(correlation))
+    # Summary of user-level correlations
+    user_corr_summary <- user_correlations %>%
+        summarise(
+            users = n(),
+            positive_corr = sum(correlation > 0),
+            strong_positive = sum(correlation > 0.3),
+            negative_corr = sum(correlation < 0),
+            mean_correlation = mean(correlation),
+            median_correlation = median(correlation)
+        )
 
-knitr::kable(
-    correlation_results,
-    digits = 3,
-    caption = "Overall Activity-Performance Correlation",
-    col.names = c("Pearson r", "Spearman ρ", "Observations", "Users")
-)
-
-# Summary of user-level correlations
-user_corr_summary <- user_correlations %>%
-    summarise(
-        users = n(),
-        positive_corr = sum(correlation > 0),
-        strong_positive = sum(correlation > 0.3),
-        negative_corr = sum(correlation < 0),
-        mean_correlation = mean(correlation),
-        median_correlation = median(correlation)
+    knitr::kable(
+        user_corr_summary,
+        digits = 3,
+        caption = "User-Level Correlation Summary",
+        col.names = c("Users", "Positive", "Strong Pos.", "Negative", "Mean r", "Median r")
     )
-
-knitr::kable(
-    user_corr_summary,
-    digits = 3,
-    caption = \"User-Level Correlation Summary\",
-    col.names = c(\"Users\", \"Positive\", \"Strong Pos.\", \"Negative\", \"Mean r\", \"Median r\")
-)
 }
 ```
 
