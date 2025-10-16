@@ -279,3 +279,28 @@ ggplotly(p4)
 5. **Activity Correlation:** More active players (higher game counts) tend to have more stable ratings and lower variance over time.
 
 ---
+
+### D.10 Export and Deployment Options
+
+**To deploy this dashboard:**
+
+```{r}
+# Option 1: Render as standalone HTML
+rmarkdown::render("appendix_d.rmd", output_format = "flexdashboard::flex_dashboard")
+
+# Option 2: Deploy to Shiny Server
+# Add runtime: shiny to YAML header and deploy using rsconnect
+
+# Option 3: Host on GitHub Pages
+# Render to HTML and commit to gh-pages branch
+```
+
+**Interactive Features:**
+
+- Hover tooltips for detailed values
+- Filterable/sortable data tables
+- Exportable tables (CSV, Excel)
+- Zoom and pan on plots
+- Cross-filtering capabilities (with Shiny runtime)
+
+---
