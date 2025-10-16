@@ -23,15 +23,31 @@ library(lubridate)
 library(httr)
 library(dplyr)
 
-# Load random subset of users from the Lichess summary
-lichess_path <- "../../data/lichess_clean.csv"
-lichess_users <- read_csv(lichess_path, show_col_types = FALSE) %>%
-    slice_sample(n = 15) %>% # pull 15 random users for plotting
-    pull(user)
+# First, try to load existing rating history data
+rating_hist_path <- "../../data/lichess_rating_history.csv"
+existing_data <- NULL
 
-# Debug: Check selected users
-cat("Selected users:\n")
-print(lichess_users)
+if (file.exists(rating_hist_path)) {
+    existing_data <- read_csv(rating_hist_path, show_col_types = FALSE)
+    if (nrow(existing_data) > 0) {
+        cat(sprintf("Loaded existing rating history: %d records for %d users\n", 
+                    nrow(existing_data), n_distinct(existing_data$user)))
+    }
+}
+
+# Only fetch new data if we don't have existing data
+if (is.null(existing_data) || nrow(existing_data) == 0) {
+    cat("No existing data found. Fetching from Lichess API...\n")
+    
+    # Load random subset of users from the Lichess summary
+    lichess_path <- "../../data/lichess_clean.csv"
+    lichess_users <- read_csv(lichess_path, show_col_types = FALSE) %>%
+        slice_sample(n = 15) %>% # pull 15 random users for plotting
+        pull(user)
+
+    # Debug: Check selected users
+    cat("Selected users:\n")
+    print(lichess_users)
 
 # Function to retrieve rating history for a given user
 get_rating_history <- function(username) {
