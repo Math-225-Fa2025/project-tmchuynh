@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>Presentation title</title>
+    <title>Chess Rating Analysis</title>
     <meta charset="utf-8" />
-    <meta name="author" content="Team name   Names of team members" />
+    <meta name="author" content="Tina Huynh" />
     <meta name="date" content="2025-10-16" />
     <script src="libs/header-attrs-2.29/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
@@ -15,16 +15,13 @@
 class: center, middle, inverse, title-slide
 
 .title[
-# Presentation title
+# Chess Rating Analysis
 ]
 .subtitle[
-## Presentation subtitle (if any)
+## Statistical Analysis of Player Performance and Progression
 ]
 .author[
-### Team name <br> Names of team members
-]
-.institute[
-### University of Edinburgh
+### Tina Huynh
 ]
 .date[
 ### 2025-10-16
@@ -39,237 +36,382 @@ class: center, middle, inverse, title-slide
 
 
 
+class: center, left
 
-``` r
-style_xaringan(
-  title_slide_background_image = "img/confetti.jpg"
-)
-```
+## Research Questions
 
+**How do chess players perform and progress across different platforms and contexts?**
 
-class: center, middle
-
-## A statement of the overall goal / research question
+1. What are the rating differences between Lichess and FIDE systems?
+2. How do players improve over time?
+3. What factors influence game outcomes?
 
 ---
 
 class: inverse, center, middle
 
-# Section title
+# Part 1: Rating Systems Comparison
 
 ---
 
-# Hello World
+# Lichess vs. FIDE Ratings
 
-- Click the `Knit` button to compile your presentation
+.center[
+&lt;img src="presentation_files/rating_comparison.png" width="75%" /&gt;
+]
 
-- Make sure to commit and push all resulting files to your GitHub repo
-
----
-
-class: inverse, middle, center
-
-# Using xaringan
+**Key Finding:** Lichess ratings are systematically higher than FIDE across most rating groups, indicating platform-specific rating inflation.
 
 ---
 
-# xaringan
-
-- The presentation is created using the `xaringan` package
-
-- Use `---` to separate slides and `--` for incremental builds
-
---
-
-- Like this
-
----
-
-# Layouts
-
-You can use plain text
-
-- or bullet points
+# Rating Gap Distribution
 
 .pull-left[
-or text in two columns `\(^*\)`
+&lt;img src="presentation_files/rating_gap_distribution.png" width="100%" /&gt;
 ]
+
 .pull-right[
-- like
-- this
+**Observations:**
+- Positive gaps across all tiers
+- Largest differences at extremes (Under-1600 and 2600+)
+- Average gap: ~150-200 rating points
+- Reflects different player pools and rating calculation methods
 ]
+
+---
+
+# Distribution Comparison
+
+.center[
+&lt;img src="presentation_files/rating_distribution_comparison.png" width="70%" /&gt;
+]
+
+Lichess attracts a broader range of online players, while FIDE focuses on over-the-board tournament participants.
+
+---
+
+class: inverse, center, middle
+
+# Part 2: Performance Analysis
+
+---
+
+# Win Rate by Rating Tier
+
+.pull-left[
+&lt;img src="presentation_files/winrate_by_tier.png" width="100%" /&gt;
+]
+
+.pull-right[
+**Key Insights:**
+- Win rates remain stable around 50% across tiers
+- Slight upward trend at higher ratings
+- Elite players show greater consistency
+- Lower variance in outcomes at top levels
+]
+
+---
+
+# Game Outcomes by Color
+
+.center[
+&lt;img src="presentation_files/game_outcomes_by_color.png" width="65%" /&gt;
+]
+
+**White advantage confirmed:** Approximately 52-54% better outcomes when playing White, consistent with chess theory.
+
+---
+
+# Performance by Time Control
+
+.center[
+&lt;img src="presentation_files/game_outcomes_by_time_control.png" width="70%" /&gt;
+]
+
+Faster time controls (Bullet, Blitz) show more decisive results; Classical games have higher draw rates.
+
+---
+
+# Accuracy and Outcomes
+
+.center[
+&lt;img src="presentation_files/accuracy_distribution_by_outcome.png" width="65%" /&gt;
+]
+
+**Strong correlation:** Higher accuracy directly predicts winning outcomes, with clear separation between wins, draws, and losses.
+
+---
+
+class: inverse, center, middle
+
+# Part 3: Opening Analysis
+
+---
+
+# Win Rate by Opening Family
+
+.center[
+&lt;img src="presentation_files/win_rate_by_opening_family.png" width="70%" /&gt;
+]
+
+Different opening systems show varying effectiveness, with some providing consistent advantages.
+
+---
+
+# Opening Performance by Color
+
+.center[
+&lt;img src="presentation_files/win_rate_by_opening_and_color.png" width="75%" /&gt;
+]
+
+Opening effectiveness varies significantly based on whether you're playing White or Black pieces.
+
+---
+
+# Color Advantage by Opening
+
+.center[
+&lt;img src="presentation_files/opening_color_advantage.png" width="70%" /&gt;
+]
+
+Some openings strongly favor White (positive values), while others provide better chances for Black (negative values).
+
+---
+
+# Opening Outcomes Distribution
+
+.center[
+&lt;img src="presentation_files/opening_outcomes_by_color.png" width="70%" /&gt;
+]
+
+Complete win/loss/draw breakdown shows how opening choice impacts game decisiveness.
+
+---
+
+class: inverse, center, middle
+
+# Part 4: Longitudinal Analysis
+
+---
+
+# Rating Progression Over Time
+
+.center[
+&lt;img src="presentation_files/lichess-rating-progression-over-time.png" width="75%" /&gt;
+]
+
+Individual player trajectories show diverse learning patterns and skill development paths.
+
+---
+
+# Cumulative Rating Change
+
+.center[
+&lt;img src="presentation_files/cumulative_rating_change.png" width="70%" /&gt;
+]
+
+Net rating changes reveal which players improve, plateau, or decline over their playing history.
+
+---
+
+# Rating Volatility Analysis
+
+.pull-left[
+&lt;img src="presentation_files/rating_volatility.png" width="100%" /&gt;
+]
+
+.pull-right[
+**Findings:**
+- Higher volatility in faster time controls
+- Individual variation in consistency
+- Skill stabilization over time
+- Lower variance indicates mastery
+]
+
+---
+
+# Rolling Win Rate Trends
+
+.center[
+&lt;img src="presentation_files/rolling_win_rate_over_time.png" width="70%" /&gt;
+]
+
+20-game rolling averages smooth short-term fluctuations and reveal genuine performance trends.
+
+---
+
+class: inverse, center, middle
+
+# Part 5: Growth Modeling
+
+---
+
+# Linear Growth Rates
+
+.center[
+&lt;img src="presentation_files/rating_growth.png" width="70%" /&gt;
+]
+
+Linear regression reveals weekly improvement rates, with R² indicating model fit quality for each player.
+
+---
+
+# Nonlinear Growth Models
+
+.center[
+&lt;img src="presentation_files/nonlinear_growth_models.png" width="75%" /&gt;
+]
+
+**Exponential saturation model:** `R = A - B × e^(-kt)`
+
+Captures rapid initial improvement followed by plateauing near skill ceiling.
+
+---
+
+# Nonlinear Rating Progression
+
+.center[
+&lt;img src="presentation_files/nonlinear_rating_progression.png" width="70%" /&gt;
+]
+
+Model fits demonstrate characteristic S-curve learning patterns across multiple players.
+
+---
+
+class: inverse, center, middle
+
+# Part 6: Advanced Analytics
+
+---
+
+# Activity-Performance Correlation
+
+.center[
+&lt;img src="presentation_files/activity-improvement-heatmap.png" width="65%" /&gt;
+]
+
+Heatmap reveals relationship between playing frequency and rating improvement across different activity levels.
+
+---
+
+# Correlation Matrix
+
+.center[
+&lt;img src="presentation_files/pairwise-correlations.png" width="65%" /&gt;
+]
+
+Pairwise correlations identify key relationships between rating, win rate, rating gap, and sample size.
+
+---
+
+# Rating Difference Impact
+
+.center[
+&lt;img src="presentation_files/rating_difference_distribution.png" width="70%" /&gt;
+]
+
+Distribution of rating differentials shows expected outcomes: positive differences predict wins, negative predict losses.
+
+---
+
+# Win Rate by Rating Category
+
+.center[
+&lt;img src="presentation_files/win_rate_by_rating_category.png" width="70%" /&gt;
+]
+
+Clear monotonic relationship: as rating advantage increases, win probability rises systematically.
+
+---
+
+class: inverse, center, middle
+
+# Key Findings Summary
+
+---
+
+# Major Conclusions
+
+.pull-left[
+**Rating Systems:**
+- Lichess inflates ratings by ~150-200 points
+- Platform differences reflect player pools
+- Rating gaps consistent across skill levels
+
+**Performance Factors:**
+- White advantage: 52-54% win rate
+- Accuracy strongly predicts outcomes
+- Time control affects decisiveness
+]
+
+.pull-right[
+**Skill Development:**
+- Exponential learning curves
+- Initial rapid improvement
+- Plateau near skill ceiling
+- Individual variation in learning rates
+
+**Strategic Insights:**
+- Opening choice matters
+- Color impacts opening effectiveness
+- Activity correlates with improvement
+]
+
+---
+
+# Statistical Methods Used
+
+- **Descriptive Statistics:** Mean, median, SD across groups
+- **Correlation Analysis:** Pearson and Spearman coefficients
+- **Linear Regression:** Growth rate estimation
+- **Nonlinear Regression:** Exponential saturation models
+- **Time Series Analysis:** Rolling averages, trend decomposition
+- **Categorical Analysis:** Chi-square tests, contingency tables
+- **Data Visualization:** ggplot2, interactive plotly dashboards
+
+---
+
+# Limitations &amp; Future Work
+
+**Limitations:**
+- Platform-specific results (Lichess focus)
+- Self-selection bias in sample
+- Limited temporal scope
+- Rating system differences
+
+**Future Directions:**
+- Cross-platform validation (Chess.com, FIDE data)
+- Machine learning for outcome prediction
+- Deeper opening theory analysis
+- Psychological factors in performance
+- Real-time rating adjustment models
+
+---
+
+class: center, middle
+
+# Thank You!
+
+**Questions?**
+
+For detailed analysis, see:
+- Appendix A: Summary Statistics
+- Appendix B: Longitudinal Analysis  
+- Appendix C: Nonlinear Modeling
+- Appendix D: Interactive Dashboard
 
 .footnote[
-[*] And add footnotes
+Data sources: Lichess API, FIDE Rating Lists  
+Analysis performed in R with tidyverse, ggplot2, and statistical modeling packages
 ]
-
----
-
-# Code
-
-
-``` r
-# a boring regression
-model &lt;- lm(dist ~ speed, data = cars)
-tidy(model)
-```
-
-```
-## # A tibble: 2 × 5
-##   term        estimate std.error statistic  p.value
-##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
-## 1 (Intercept)   -17.6      6.76      -2.60 1.23e- 2
-## 2 speed           3.93     0.416      9.46 1.49e-12
-```
-
-``` r
-glance(model)
-```
-
-```
-## # A tibble: 1 × 12
-##   r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC
-##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1     0.651         0.644  15.4      89.6 1.49e-12     1  -207.  419.  425.
-## # ℹ 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;
-```
-
----
-
-# Plots
-
-
-
-&lt;img src="presentation_files/figure-html/plot-iris-1.png" width="80%" /&gt;
-
----
-
-## Plot and text
-
-.pull-left[
-- Some text
-- goes here
-]
-.pull-right[
-&lt;img src="presentation_files/figure-html/unnamed-chunk-2-1.png" width="100%" /&gt;
-]
-
----
-
-# Tables
-
-If you want to generate a table, make sure it is in the HTML format (instead of Markdown or other formats), e.g.,
-
-&lt;table&gt;
- &lt;thead&gt;
-  &lt;tr&gt;
-   &lt;th style="text-align:right;"&gt; Sepal.Length &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; Sepal.Width &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; Petal.Length &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; Petal.Width &lt;/th&gt;
-   &lt;th style="text-align:left;"&gt; Species &lt;/th&gt;
-  &lt;/tr&gt;
- &lt;/thead&gt;
-&lt;tbody&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.1 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.5 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.9 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.7 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.2 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1.3 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.6 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.1 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1.5 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.6 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.9 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1.7 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.4 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
-  &lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
----
-
-# Images
-
-&lt;div class="figure" style="text-align: center"&gt;
-&lt;img src="https://images.unsplash.com/photo-1535448033526-c0e85c9e6968?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1650&amp;q=80" alt="Image credit: Photo by Jörg Angeli on Unsplash." width="60%" /&gt;
-&lt;p class="caption"&gt;Image credit: Photo by Jörg Angeli on Unsplash.&lt;/p&gt;
-&lt;/div&gt;
-
-Or you can also include a full page image. See next slide.
-
----
-
-background-image: url(https://images.unsplash.com/photo-1535448033526-c0e85c9e6968?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1650&amp;q=80)
-
----
-
-# Math Expressions
-
-You can write LaTeX math expressions inside a pair of dollar signs, e.g. &amp;#36;\alpha+\beta$ renders `\(\alpha+\beta\)`. You can use the display style with double dollar signs:
-
-```
-$$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$
-```
-
-`$$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$`
-
-Limitations:
-
-1. The source code of a LaTeX math expression must be in one line, unless it is inside a pair of double dollar signs, in which case the starting `$$` must appear in the very beginning of a line, followed immediately by a non-space character, and the ending `$$` must be at the end of a line, led by a non-space character;
-
-1. There should not be spaces after the opening `$` or before the closing `$`.
-
-1. Math does not work on the title slide (see [#61](https://github.com/yihui/xaringan/issues/61) for a workaround).
-
----
-
-# Feeling adventurous?
-
-- Want to find out more about `xaringan`? See https://slides.yihui.name/xaringan/#1.
-
-- You are welcomed to use the default styling of the slides. In fact, that's what I expect majority of you will do. You will differentiate yourself with the content of your presentation.
-
-- But some of you might want to play around with slide styling. The 
-`xaringanthemer` provides some solutions for this that: https://pkg.garrickadenbuie.com/xaringanthemer.
-
-- And if you want more bells and whistles, there is also `xaringanExtra`: https://pkg.garrickadenbuie.com/xaringanExtra.
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
   "highlightStyle": "github",
   "highlightLines": true,
-  "countIncrementalSlides": false
+  "countIncrementalSlides": false,
+  "ratio": "12:8"
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));
@@ -349,7 +491,6 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
   }
 })();
-setInterval(function() {slideshow.gotoNextSlide();}, 9000);
 // adds .remark-code-has-line-highlighted class to <pre> parent elements
 // of code chunks containing highlighted lines with class .remark-code-line-highlighted
 (function(d) {
