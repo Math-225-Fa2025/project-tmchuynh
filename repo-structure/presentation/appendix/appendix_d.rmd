@@ -174,3 +174,59 @@ player_summary %>%
 ```
 
 ---
+
+### D.7 Nonlinear Growth Model Parameters
+
+```{r growth-parameters, message=FALSE}
+# Fit exponential growth models for sample users
+rating_nl_df <- rating_history %>%
+  filter(category == "Blitz", !is.na(rating)) %>%
+  group_by(user) %>%
+  mutate(time_index = row_number()) %>%
+  filter(n() >= 15) %>%
+  ungroup()
+
+target_users <- rating_nl_df %>%
+  count(user) %>%
+  arrange(desc(n)) %>%
+  slice_head(n = 5) %>%
+  pull(user)
+
+fit_growth_curve <- function(df) {
+  tryCatch({
+    model <- nlsLM(
+      rating ~ A - B * exp(-k * time_index),
+      data = df,
+      start = list(A = max(df$rating), B = max(df$rating) - min(df$rating), k = 0.05),
+      control = nls.lm.control(maxiter = 100)
+    )
+    tidy(model) %>% mutate(user = unique(df$user))
+  }, error = function(e) NULL)
+}
+
+nonlinear_models <- rating_nl_df %>%
+  filter(user %in% target_users) %>%
+  group_by(user) %>%
+  group_modify(~ fit_growth_curve(.x)) %>%
+  ungroup()
+
+# Create summary table
+growth_summary <- nonlinear_models %>%
+  select(user, term, estimate) %>%
+  pivot_wider(names_from = term, values_from = estimate) %>%
+  mutate(
+    ceiling_rating = round(A, 1),
+    learning_rate = round(k, 4),
+    rating_span = round(B, 1)
+  ) %>%
+  select(user, ceiling_rating, learning_rate, rating_span)
+
+datatable(
+  growth_summary,
+  caption = "Nonlinear Growth Model Parameters (Exponential Fit)",
+  colnames = c("User", "Ceiling Rating", "Learning Rate (k)", "Rating Span"),
+  options = list(pageLength = 5)
+)
+```
+
+---
