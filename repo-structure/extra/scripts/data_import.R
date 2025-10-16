@@ -579,6 +579,113 @@ get_lichess_data <- function(username, max_games = 20, access_token = NULL) {
               }
             )
           }
+
+      # Debug: Check available columns
+      cat("Available columns:", paste(names(df), collapse = ", "), "\n")
+
+      # More robust color detection
+      # More robust color detection
+      df <- data.frame()  # Placeholder for now
+      return(df)
+                      if (field %in% c("rating", "ratingDiff")) {
+                        return(as.integer(value))
+                      } else {
+                        return(as.character(value))
+                      }
+                    }
+                  }
+
+                  # Return appropriate NA type
+                  if (field %in% c("rating", "ratingDiff")) {
+                    return(NA_integer_)
+                  } else {
+                    return(NA_character_)
+                  }
+                },
+                error = function(e) {
+                  if (field %in% c("rating", "ratingDiff")) {
+                    return(NA_integer_)
+                  } else {
+                    return(NA_character_)
+                  }
+                }
+              )
+            }
+
+            # Extract basic game info with safe defaults and consistent types
+            game_row <- data.frame(
+              id = as.character(ifelse(
+                "id" %in% names(game),
+                game$id,
+                paste0("unknown_", i)
+              )),
+              rated = as.logical(ifelse(
+                "rated" %in% names(game),
+                game$rated,
+                TRUE
+              )),
+              speed = as.character(ifelse(
+                "speed" %in% names(game),
+                game$speed,
+                ifelse("perf" %in% names(game), game$perf, "unknown")
+              )),
+              winner = as.character(ifelse(
+                "winner" %in% names(game),
+                game$winner,
+                NA_character_
+              )),
+              createdAt = as.numeric(ifelse(
+                "createdAt" %in% names(game),
+                game$createdAt,
+                NA_real_
+              )),
+              lastMoveAt = as.numeric(ifelse(
+                "lastMoveAt" %in% names(game),
+                game$lastMoveAt,
+                NA_real_
+              )),
+              # Player data extraction with safe handling
+              players.white.user.id = get_player_field(
+                game,
+                "white",
+                "user_id"
+              ),
+              players.white.user.name = get_player_field(
+                game,
+                "white",
+                "user_name"
+              ),
+              players.white.rating = get_player_field(game, "white", "rating"),
+              players.white.ratingDiff = get_player_field(
+                game,
+                "white",
+                "ratingDiff"
+              ),
+              players.black.user.id = get_player_field(
+                game,
+                "black",
+                "user_id"
+              ),
+              players.black.user.name = get_player_field(
+                game,
+                "black",
+                "user_name"
+              ),
+              players.black.rating = get_player_field(game, "black", "rating"),
+              players.black.ratingDiff = get_player_field(
+                game,
+                "black",
+                "ratingDiff"
+              ),
+              stringsAsFactors = FALSE
+            )
+
+            game_list[[i]] <- game_row
+          }
+
+          # Combine the manually created data frames
+          do.call(rbind, game_list)
+        }
       )
 
       if (is.null(df) || nrow(df) == 0) {
@@ -908,7 +1015,8 @@ if (length(all_game_data) > 0) {
   lichess_all <- bind_rows(all_game_data)
   message(sprintf(
     "\n✓ Data collection complete! Collected %d games from %d users",
-    nrow(lichess_all), success_count
+    nrow(lichess_all),
+    success_count
   ))
 } else {
   lichess_all <- NULL
@@ -938,13 +1046,22 @@ if (is.null(lichess_all) || nrow(lichess_all) == 0) {
   lichess_all <- tibble(
     user = rep(sample_users, games_per_user),
     id = paste0("game_", sprintf("%06d", seq_len(total_games))),
-    rated = sample(c(TRUE, FALSE), total_games, replace = TRUE, prob = c(0.8, 0.2)),
-    speed = sample(c("bullet", "blitz", "rapid", "classical"), total_games,
+    rated = sample(
+      c(TRUE, FALSE),
+      total_games,
+      replace = TRUE,
+      prob = c(0.8, 0.2)
+    ),
+    speed = sample(
+      c("bullet", "blitz", "rapid", "classical"),
+      total_games,
       replace = TRUE,
       prob = c(0.3, 0.4, 0.25, 0.05)
     ),
     color = sample(c("White", "Black"), total_games, replace = TRUE),
-    winner = sample(c("white", "black", "draw"), total_games,
+    winner = sample(
+      c("white", "black", "draw"),
+      total_games,
       replace = TRUE,
       prob = c(0.42, 0.40, 0.18)
     ), # Realistic win/loss/draw distribution
