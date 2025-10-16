@@ -439,116 +439,117 @@ get_lichess_data <- function(username, max_games = 20, access_token = NULL) {
       message("Constructing data frame from game data...")
 
       # Manual extraction - extract key fields from each game
+      game_list <- list()
 
-          for (i in seq_along(json_games)) {
-            tryCatch(
-              {
-                game <- json_games[[i]]
+      for (i in seq_along(json_games)) {
+        tryCatch(
+          {
+            game <- json_games[[i]]
 
-                # Helper function to safely extract player data
-                safe_extract <- function(obj, path, default = NA) {
-                  tryCatch(
-                    {
-                      result <- obj
-                      for (key in path) {
-                        if (is.list(result) && key %in% names(result)) {
-                          result <- result[[key]]
-                        } else {
-                          return(default)
-                        }
-                      }
-                      return(result)
-                    },
-                    error = function(e) default
-                  )
-                }
+            # Helper function to safely extract player data
+            safe_extract <- function(obj, path, default = NA) {
+              tryCatch(
+                {
+                  result <- obj
+                  for (key in path) {
+                    if (is.list(result) && key %in% names(result)) {
+                      result <- result[[key]]
+                    } else {
+                      return(default)
+                    }
+                  }
+                  return(result)
+                },
+                error = function(e) default
+              )
+            }
 
-                # Extract game data with consistent types
-                game_row <- data.frame(
-                  id = as.character(safe_extract(
-                    game,
-                    "id",
-                    paste0("unknown_", i)
-                  )),
-                  rated = as.logical(safe_extract(game, "rated", TRUE)),
-                  speed = as.character(safe_extract(
-                    game,
-                    "speed",
-                    safe_extract(game, "perf", "unknown")
-                  )),
-                  winner = as.character(safe_extract(
-                    game,
-                    "winner",
-                    NA_character_
-                  )),
-                  createdAt = as.numeric(safe_extract(
-                    game,
-                    "createdAt",
-                    NA_real_
-                  )),
-                  lastMoveAt = as.numeric(safe_extract(
-                    game,
-                    "lastMoveAt",
-                    NA_real_
-                  )),
-                  players.white.user.id = as.character(safe_extract(
-                    game,
-                    c("players", "white", "user", "id"),
-                    NA_character_
-                  )),
-                  players.white.user.name = as.character(safe_extract(
-                    game,
-                    c("players", "white", "user", "name"),
-                    NA_character_
-                  )),
-                  players.white.rating = as.integer(safe_extract(
-                    game,
-                    c("players", "white", "rating"),
-                    NA_integer_
-                  )),
-                  players.white.ratingDiff = as.integer(safe_extract(
-                    game,
-                    c("players", "white", "ratingDiff"),
-                    NA_integer_
-                  )),
-                  players.black.user.id = as.character(safe_extract(
-                    game,
-                    c("players", "black", "user", "id"),
-                    NA_character_
-                  )),
-                  players.black.user.name = as.character(safe_extract(
-                    game,
-                    c("players", "black", "user", "name"),
-                    NA_character_
-                  )),
-                  players.black.rating = as.integer(safe_extract(
-                    game,
-                    c("players", "black", "rating"),
-                    NA_integer_
-                  )),
-                  players.black.ratingDiff = as.integer(safe_extract(
-                    game,
-                    c("players", "black", "ratingDiff"),
-                    NA_integer_
-                  )),
-                  stringsAsFactors = FALSE
-                )
-
-                game_list[[i]] <- game_row
-              },
-              error = function(e) {
-                message(paste(
-                  "Error processing game",
-                  i,
-                  "for user",
-                  username,
-                  ":",
-                  e$message
-                ))
-                return(NULL)
-              }
+            # Extract game data with consistent types
+            game_row <- data.frame(
+              id = as.character(safe_extract(
+                game,
+                "id",
+                paste0("unknown_", i)
+              )),
+              rated = as.logical(safe_extract(game, "rated", TRUE)),
+              speed = as.character(safe_extract(
+                game,
+                "speed",
+                safe_extract(game, "perf", "unknown")
+              )),
+              winner = as.character(safe_extract(
+                game,
+                "winner",
+                NA_character_
+              )),
+              createdAt = as.numeric(safe_extract(
+                game,
+                "createdAt",
+                NA_real_
+              )),
+              lastMoveAt = as.numeric(safe_extract(
+                game,
+                "lastMoveAt",
+                NA_real_
+              )),
+              players.white.user.id = as.character(safe_extract(
+                game,
+                c("players", "white", "user", "id"),
+                NA_character_
+              )),
+              players.white.user.name = as.character(safe_extract(
+                game,
+                c("players", "white", "user", "name"),
+                NA_character_
+              )),
+              players.white.rating = as.integer(safe_extract(
+                game,
+                c("players", "white", "rating"),
+                NA_integer_
+              )),
+              players.white.ratingDiff = as.integer(safe_extract(
+                game,
+                c("players", "white", "ratingDiff"),
+                NA_integer_
+              )),
+              players.black.user.id = as.character(safe_extract(
+                game,
+                c("players", "black", "user", "id"),
+                NA_character_
+              )),
+              players.black.user.name = as.character(safe_extract(
+                game,
+                c("players", "black", "user", "name"),
+                NA_character_
+              )),
+              players.black.rating = as.integer(safe_extract(
+                game,
+                c("players", "black", "rating"),
+                NA_integer_
+              )),
+              players.black.ratingDiff = as.integer(safe_extract(
+                game,
+                c("players", "black", "ratingDiff"),
+                NA_integer_
+              )),
+              stringsAsFactors = FALSE
             )
+
+            game_list[[i]] <- game_row
+          },
+          error = function(e) {
+            message(paste(
+              "Error processing game",
+              i,
+              "for user",
+              username,
+              ":",
+              e$message
+            ))
+            return(NULL)
           }
+        )
+      }
 
           # Remove any NULL entries and combine
           game_list <- game_list[!sapply(game_list, is.null)]
