@@ -262,7 +262,7 @@ if (nrow(lichess_df) > 0) {
         TRUE ~ "Other"
       ),
 
-      # Opening categorization
+      # Opening categorization (expanded)
       opening_family = case_when(
         str_detect(opening_name, "Sicilian") ~ "Sicilian Defense",
         str_detect(opening_name, "French") ~ "French Defense",
@@ -271,6 +271,19 @@ if (nrow(lichess_df) > 0) {
         str_detect(opening_name, "King's Indian") ~ "King's Indian Defense",
         str_detect(opening_name, "Ruy Lopez|Spanish") ~ "Ruy Lopez",
         str_detect(opening_name, "English") ~ "English Opening",
+        str_detect(opening_name, "Italian") ~ "Italian Game",
+        str_detect(opening_name, "Scotch") ~ "Scotch Game",
+        str_detect(opening_name, "Slav") ~ "Slav Defense",
+        str_detect(opening_name, "Nimzo-Indian") ~ "Nimzo-Indian Defense",
+        str_detect(opening_name, "Grunfeld|Grünfeld") ~ "Grunfeld Defense",
+        str_detect(opening_name, "Benoni") ~ "Benoni Defense",
+        str_detect(opening_name, "Dutch") ~ "Dutch Defense",
+        str_detect(opening_name, "Pirc") ~ "Pirc Defense",
+        str_detect(opening_name, "Alekhine") ~ "Alekhine's Defense",
+        str_detect(opening_name, "Scandinavian") ~ "Scandinavian Defense",
+        str_detect(opening_name, "Vienna") ~ "Vienna Game",
+        str_detect(opening_name, "London") ~ "London System",
+        str_detect(opening_name, "Catalan") ~ "Catalan Opening",
         TRUE ~ "Other"
       )
     ) %>%
@@ -291,7 +304,7 @@ if (nrow(lichess_df) > 0) {
     opponent_rating = sample(2200:2800, 100, replace = TRUE),
     user_result = sample(c("win", "loss", "draw"), 100, replace = TRUE, prob = c(0.4, 0.35, 0.25)),
     time_control = sample(c("Blitz", "Rapid", "Classical"), 100, replace = TRUE),
-    opening_family = sample(c("Sicilian Defense", "Queen's Gambit", "Ruy Lopez", "Other"), 100, replace = TRUE),
+    opening_family = sample(c("Sicilian Defense", "Scandinavian", "Pirc", "Queen's Gambit", "Nimzo-Indian", "Ruy Lopez", "Other"), 100, replace = TRUE),
     user_accuracy = runif(100, 75, 95),
     rating_diff = user_rating - opponent_rating
   )
@@ -561,29 +574,125 @@ if (sum(!is.na(lichess_df$user_accuracy)) > 0) {
   ggsave("../presentation/presentation_files/accuracy_distribution_by_outcome.png", plot = p4, width = 10, height = 6, dpi = 300)
 }
 
-# 6. Opening performance analysis
+# 6. Enhanced opening performance analysis with color correlation
 opening_stats <- lichess_df %>%
-  group_by(opening_family) %>%
+  group_by(opening_family, user_color) %>%
   summarise(
     games = n(),
+    wins = sum(user_result == "win"),
+    losses = sum(user_result == "loss"),
+    draws = sum(user_result == "draw"),
     win_rate = mean(user_result == "win"),
+    loss_rate = mean(user_result == "loss"),
+    draw_rate = mean(user_result == "draw"),
     avg_accuracy = mean(user_accuracy, na.rm = TRUE),
+    avg_rating = mean(user_rating, na.rm = TRUE),
     .groups = "drop"
   ) %>%
-  filter(games >= 5) %>% # Only openings with sufficient games
+  filter(games >= 3) %>% # Minimum games per opening-color combination
   arrange(desc(win_rate))
 
-p5 <- ggplot(opening_stats, aes(x = reorder(opening_family, win_rate), y = win_rate)) +
-  geom_col(fill = "steelblue", alpha = 0.7) +
+# Overall opening performance (collapsed across colors)
+opening_overall <- lichess_df %>%
+  group_by(opening_family) %>%
+  summarise(
+    total_games = n(),
+    overall_win_rate = mean(user_result == "win"),
+    white_games = sum(user_color == "white"),
+    black_games = sum(user_color == "black"),
+    white_win_rate = mean(user_result[user_color == "white"] == "win"),
+    black_win_rate = mean(user_result[user_color == "black"] == "win"),
+    .groups = "drop"
+  ) %>%
+  filter(total_games >= 5) %>%
+  arrange(desc(overall_win_rate))
+
+print(opening_overall)
+
+# Visualization 1: Win rate by opening and color (faceted)
+p5a <- ggplot(opening_stats, aes(x = reorder(opening_family, win_rate), y = win_rate, fill = user_color)) +
+  geom_col(position = "dodge", alpha = 0.8) +
   coord_flip() +
   labs(
-    title = "Win Rate by Opening Family",
-    x = "Opening Family", y = "Win Rate"
+    title = "Win Rate by Opening Family and Piece Color",
+    subtitle = "Comparison of opening effectiveness when playing White vs Black",
+    x = "Opening Family", 
+    y = "Win Rate",
+    fill = "Color"
   ) +
-  scale_y_continuous(labels = percent_format())
+  scale_y_continuous(labels = percent_format()) +
+  scale_fill_manual(values = c("white" = "#E8E8E8", "black" = "#404040")) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
 
-print(p5)
-ggsave("../presentation/presentation_files/win_rate_by_opening_family.png", plot = p5, width = 10, height = 8, dpi = 300)
+print(p5a)
+ggsave("../presentation/presentation_files/win_rate_by_opening_and_color.png", plot = p5a, width = 12, height = 10, dpi = 300)
+
+# Visualization 2: Stacked outcomes by opening (top openings only)
+top_openings <- opening_overall %>%
+  slice_max(total_games, n = 10) %>%
+  pull(opening_family)
+
+opening_outcomes <- lichess_df %>%
+  filter(opening_family %in% top_openings) %>%
+  count(opening_family, user_color, user_result) %>%
+  group_by(opening_family, user_color) %>%
+  mutate(proportion = n / sum(n)) %>%
+  ungroup()
+
+p5b <- ggplot(opening_outcomes, aes(x = opening_family, y = proportion, fill = user_result)) +
+  geom_col(position = "stack") +
+  facet_wrap(~user_color, ncol = 1) +
+  coord_flip() +
+  labs(
+    title = "Game Outcomes by Opening Family and Color",
+    subtitle = "Distribution of wins, losses, and draws for most common openings",
+    x = "Opening Family",
+    y = "Proportion",
+    fill = "Result"
+  ) +
+  scale_y_continuous(labels = percent_format()) +
+  scale_fill_manual(values = c("win" = "#2ECC71", "loss" = "#E74C3C", "draw" = "#3498DB")) +
+  theme_minimal()
+
+print(p5b)
+ggsave("../presentation/presentation_files/opening_outcomes_by_color.png", plot = p5b, width = 12, height = 10, dpi = 300)
+
+# Visualization 3: Color advantage heatmap by opening
+opening_color_advantage <- opening_stats %>%
+  select(opening_family, user_color, win_rate) %>%
+  pivot_wider(names_from = user_color, values_from = win_rate, names_prefix = "win_rate_") %>%
+  mutate(
+    color_advantage = win_rate_white - win_rate_black,
+    favors = case_when(
+      color_advantage > 0.1 ~ "Strongly favors White",
+      color_advantage > 0.05 ~ "Favors White",
+      abs(color_advantage) <= 0.05 ~ "Balanced",
+      color_advantage < -0.05 ~ "Favors Black",
+      TRUE ~ "Strongly favors Black"
+    )
+  ) %>%
+  filter(!is.na(color_advantage))
+
+p5c <- ggplot(opening_color_advantage, aes(x = reorder(opening_family, color_advantage), y = color_advantage)) +
+  geom_col(aes(fill = color_advantage), alpha = 0.8) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "black") +
+  coord_flip() +
+  labs(
+    title = "Color Advantage by Opening Family",
+    subtitle = "Positive values indicate White performs better, negative indicates Black advantage",
+    x = "Opening Family",
+    y = "Win Rate Difference (White - Black)"
+  ) +
+  scale_y_continuous(labels = percent_format()) +
+    scale_fill_gradient2(
+      low = "#2C3E50", mid = "#95A5A6", high = "#ECF0F1",
+      midpoint = 0, name = "Advantage"
+    ) +
+    theme_minimal()
+
+print(p5c)
+ggsave("../presentation/presentation_files/opening_color_advantage.png", plot = p5c, width = 12, height = 10, dpi = 300)
 
 # 7. Performance over time
 if (nrow(lichess_df) > 10) {

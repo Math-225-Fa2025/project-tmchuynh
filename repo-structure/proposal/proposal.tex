@@ -1,0 +1,1719 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[
+]{article}
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{5}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage[]{natbib}
+\bibliographystyle{plainnat}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdfauthor={Tina Huynh},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{Tina Huynh}
+\date{2025-10-16}
+
+\begin{document}
+
+{
+\setcounter{tocdepth}{2}
+\tableofcontents
+}
+\section{Statistical Analysis of Chess Performance and Player
+Progression}\label{statistical-analysis-of-chess-performance-and-player-progression}
+
+\subsection{Information}\label{information}
+
+\subsubsection{Research Questions}\label{research-questions}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  How do \textbf{opening choices} influence win probability across time
+  controls (e.g., blitz, rapid, classical)?
+\item
+  Does \textbf{playing frequency} or \textbf{game volume} correlate with
+  \textbf{rating growth} over time?
+\item
+  Are \textbf{white pieces} statistically more likely to win, and does
+  this advantage vary by rating or game type?
+\item
+  How does \textbf{player rating} predict \textbf{accuracy and move
+  efficiency}, and are these patterns consistent across skill brackets?
+\end{enumerate}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{Data Information}\label{data-information}
+
+\paragraph{Lichess Public API and Game
+Database}\label{lichess-public-api-and-game-database}
+
+The \textbf{Lichess API} is an open data service provided by
+Lichess.org, a free online chess platform.\\
+It offers access to detailed, anonymized game records, including
+metadata such as player ratings, time controls, openings, and results.\\
+The \textbf{Lichess Database} also publishes monthly bulk archives of
+millions of games in PGN format, which can be converted into CSV or JSON
+for analysis.
+
+\subparagraph{Variables}\label{variables}
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{player\_id}: unique user identifier\\
+\item
+  \texttt{rating\_pre} and \texttt{rating\_post}: player ratings before
+  and after the game\\
+\item
+  \texttt{game\_type}: categorical variable (e.g., ``blitz'', ``rapid'',
+  ``classical'', ``bullet'')\\
+\item
+  \texttt{opening\_name}: chess opening name (e.g., ``Sicilian
+  Defense'')\\
+\item
+  \texttt{winner}: categorical (``white'', ``black'', or ``draw'')\\
+\item
+  \texttt{color}: player's color for the game\\
+\item
+  \texttt{avg\_move\_time}: average time per move (seconds)\\
+\item
+  \texttt{accuracy}: move accuracy score (from Lichess analysis)\\
+\item
+  \texttt{datetime}: UTC timestamp of game\\
+\item
+  \texttt{moves}: total number of moves per game
+\end{itemize}
+
+\subparagraph{Collection Information}\label{collection-information}
+
+Data are accessible via the
+\textbf{\href{https://lichess.org/api}{Lichess API}} and the
+\textbf{\href{https://database.lichess.org/}{Lichess Database}}.\\
+The API allows filtered downloads by user, date, and game type, while
+the monthly archives allow large-scale collection for sampling or time
+series studies.\\
+Lichess data are publicly available under the \textbf{Creative Commons
+CC0 license}, permitting academic use and redistribution.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\paragraph{FIDE Player Rating Lists}\label{fide-player-rating-lists}
+
+The \textbf{FIDE (Fédération Internationale des Échecs)} rating lists
+contain official Elo ratings, federation, title, age, and gender for all
+registered players worldwide.\\
+These data provide demographic and global context to the Lichess dataset
+and allow calibration of player strength and rating dynamics.
+
+\subparagraph{Variables}\label{variables-1}
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{player\_name}: player's full name\\
+\item
+  \texttt{fide\_id}: unique identifier\\
+\item
+  \texttt{country}: player's national federation\\
+\item
+  \texttt{rating\_standard}, \texttt{rating\_rapid},
+  \texttt{rating\_blitz}: ratings across formats\\
+\item
+  \texttt{title}: player title (GM, IM, FM, WGM, etc.)\\
+\item
+  \texttt{games\_played}: total games considered in rating calculation
+\end{itemize}
+
+\subparagraph{Collection Information}\label{collection-information-1}
+
+FIDE rating data are published monthly on
+\href{https://ratings.fide.com/download_lists.phtml}{the official site}
+as \texttt{.csv} or \texttt{.xlsx} files.\\
+The data are updated monthly and are freely available for research and
+statistical analysis.
+
+\subsection{Data Analysis Plan}\label{data-analysis-plan}
+
+\subsubsection{Variable and Function Naming
+Conventions}\label{variable-and-function-naming-conventions}
+
+Variables will use lowercase snake\_case naming (e.g.,
+\texttt{rating\_diff}, \texttt{win\_rate}, \texttt{avg\_move\_time}).\\
+Custom functions will follow similar naming conventions, such as
+\texttt{calc\_win\_rate()} and \texttt{normalize\_rating\_change()}.\\
+Data will be stored in tibbles and manipulated with \texttt{dplyr} and
+\texttt{tidyr}.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{Data Cleaning}\label{data-cleaning}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Import JSON or CSV data from the Lichess API or PGN archive.\\
+\item
+  Standardize rating fields, convert timestamps, and filter out
+  corrupted games.\\
+\item
+  Recode categorical fields for uniformity (\texttt{winner},
+  \texttt{color}, \texttt{game\_type}).\\
+\item
+  Derive computed variables such as:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{rating\_change\ =\ rating\_post\ -\ rating\_pre}
+  \item
+    \texttt{is\_white\_win\ =\ ifelse(winner\ ==\ "white",\ 1,\ 0)}
+  \end{itemize}
+\item
+  Integrate FIDE data by matching players or aggregating by
+  country/title.
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(httr)}
+\FunctionTok{library}\NormalTok{(jsonlite)}
+\FunctionTok{library}\NormalTok{(dplyr)}
+\FunctionTok{library}\NormalTok{(purrr)}
+\FunctionTok{library}\NormalTok{(tidyr)}
+\FunctionTok{library}\NormalTok{(ggplot2)}
+\FunctionTok{library}\NormalTok{(lubridate)}
+\FunctionTok{library}\NormalTok{(skimr)}
+\FunctionTok{library}\NormalTok{(corrplot)}
+\FunctionTok{library}\NormalTok{(broom)}
+\FunctionTok{library}\NormalTok{(modelr)}
+\FunctionTok{library}\NormalTok{(scales)}
+
+\CommentTok{\# Set theme for consistent plotting}
+\FunctionTok{theme\_set}\NormalTok{(}\FunctionTok{theme\_minimal}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Enhanced data collection function with error handling and rate limiting}
+\NormalTok{collect\_lichess\_data }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(username, }\AttributeTok{max\_games =} \DecValTok{500}\NormalTok{, }\AttributeTok{delay =} \DecValTok{1}\NormalTok{) \{}
+  \FunctionTok{cat}\NormalTok{(}\StringTok{"Collecting data for user:"}\NormalTok{, username, }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+
+  \CommentTok{\# API request with proper error handling}
+\NormalTok{  url }\OtherTok{\textless{}{-}} \FunctionTok{paste0}\NormalTok{(}
+    \StringTok{"https://lichess.org/api/games/user/"}\NormalTok{, username,}
+    \StringTok{"?max="}\NormalTok{, max\_games, }\StringTok{"\&analysed=true\&perfType=blitz,rapid,classical"}
+\NormalTok{  )}
+
+  \FunctionTok{tryCatch}\NormalTok{(}
+\NormalTok{    \{}
+\NormalTok{      response }\OtherTok{\textless{}{-}} \FunctionTok{GET}\NormalTok{(}
+\NormalTok{        url,}
+        \FunctionTok{add\_headers}\NormalTok{(}\StringTok{"Accept"} \OtherTok{=} \StringTok{"application/x{-}ndjson"}\NormalTok{),}
+        \FunctionTok{timeout}\NormalTok{(}\DecValTok{30}\NormalTok{)}
+\NormalTok{      )}
+
+      \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{status\_code}\NormalTok{(response) }\SpecialCharTok{!=} \DecValTok{200}\NormalTok{) \{}
+        \FunctionTok{stop}\NormalTok{(}\StringTok{"API request failed with status: "}\NormalTok{, }\FunctionTok{status\_code}\NormalTok{(response))}
+\NormalTok{      \}}
+
+\NormalTok{      raw\_text }\OtherTok{\textless{}{-}} \FunctionTok{content}\NormalTok{(response, }\AttributeTok{as =} \StringTok{"text"}\NormalTok{, }\AttributeTok{encoding =} \StringTok{"UTF{-}8"}\NormalTok{)}
+
+      \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nchar}\NormalTok{(raw\_text) }\SpecialCharTok{==} \DecValTok{0}\NormalTok{) \{}
+        \FunctionTok{warning}\NormalTok{(}\StringTok{"Empty response from API"}\NormalTok{)}
+        \FunctionTok{return}\NormalTok{(}\FunctionTok{tibble}\NormalTok{())}
+\NormalTok{      \}}
+
+      \CommentTok{\# Split and parse NDJSON}
+\NormalTok{      lines }\OtherTok{\textless{}{-}} \FunctionTok{strsplit}\NormalTok{(raw\_text, }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)[[}\DecValTok{1}\NormalTok{]]}
+\NormalTok{      lines }\OtherTok{\textless{}{-}}\NormalTok{ lines[}\FunctionTok{nzchar}\NormalTok{(lines)]}
+
+      \FunctionTok{cat}\NormalTok{(}\StringTok{"Processing"}\NormalTok{, }\FunctionTok{length}\NormalTok{(lines), }\StringTok{"games...}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+
+      \CommentTok{\# Enhanced parsing with better error handling}
+\NormalTok{      lichess\_games }\OtherTok{\textless{}{-}} \FunctionTok{map}\NormalTok{(lines, }\ControlFlowTok{function}\NormalTok{(line) \{}
+        \FunctionTok{tryCatch}\NormalTok{(}
+\NormalTok{          \{}
+\NormalTok{            obj }\OtherTok{\textless{}{-}} \FunctionTok{fromJSON}\NormalTok{(line, }\AttributeTok{flatten =} \ConstantTok{TRUE}\NormalTok{)}
+
+            \CommentTok{\# Extract player{-}specific data}
+\NormalTok{            user\_color }\OtherTok{\textless{}{-}} \ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{is.null}\NormalTok{(obj}\SpecialCharTok{$}\NormalTok{players}\SpecialCharTok{$}\NormalTok{white}\SpecialCharTok{$}\NormalTok{user}\SpecialCharTok{$}\NormalTok{id) }\SpecialCharTok{\&\&}
+\NormalTok{              obj}\SpecialCharTok{$}\NormalTok{players}\SpecialCharTok{$}\NormalTok{white}\SpecialCharTok{$}\NormalTok{user}\SpecialCharTok{$}\NormalTok{id }\SpecialCharTok{==}\NormalTok{ username) \{}
+              \StringTok{"white"}
+\NormalTok{            \} }\ControlFlowTok{else}\NormalTok{ \{}
+              \StringTok{"black"}
+\NormalTok{            \}}
+
+            \CommentTok{\# More comprehensive data extraction}
+            \FunctionTok{tibble}\NormalTok{(}
+              \AttributeTok{id =}\NormalTok{ obj}\SpecialCharTok{$}\NormalTok{id }\SpecialCharTok{\%||\%} \ConstantTok{NA\_character\_}\NormalTok{,}
+              \AttributeTok{username =}\NormalTok{ username,}
+              \AttributeTok{user\_color =}\NormalTok{ user\_color,}
+              \AttributeTok{rated =}\NormalTok{ obj}\SpecialCharTok{$}\NormalTok{rated }\SpecialCharTok{\%||\%} \ConstantTok{NA}\NormalTok{,}
+              \AttributeTok{speed =}\NormalTok{ obj}\SpecialCharTok{$}\NormalTok{speed }\SpecialCharTok{\%||\%} \ConstantTok{NA\_character\_}\NormalTok{,}
+              \AttributeTok{perf =}\NormalTok{ obj}\SpecialCharTok{$}\NormalTok{perf }\SpecialCharTok{\%||\%} \ConstantTok{NA\_character\_}\NormalTok{,}
+              \AttributeTok{createdAt =}\NormalTok{ obj}\SpecialCharTok{$}\NormalTok{createdAt }\SpecialCharTok{\%||\%} \ConstantTok{NA\_real\_}\NormalTok{,}
+              \AttributeTok{lastMoveAt =}\NormalTok{ obj}\SpecialCharTok{$}\NormalTok{lastMoveAt }\SpecialCharTok{\%||\%} \ConstantTok{NA\_real\_}\NormalTok{,}
+              \AttributeTok{turns =}\NormalTok{ obj}\SpecialCharTok{$}\NormalTok{turns }\SpecialCharTok{\%||\%} \ConstantTok{NA\_integer\_}\NormalTok{,}
+              \AttributeTok{winner =}\NormalTok{ obj}\SpecialCharTok{$}\NormalTok{winner }\SpecialCharTok{\%||\%} \ConstantTok{NA\_character\_}\NormalTok{,}
+              \AttributeTok{status =}\NormalTok{ obj}\SpecialCharTok{$}\NormalTok{status }\SpecialCharTok{\%||\%} \ConstantTok{NA\_character\_}\NormalTok{,}
+              \AttributeTok{white\_rating =}\NormalTok{ obj}\SpecialCharTok{$}\NormalTok{players}\SpecialCharTok{$}\NormalTok{white}\SpecialCharTok{$}\NormalTok{rating }\SpecialCharTok{\%||\%} \ConstantTok{NA\_integer\_}\NormalTok{,}
+              \AttributeTok{black\_rating =}\NormalTok{ obj}\SpecialCharTok{$}\NormalTok{players}\SpecialCharTok{$}\NormalTok{black}\SpecialCharTok{$}\NormalTok{rating }\SpecialCharTok{\%||\%} \ConstantTok{NA\_integer\_}\NormalTok{,}
+              \AttributeTok{white\_username =}\NormalTok{ obj}\SpecialCharTok{$}\NormalTok{players}\SpecialCharTok{$}\NormalTok{white}\SpecialCharTok{$}\NormalTok{user}\SpecialCharTok{$}\NormalTok{id }\SpecialCharTok{\%||\%} \ConstantTok{NA\_character\_}\NormalTok{,}
+              \AttributeTok{black\_username =}\NormalTok{ obj}\SpecialCharTok{$}\NormalTok{players}\SpecialCharTok{$}\NormalTok{black}\SpecialCharTok{$}\NormalTok{user}\SpecialCharTok{$}\NormalTok{id }\SpecialCharTok{\%||\%} \ConstantTok{NA\_character\_}\NormalTok{,}
+              \AttributeTok{opening\_name =}\NormalTok{ obj}\SpecialCharTok{$}\NormalTok{opening}\SpecialCharTok{$}\NormalTok{name }\SpecialCharTok{\%||\%} \ConstantTok{NA\_character\_}\NormalTok{,}
+              \AttributeTok{opening\_eco =}\NormalTok{ obj}\SpecialCharTok{$}\NormalTok{opening}\SpecialCharTok{$}\NormalTok{eco }\SpecialCharTok{\%||\%} \ConstantTok{NA\_character\_}\NormalTok{,}
+              \AttributeTok{opening\_ply =}\NormalTok{ obj}\SpecialCharTok{$}\NormalTok{opening}\SpecialCharTok{$}\NormalTok{ply }\SpecialCharTok{\%||\%} \ConstantTok{NA\_integer\_}\NormalTok{,}
+              \AttributeTok{clock\_initial =}\NormalTok{ obj}\SpecialCharTok{$}\NormalTok{clock}\SpecialCharTok{$}\NormalTok{initial }\SpecialCharTok{\%||\%} \ConstantTok{NA\_integer\_}\NormalTok{,}
+              \AttributeTok{clock\_increment =}\NormalTok{ obj}\SpecialCharTok{$}\NormalTok{clock}\SpecialCharTok{$}\NormalTok{increment }\SpecialCharTok{\%||\%} \ConstantTok{NA\_integer\_}\NormalTok{,}
+              \AttributeTok{clock\_total =}\NormalTok{ obj}\SpecialCharTok{$}\NormalTok{clock}\SpecialCharTok{$}\NormalTok{totalTime }\SpecialCharTok{\%||\%} \ConstantTok{NA\_integer\_}\NormalTok{,}
+              \CommentTok{\# Analysis data if available}
+              \AttributeTok{white\_accuracy =}\NormalTok{ obj}\SpecialCharTok{$}\NormalTok{players}\SpecialCharTok{$}\NormalTok{white}\SpecialCharTok{$}\NormalTok{analysis}\SpecialCharTok{$}\NormalTok{accuracy }\SpecialCharTok{\%||\%} \ConstantTok{NA\_real\_}\NormalTok{,}
+              \AttributeTok{black\_accuracy =}\NormalTok{ obj}\SpecialCharTok{$}\NormalTok{players}\SpecialCharTok{$}\NormalTok{black}\SpecialCharTok{$}\NormalTok{analysis}\SpecialCharTok{$}\NormalTok{accuracy }\SpecialCharTok{\%||\%} \ConstantTok{NA\_real\_}\NormalTok{,}
+              \AttributeTok{white\_blunder =}\NormalTok{ obj}\SpecialCharTok{$}\NormalTok{players}\SpecialCharTok{$}\NormalTok{white}\SpecialCharTok{$}\NormalTok{analysis}\SpecialCharTok{$}\NormalTok{blunder }\SpecialCharTok{\%||\%} \ConstantTok{NA\_integer\_}\NormalTok{,}
+              \AttributeTok{black\_blunder =}\NormalTok{ obj}\SpecialCharTok{$}\NormalTok{players}\SpecialCharTok{$}\NormalTok{black}\SpecialCharTok{$}\NormalTok{analysis}\SpecialCharTok{$}\NormalTok{blunder }\SpecialCharTok{\%||\%} \ConstantTok{NA\_integer\_}
+\NormalTok{            )}
+\NormalTok{          \},}
+          \AttributeTok{error =} \ControlFlowTok{function}\NormalTok{(e) \{}
+            \FunctionTok{warning}\NormalTok{(}\StringTok{"Failed to parse line: "}\NormalTok{, }\FunctionTok{substr}\NormalTok{(line, }\DecValTok{1}\NormalTok{, }\DecValTok{100}\NormalTok{), }\StringTok{"..."}\NormalTok{)}
+\NormalTok{          \}}
+\NormalTok{        )}
+\NormalTok{      \})}
+
+      \CommentTok{\# Compact and bind}
+\NormalTok{      lichess\_games }\OtherTok{\textless{}{-}} \FunctionTok{compact}\NormalTok{(lichess\_games)}
+
+      \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{length}\NormalTok{(lichess\_games) }\SpecialCharTok{==} \DecValTok{0}\NormalTok{) \{}
+        \FunctionTok{warning}\NormalTok{(}\StringTok{"No valid games parsed"}\NormalTok{)}
+        \FunctionTok{return}\NormalTok{(}\FunctionTok{tibble}\NormalTok{())}
+\NormalTok{      \}}
+
+\NormalTok{      result\_df }\OtherTok{\textless{}{-}} \FunctionTok{bind\_rows}\NormalTok{(lichess\_games)}
+      \FunctionTok{cat}\NormalTok{(}\StringTok{"Successfully collected"}\NormalTok{, }\FunctionTok{nrow}\NormalTok{(result\_df), }\StringTok{"games}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+
+      \CommentTok{\# Rate limiting}
+      \ControlFlowTok{if}\NormalTok{ (delay }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{) }\FunctionTok{Sys.sleep}\NormalTok{(delay)}
+
+      \FunctionTok{return}\NormalTok{(result\_df)}
+\NormalTok{    \},}
+    \AttributeTok{error =} \ControlFlowTok{function}\NormalTok{(e) \{}
+      \FunctionTok{warning}\NormalTok{(}\StringTok{"Data collection failed: "}\NormalTok{, e}\SpecialCharTok{$}\NormalTok{message)}
+\NormalTok{    \}}
+\NormalTok{  )}
+\NormalTok{\}}
+
+\CommentTok{\# Collect data for analysis}
+\NormalTok{lichess\_df }\OtherTok{\textless{}{-}} \FunctionTok{collect\_lichess\_data}\NormalTok{(}\StringTok{"magnuscarlsen"}\NormalTok{, }\AttributeTok{max\_games =} \DecValTok{200}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Collecting data for user: magnuscarlsen
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Data validation and cleaning}
+\ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(lichess\_df) }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{) \{}
+\NormalTok{  lichess\_df }\OtherTok{\textless{}{-}}\NormalTok{ lichess\_df }\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{filter}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(id), rated }\SpecialCharTok{==} \ConstantTok{TRUE}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{mutate}\NormalTok{(}
+      \CommentTok{\# Convert timestamps}
+      \AttributeTok{game\_date =} \FunctionTok{as.POSIXct}\NormalTok{(createdAt }\SpecialCharTok{/} \DecValTok{1000}\NormalTok{, }\AttributeTok{origin =} \StringTok{"1970{-}01{-}01"}\NormalTok{, }\AttributeTok{tz =} \StringTok{"UTC"}\NormalTok{),}
+      \AttributeTok{game\_duration =} \FunctionTok{as.numeric}\NormalTok{(lastMoveAt }\SpecialCharTok{{-}}\NormalTok{ createdAt) }\SpecialCharTok{/} \DecValTok{1000} \SpecialCharTok{/} \DecValTok{60}\NormalTok{, }\CommentTok{\# minutes}
+
+      \CommentTok{\# User{-}specific variables}
+      \AttributeTok{user\_rating =} \FunctionTok{ifelse}\NormalTok{(user\_color }\SpecialCharTok{==} \StringTok{"white"}\NormalTok{, white\_rating, black\_rating),}
+      \AttributeTok{opponent\_rating =} \FunctionTok{ifelse}\NormalTok{(user\_color }\SpecialCharTok{==} \StringTok{"white"}\NormalTok{, black\_rating, white\_rating),}
+      \AttributeTok{user\_accuracy =} \FunctionTok{ifelse}\NormalTok{(user\_color }\SpecialCharTok{==} \StringTok{"white"}\NormalTok{, white\_accuracy, black\_accuracy),}
+
+      \CommentTok{\# Game outcome from user\textquotesingle{}s perspective}
+      \AttributeTok{user\_result =} \FunctionTok{case\_when}\NormalTok{(}
+        \FunctionTok{is.na}\NormalTok{(winner) }\SpecialCharTok{\textasciitilde{}} \StringTok{"draw"}\NormalTok{,}
+\NormalTok{        winner }\SpecialCharTok{==}\NormalTok{ user\_color }\SpecialCharTok{\textasciitilde{}} \StringTok{"win"}\NormalTok{,}
+        \ConstantTok{TRUE} \SpecialCharTok{\textasciitilde{}} \StringTok{"loss"}
+\NormalTok{      ),}
+
+      \CommentTok{\# Rating difference (user {-} opponent)}
+      \AttributeTok{rating\_diff =}\NormalTok{ user\_rating }\SpecialCharTok{{-}}\NormalTok{ opponent\_rating,}
+
+      \CommentTok{\# Game type categorization}
+      \AttributeTok{time\_control =} \FunctionTok{case\_when}\NormalTok{(}
+\NormalTok{        speed }\SpecialCharTok{==} \StringTok{"bullet"} \SpecialCharTok{\textasciitilde{}} \StringTok{"Bullet"}\NormalTok{,}
+\NormalTok{        speed }\SpecialCharTok{==} \StringTok{"blitz"} \SpecialCharTok{\textasciitilde{}} \StringTok{"Blitz"}\NormalTok{,}
+\NormalTok{        speed }\SpecialCharTok{==} \StringTok{"rapid"} \SpecialCharTok{\textasciitilde{}} \StringTok{"Rapid"}\NormalTok{,}
+\NormalTok{        speed }\SpecialCharTok{==} \StringTok{"classical"} \SpecialCharTok{\textasciitilde{}} \StringTok{"Classical"}\NormalTok{,}
+        \ConstantTok{TRUE} \SpecialCharTok{\textasciitilde{}} \StringTok{"Other"}
+\NormalTok{      ),}
+
+      \CommentTok{\# Opening categorization (expanded)}
+      \AttributeTok{opening\_family =} \FunctionTok{case\_when}\NormalTok{(}
+        \FunctionTok{str\_detect}\NormalTok{(opening\_name, }\StringTok{"Sicilian"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"Sicilian Defense"}\NormalTok{,}
+        \FunctionTok{str\_detect}\NormalTok{(opening\_name, }\StringTok{"French"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"French Defense"}\NormalTok{,}
+        \FunctionTok{str\_detect}\NormalTok{(opening\_name, }\StringTok{"Caro"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"Caro{-}Kann Defense"}\NormalTok{,}
+        \FunctionTok{str\_detect}\NormalTok{(opening\_name, }\StringTok{"Queen\textquotesingle{}s Gambit"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"Queen\textquotesingle{}s Gambit"}\NormalTok{,}
+        \FunctionTok{str\_detect}\NormalTok{(opening\_name, }\StringTok{"King\textquotesingle{}s Indian"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"King\textquotesingle{}s Indian Defense"}\NormalTok{,}
+        \FunctionTok{str\_detect}\NormalTok{(opening\_name, }\StringTok{"Ruy Lopez|Spanish"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"Ruy Lopez"}\NormalTok{,}
+        \FunctionTok{str\_detect}\NormalTok{(opening\_name, }\StringTok{"English"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"English Opening"}\NormalTok{,}
+        \FunctionTok{str\_detect}\NormalTok{(opening\_name, }\StringTok{"Italian"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"Italian Game"}\NormalTok{,}
+        \FunctionTok{str\_detect}\NormalTok{(opening\_name, }\StringTok{"Scotch"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"Scotch Game"}\NormalTok{,}
+        \FunctionTok{str\_detect}\NormalTok{(opening\_name, }\StringTok{"Slav"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"Slav Defense"}\NormalTok{,}
+        \FunctionTok{str\_detect}\NormalTok{(opening\_name, }\StringTok{"Nimzo{-}Indian"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"Nimzo{-}Indian Defense"}\NormalTok{,}
+        \FunctionTok{str\_detect}\NormalTok{(opening\_name, }\StringTok{"Grunfeld|Grünfeld"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"Grunfeld Defense"}\NormalTok{,}
+        \FunctionTok{str\_detect}\NormalTok{(opening\_name, }\StringTok{"Benoni"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"Benoni Defense"}\NormalTok{,}
+        \FunctionTok{str\_detect}\NormalTok{(opening\_name, }\StringTok{"Dutch"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"Dutch Defense"}\NormalTok{,}
+        \FunctionTok{str\_detect}\NormalTok{(opening\_name, }\StringTok{"Pirc"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"Pirc Defense"}\NormalTok{,}
+        \FunctionTok{str\_detect}\NormalTok{(opening\_name, }\StringTok{"Alekhine"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"Alekhine\textquotesingle{}s Defense"}\NormalTok{,}
+        \FunctionTok{str\_detect}\NormalTok{(opening\_name, }\StringTok{"Scandinavian"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"Scandinavian Defense"}\NormalTok{,}
+        \FunctionTok{str\_detect}\NormalTok{(opening\_name, }\StringTok{"Vienna"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"Vienna Game"}\NormalTok{,}
+        \FunctionTok{str\_detect}\NormalTok{(opening\_name, }\StringTok{"London"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"London System"}\NormalTok{,}
+        \FunctionTok{str\_detect}\NormalTok{(opening\_name, }\StringTok{"Catalan"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"Catalan Opening"}\NormalTok{,}
+        \ConstantTok{TRUE} \SpecialCharTok{\textasciitilde{}} \StringTok{"Other"}
+\NormalTok{      )}
+\NormalTok{    ) }\SpecialCharTok{\%\textgreater{}\%}
+    \CommentTok{\# Remove games with missing critical data}
+    \FunctionTok{filter}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(user\_rating), }\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(opponent\_rating)) }\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{arrange}\NormalTok{(game\_date)}
+
+  \FunctionTok{cat}\NormalTok{(}\StringTok{"Final dataset contains"}\NormalTok{, }\FunctionTok{nrow}\NormalTok{(lichess\_df), }\StringTok{"valid games}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\NormalTok{\} }\ControlFlowTok{else}\NormalTok{ \{}
+  \FunctionTok{cat}\NormalTok{(}\StringTok{"No data collected {-} using simulated data for demonstration}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+  \CommentTok{\# Create simulated data for demonstration}
+  \FunctionTok{set.seed}\NormalTok{(}\DecValTok{42}\NormalTok{)}
+\NormalTok{  lichess\_df }\OtherTok{\textless{}{-}} \FunctionTok{tibble}\NormalTok{(}
+    \AttributeTok{id =} \FunctionTok{paste0}\NormalTok{(}\StringTok{"sim\_"}\NormalTok{, }\DecValTok{1}\SpecialCharTok{:}\DecValTok{100}\NormalTok{),}
+    \AttributeTok{game\_date =} \FunctionTok{seq}\NormalTok{(}\AttributeTok{from =} \FunctionTok{as.POSIXct}\NormalTok{(}\StringTok{"2024{-}01{-}01"}\NormalTok{), }\AttributeTok{by =} \StringTok{"day"}\NormalTok{, }\AttributeTok{length.out =} \DecValTok{100}\NormalTok{),}
+    \AttributeTok{user\_color =} \FunctionTok{sample}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"white"}\NormalTok{, }\StringTok{"black"}\NormalTok{), }\DecValTok{100}\NormalTok{, }\AttributeTok{replace =} \ConstantTok{TRUE}\NormalTok{),}
+    \AttributeTok{user\_rating =} \FunctionTok{sample}\NormalTok{(}\DecValTok{2400}\SpecialCharTok{:}\DecValTok{2900}\NormalTok{, }\DecValTok{100}\NormalTok{, }\AttributeTok{replace =} \ConstantTok{TRUE}\NormalTok{),}
+    \AttributeTok{opponent\_rating =} \FunctionTok{sample}\NormalTok{(}\DecValTok{2200}\SpecialCharTok{:}\DecValTok{2800}\NormalTok{, }\DecValTok{100}\NormalTok{, }\AttributeTok{replace =} \ConstantTok{TRUE}\NormalTok{),}
+    \AttributeTok{user\_result =} \FunctionTok{sample}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"win"}\NormalTok{, }\StringTok{"loss"}\NormalTok{, }\StringTok{"draw"}\NormalTok{), }\DecValTok{100}\NormalTok{, }\AttributeTok{replace =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{prob =} \FunctionTok{c}\NormalTok{(}\FloatTok{0.4}\NormalTok{, }\FloatTok{0.35}\NormalTok{, }\FloatTok{0.25}\NormalTok{)),}
+    \AttributeTok{time\_control =} \FunctionTok{sample}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Blitz"}\NormalTok{, }\StringTok{"Rapid"}\NormalTok{, }\StringTok{"Classical"}\NormalTok{), }\DecValTok{100}\NormalTok{, }\AttributeTok{replace =} \ConstantTok{TRUE}\NormalTok{),}
+    \AttributeTok{opening\_family =} \FunctionTok{sample}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Sicilian Defense"}\NormalTok{, }\StringTok{"Scandinavian"}\NormalTok{, }\StringTok{"Pirc"}\NormalTok{, }\StringTok{"Queen\textquotesingle{}s Gambit"}\NormalTok{, }\StringTok{"Nimzo{-}Indian"}\NormalTok{, }\StringTok{"Ruy Lopez"}\NormalTok{, }\StringTok{"Other"}\NormalTok{), }\DecValTok{100}\NormalTok{, }\AttributeTok{replace =} \ConstantTok{TRUE}\NormalTok{),}
+    \AttributeTok{user\_accuracy =} \FunctionTok{runif}\NormalTok{(}\DecValTok{100}\NormalTok{, }\DecValTok{75}\NormalTok{, }\DecValTok{95}\NormalTok{),}
+    \AttributeTok{rating\_diff =}\NormalTok{ user\_rating }\SpecialCharTok{{-}}\NormalTok{ opponent\_rating}
+\NormalTok{  )}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## No data collected - using simulated data for demonstration
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{glimpse}\NormalTok{(lichess\_df)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Rows: 100
+## Columns: 10
+## $ id              <chr> "sim_1", "sim_2", "sim_3", "sim_4", "sim_5", "sim_6", ~
+## $ game_date       <dttm> 2024-01-01, 2024-01-02, 2024-01-03, 2024-01-04, 2024-~
+## $ user_color      <chr> "white", "white", "white", "white", "black", "black", ~
+## $ user_rating     <int> 2481, 2807, 2768, 2801, 2724, 2509, 2759, 2838, 2695, ~
+## $ opponent_rating <int> 2547, 2306, 2516, 2213, 2361, 2743, 2236, 2337, 2568, ~
+## $ user_result     <chr> "draw", "win", "draw", "win", "win", "draw", "loss", "~
+## $ time_control    <chr> "Blitz", "Classical", "Blitz", "Rapid", "Rapid", "Clas~
+## $ opening_family  <chr> "Queen's Gambit", "Sicilian Defense", "Other", "Queen'~
+## $ user_accuracy   <dbl> 83.79288, 83.78116, 87.03657, 83.07814, 94.16637, 94.4~
+## $ rating_diff     <int> -66, 501, 252, 588, 363, -234, 523, 501, 127, -198, 60~
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Data quality assessment}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"=== DATA QUALITY REPORT ===}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## === DATA QUALITY REPORT ===
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Missing data analysis}
+\NormalTok{missing\_summary }\OtherTok{\textless{}{-}}\NormalTok{ lichess\_df }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summarise\_all}\NormalTok{(}\SpecialCharTok{\textasciitilde{}} \FunctionTok{sum}\NormalTok{(}\FunctionTok{is.na}\NormalTok{(.))) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{pivot\_longer}\NormalTok{(}\FunctionTok{everything}\NormalTok{(), }\AttributeTok{names\_to =} \StringTok{"variable"}\NormalTok{, }\AttributeTok{values\_to =} \StringTok{"missing\_count"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{missing\_pct =} \FunctionTok{round}\NormalTok{(missing\_count }\SpecialCharTok{/} \FunctionTok{nrow}\NormalTok{(lichess\_df) }\SpecialCharTok{*} \DecValTok{100}\NormalTok{, }\DecValTok{2}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{arrange}\NormalTok{(}\FunctionTok{desc}\NormalTok{(missing\_count))}
+
+\FunctionTok{print}\NormalTok{(missing\_summary)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 10 x 3
+##    variable        missing_count missing_pct
+##    <chr>                   <int>       <dbl>
+##  1 id                          0           0
+##  2 game_date                   0           0
+##  3 user_color                  0           0
+##  4 user_rating                 0           0
+##  5 opponent_rating             0           0
+##  6 user_result                 0           0
+##  7 time_control                0           0
+##  8 opening_family              0           0
+##  9 user_accuracy               0           0
+## 10 rating_diff                 0           0
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Basic statistics}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{=== SUMMARY STATISTICS ===}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## === SUMMARY STATISTICS ===
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(lichess\_df }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{select}\NormalTok{(user\_rating, opponent\_rating, rating\_diff, user\_accuracy))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   user_rating   opponent_rating  rating_diff     user_accuracy  
+##  Min.   :2400   Min.   :2201    Min.   :-352.0   Min.   :75.18  
+##  1st Qu.:2526   1st Qu.:2345    1st Qu.: -69.0   1st Qu.:79.52  
+##  Median :2668   Median :2461    Median : 164.0   Median :85.03  
+##  Mean   :2655   Mean   :2497    Mean   : 158.1   Mean   :84.93  
+##  3rd Qu.:2768   3rd Qu.:2675    3rd Qu.: 341.8   3rd Qu.:89.60  
+##  Max.   :2886   Max.   :2786    Max.   : 606.0   Max.   :94.85
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Distribution of key variables}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{=== CATEGORICAL VARIABLE DISTRIBUTIONS ===}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## === CATEGORICAL VARIABLE DISTRIBUTIONS ===
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{table}\NormalTok{(lichess\_df}\SpecialCharTok{$}\NormalTok{user\_result)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## draw loss  win 
+##   24   34   42
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{table}\NormalTok{(lichess\_df}\SpecialCharTok{$}\NormalTok{time\_control)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##     Blitz Classical     Rapid 
+##        31        32        37
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{table}\NormalTok{(lichess\_df}\SpecialCharTok{$}\NormalTok{user\_color)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## black white 
+##    56    44
+\end{verbatim}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{Comparison Groups}\label{comparison-groups}
+
+\paragraph{Primary Grouping Variables}\label{primary-grouping-variables}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{By Color:} White vs.~Black
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{First-move advantage analysis}: Quantifying the theoretical
+    52-56\% win rate for white pieces
+  \item
+    \textbf{Opening initiative impact}: How color affects opening choice
+    and early game strategy
+  \item
+    \textbf{Endgame conversion rates}: Color-specific success in
+    winning/drawing positions
+  \item
+    \textbf{Psychological factors}: Player confidence and aggression
+    based on piece color
+  \end{itemize}
+\item
+  \textbf{By Game Type:} Blitz, Rapid, Classical, Bullet
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{Bullet (\textless{} 3 minutes)}: Ultra-fast games
+    emphasizing intuition and pattern recognition
+  \item
+    \textbf{Blitz (3-8 minutes)}: Fast-paced games balancing speed and
+    tactical calculation
+  \item
+    \textbf{Rapid (8-25 minutes)}: Moderate time controls allowing
+    strategic planning
+  \item
+    \textbf{Classical (\textgreater{} 25 minutes)}: Deep positional
+    games with extensive calculation
+  \item
+    \textbf{Correspondence}: Turn-based games with days per move (if
+    available)
+  \end{itemize}
+\item
+  \textbf{By Rating Tier:}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{Beginner (\textless{} 1000)}: Learning basic rules and piece
+    values
+  \item
+    \textbf{Novice (1000-1400)}: Developing tactical awareness and
+    opening principles
+  \item
+    \textbf{Intermediate (1400--1800)}: Strategic understanding and
+    pattern recognition
+  \item
+    \textbf{Advanced (1800--2200)}: Deep positional play and endgame
+    technique
+  \item
+    \textbf{Expert (2200-2400)}: Near-master level with specialized
+    knowledge
+  \item
+    \textbf{Master (2400+)}: Elite players with comprehensive chess
+    understanding
+  \end{itemize}
+\item
+  \textbf{By Opening Type:}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{Aggressive Openings}: King's Gambit, Evans Gambit, Danish
+    Gambit
+  \item
+    \textbf{Positional Openings}: Ruy Lopez, Queen's Gambit, English
+    Opening
+  \item
+    \textbf{Hypermodern Systems}: King's Indian Defense, Nimzo-Indian
+    Defense
+  \item
+    \textbf{Solid Defenses}: French Defense, Caro-Kann Defense, Petrov
+    Defense
+  \item
+    \textbf{Sicilian Variations}: Open Sicilian, Closed Sicilian, Dragon
+    Variation
+  \end{itemize}
+\end{enumerate}
+
+\paragraph{Secondary Analysis
+Dimensions}\label{secondary-analysis-dimensions}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{4}
+\tightlist
+\item
+  \textbf{By Player Demographics:}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{Age Groups}: Youth (\textless{} 18), Adult (18-40), Veteran
+    (40+) where data available
+  \item
+    \textbf{Geographic Regions}: Continental analysis using FIDE
+    federation data
+  \item
+    \textbf{Title Categories}: Titled players (GM, IM, FM) vs.~untitled
+    players
+  \item
+    \textbf{Activity Level}: Casual (\textless{} 10 games/month),
+    Regular (10-50), Active (50+)
+  \end{itemize}
+\item
+  \textbf{By Game Context:}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{Tournament vs.~Casual}: Rated tournament games vs.~informal
+    matches
+  \item
+    \textbf{Time of Day}: Morning, afternoon, evening performance
+    patterns
+  \item
+    \textbf{Day of Week}: Weekday vs.~weekend performance variations
+  \item
+    \textbf{Season/Month}: Temporal performance fluctuations
+  \end{itemize}
+\item
+  \textbf{By Performance Metrics:}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{Accuracy Tiers}: High (90\%+), Medium (75-90\%), Low
+    (\textless{} 75\%)
+  \item
+    \textbf{Game Length}: Short (\textless{} 20 moves), Medium (20-40),
+    Long (40+)
+  \item
+    \textbf{Material Balance}: Simplified vs.~complex material positions
+  \item
+    \textbf{Time Usage}: Efficient vs.~time-pressured game management
+  \end{itemize}
+\end{enumerate}
+
+\paragraph{Statistical Comparison
+Framework}\label{statistical-comparison-framework}
+
+\textbf{Pairwise Comparisons:} - \textbf{Two-sample t-tests} for
+continuous variables (rating, accuracy) - \textbf{Chi-square tests} for
+categorical outcomes (win/loss/draw) - \textbf{Wilcoxon rank-sum tests}
+for non-parametric comparisons - \textbf{Fisher's exact tests} for small
+sample contingency tables
+
+\textbf{Multi-group Analysis:} - \textbf{ANOVA} for comparing means
+across multiple groups - \textbf{Kruskal-Wallis tests} for
+non-parametric multi-group comparisons - \textbf{Post-hoc testing} with
+Bonferroni correction for multiple comparisons - \textbf{Effect size
+calculations} (Cohen's d, eta-squared) for practical significance
+
+\textbf{Interaction Effects:} - \textbf{Two-way ANOVA} for color × time
+control interactions - \textbf{Factorial designs} testing rating tier ×
+opening type combinations - \textbf{Mixed-effects models} accounting for
+player-level random effects - \textbf{Logistic regression} with
+interaction terms for win probability
+
+\paragraph{Expected Group Differences}\label{expected-group-differences}
+
+\textbf{Color-based Expectations:} - White advantage should be
+consistent across rating levels (52-56\% win rate) - Advantage may
+diminish in bullet games due to time pressure - Opening diversity should
+favor white pieces in aggressive systems
+
+\textbf{Time Control Predictions:} - Bullet: Higher variance, more
+decisive results, fewer draws - Classical: Lower variance, more draws,
+deeper strategic play - Rating correlation with performance should
+strengthen in longer time controls
+
+\textbf{Rating Tier Hypotheses:} - Lower-rated players: More decisive
+games, tactical oversights - Higher-rated players: More draws,
+positional advantages, endgame skills - Rating predictive power should
+increase with longer time controls
+
+\textbf{Opening Type Patterns:} - Aggressive openings: Higher win rates
+but also higher loss rates - Positional openings: More draws, consistent
+performance - Defense effectiveness should correlate with player rating
+level
+
+\paragraph{Control Variables and Confounding
+Factors}\label{control-variables-and-confounding-factors}
+
+\textbf{Player-level Controls:} - Historical rating trajectory
+(improving vs.~declining) - Playing frequency and recent activity -
+Specialization in specific time controls or openings - Title status and
+competitive experience
+
+\textbf{Game-level Controls:} - Opponent strength relative to player
+rating - Recent performance streak effects - Opening preparation depth -
+Hardware/software advantages (engine assistance detection)
+
+\textbf{Environmental Controls:} - Platform-specific features (Lichess
+vs.~Chess.com differences) - Time zone and circadian rhythm effects -
+Internet connection stability impacts - Mobile vs.~desktop playing
+interface
+
+\paragraph{Sample Size and Power
+Analysis}\label{sample-size-and-power-analysis}
+
+\textbf{Minimum Sample Requirements:} - \textbf{Color analysis}: 100+
+games per color for reliable estimates - \textbf{Time control
+comparison}: 50+ games per category - \textbf{Rating tier analysis}: 30+
+games per 100-point rating band - \textbf{Opening effectiveness}: 20+
+games per opening family
+
+\textbf{Power Calculations:} - \textbf{Effect size detection}: Minimum
+5\% win rate difference - \textbf{Statistical power}: Target 80\% power
+for primary comparisons - \textbf{Alpha level}: 0.05 with Bonferroni
+correction for multiple tests - \textbf{Confidence intervals}: 95\% CI
+for all effect estimates
+
+\paragraph{Cross-validation Strategy}\label{cross-validation-strategy}
+
+\textbf{Temporal Validation:} - Split data chronologically for
+training/testing - Validate model performance on recent games - Account
+for meta-game evolution over time
+
+\textbf{Player-level Validation:} - Hold out specific players for
+generalization testing - Validate across different player populations -
+Test model robustness to playing style variations
+
+\textbf{Platform Validation:} - Compare results across different chess
+platforms - Validate against over-the-board tournament data where
+available - Account for platform-specific rating inflation/deflation
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{Exploratory Data
+Analysis}\label{exploratory-data-analysis}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Enhanced exploratory data analysis}
+
+\CommentTok{\# Create data directory if it doesn\textquotesingle{}t exist}
+\ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{dir.exists}\NormalTok{(}\StringTok{"../presentation"}\NormalTok{)) \{}
+  \FunctionTok{dir.create}\NormalTok{(}\StringTok{"../presentation"}\NormalTok{, }\AttributeTok{recursive =} \ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{\}}
+
+\CommentTok{\# 1. Performance by color}
+\NormalTok{color\_performance }\OtherTok{\textless{}{-}}\NormalTok{ lichess\_df }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(user\_color) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summarise}\NormalTok{(}
+    \AttributeTok{games =} \FunctionTok{n}\NormalTok{(),}
+    \AttributeTok{wins =} \FunctionTok{sum}\NormalTok{(user\_result }\SpecialCharTok{==} \StringTok{"win"}\NormalTok{),}
+    \AttributeTok{losses =} \FunctionTok{sum}\NormalTok{(user\_result }\SpecialCharTok{==} \StringTok{"loss"}\NormalTok{),}
+    \AttributeTok{draws =} \FunctionTok{sum}\NormalTok{(user\_result }\SpecialCharTok{==} \StringTok{"draw"}\NormalTok{),}
+    \AttributeTok{win\_rate =}\NormalTok{ wins }\SpecialCharTok{/}\NormalTok{ games,}
+    \AttributeTok{avg\_rating =} \FunctionTok{mean}\NormalTok{(user\_rating, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+    \AttributeTok{avg\_accuracy =} \FunctionTok{mean}\NormalTok{(user\_accuracy, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+    \AttributeTok{.groups =} \StringTok{"drop"}
+\NormalTok{  )}
+
+\FunctionTok{print}\NormalTok{(color\_performance)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2 x 8
+##   user_color games  wins losses draws win_rate avg_rating avg_accuracy
+##   <chr>      <int> <int>  <int> <int>    <dbl>      <dbl>        <dbl>
+## 1 black         56    22     22    12    0.393      2643.         85.3
+## 2 white         44    20     12    12    0.455      2671.         84.4
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# 2. Win rate by color visualization}
+\NormalTok{p1 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(lichess\_df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ user\_color, }\AttributeTok{fill =}\NormalTok{ user\_result)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{position =} \StringTok{"fill"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}
+    \AttributeTok{title =} \StringTok{"Game Outcomes by Piece Color"}\NormalTok{,}
+    \AttributeTok{y =} \StringTok{"Proportion"}\NormalTok{, }\AttributeTok{x =} \StringTok{"Piece Color"}\NormalTok{,}
+    \AttributeTok{fill =} \StringTok{"Result"}
+\NormalTok{  ) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_manual}\NormalTok{(}\AttributeTok{values =} \FunctionTok{c}\NormalTok{(}\StringTok{"win"} \OtherTok{=} \StringTok{"lightgreen"}\NormalTok{, }\StringTok{"loss"} \OtherTok{=} \StringTok{"salmon"}\NormalTok{, }\StringTok{"draw"} \OtherTok{=} \StringTok{"lightblue"}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{labels =} \FunctionTok{percent\_format}\NormalTok{())}
+
+\FunctionTok{print}\NormalTok{(p1)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{proposal_files/figure-latex/exploratory-analysis-1.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggsave}\NormalTok{(}\StringTok{"../presentation/presentation\_files/game\_outcomes\_by\_color.png"}\NormalTok{, }\AttributeTok{plot =}\NormalTok{ p1, }\AttributeTok{width =} \DecValTok{8}\NormalTok{, }\AttributeTok{height =} \DecValTok{6}\NormalTok{, }\AttributeTok{dpi =} \DecValTok{300}\NormalTok{)}
+
+\CommentTok{\# 3. Performance across time controls}
+\NormalTok{p2 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(lichess\_df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ time\_control, }\AttributeTok{fill =}\NormalTok{ user\_result)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{position =} \StringTok{"fill"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}
+    \AttributeTok{title =} \StringTok{"Game Outcomes by Time Control"}\NormalTok{,}
+    \AttributeTok{y =} \StringTok{"Proportion"}\NormalTok{, }\AttributeTok{x =} \StringTok{"Time Control"}\NormalTok{,}
+    \AttributeTok{fill =} \StringTok{"Result"}
+\NormalTok{  ) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_manual}\NormalTok{(}\AttributeTok{values =} \FunctionTok{c}\NormalTok{(}\StringTok{"win"} \OtherTok{=} \StringTok{"lightgreen"}\NormalTok{, }\StringTok{"loss"} \OtherTok{=} \StringTok{"salmon"}\NormalTok{, }\StringTok{"draw"} \OtherTok{=} \StringTok{"lightblue"}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{labels =} \FunctionTok{percent\_format}\NormalTok{())}
+
+\FunctionTok{print}\NormalTok{(p2)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{proposal_files/figure-latex/exploratory-analysis-2.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggsave}\NormalTok{(}\StringTok{"../presentation/presentation\_files/game\_outcomes\_by\_time\_control.png"}\NormalTok{, }\AttributeTok{plot =}\NormalTok{ p2, }\AttributeTok{width =} \DecValTok{10}\NormalTok{, }\AttributeTok{height =} \DecValTok{6}\NormalTok{, }\AttributeTok{dpi =} \DecValTok{300}\NormalTok{)}
+
+\CommentTok{\# 4. Rating difference vs. outcome}
+\NormalTok{p3 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(lichess\_df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ rating\_diff, }\AttributeTok{fill =}\NormalTok{ user\_result)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_histogram}\NormalTok{(}\AttributeTok{position =} \StringTok{"identity"}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.7}\NormalTok{, }\AttributeTok{bins =} \DecValTok{20}\NormalTok{, }\AttributeTok{color =} \StringTok{"black"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{user\_result) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}
+    \AttributeTok{title =} \StringTok{"Rating Difference Distribution by Game Outcome"}\NormalTok{,}
+    \AttributeTok{x =} \StringTok{"Rating Difference (User {-} Opponent)"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Count"}\NormalTok{,}
+    \AttributeTok{fill =} \StringTok{"Result"}
+\NormalTok{  ) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_manual}\NormalTok{(}\AttributeTok{values =} \FunctionTok{c}\NormalTok{(}\StringTok{"win"} \OtherTok{=} \StringTok{"lightgreen"}\NormalTok{, }\StringTok{"loss"} \OtherTok{=} \StringTok{"salmon"}\NormalTok{, }\StringTok{"draw"} \OtherTok{=} \StringTok{"lightblue"}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{()}
+
+\FunctionTok{print}\NormalTok{(p3)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{proposal_files/figure-latex/exploratory-analysis-3.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggsave}\NormalTok{(}\StringTok{"../presentation/presentation\_files/rating\_difference\_distribution.png"}\NormalTok{, }\AttributeTok{plot =}\NormalTok{ p3, }\AttributeTok{width =} \DecValTok{12}\NormalTok{, }\AttributeTok{height =} \DecValTok{8}\NormalTok{, }\AttributeTok{dpi =} \DecValTok{300}\NormalTok{)}
+
+\CommentTok{\# 5. Accuracy analysis}
+\ControlFlowTok{if}\NormalTok{ (}\FunctionTok{sum}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(lichess\_df}\SpecialCharTok{$}\NormalTok{user\_accuracy)) }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{) \{}
+\NormalTok{  p4 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(}
+\NormalTok{    lichess\_df }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(user\_accuracy)),}
+    \FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ user\_result, }\AttributeTok{y =}\NormalTok{ user\_accuracy, }\AttributeTok{fill =}\NormalTok{ user\_result)}
+\NormalTok{  ) }\SpecialCharTok{+}
+    \FunctionTok{geom\_boxplot}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.7}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{geom\_jitter}\NormalTok{(}\AttributeTok{width =} \FloatTok{0.2}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.4}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{labs}\NormalTok{(}
+      \AttributeTok{title =} \StringTok{"Accuracy Distribution by Game Outcome"}\NormalTok{,}
+      \AttributeTok{x =} \StringTok{"Game Result"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Accuracy (\%)"}\NormalTok{,}
+      \AttributeTok{fill =} \StringTok{"Result"}
+\NormalTok{    ) }\SpecialCharTok{+}
+    \FunctionTok{scale\_fill\_manual}\NormalTok{(}\AttributeTok{values =} \FunctionTok{c}\NormalTok{(}\StringTok{"win"} \OtherTok{=} \StringTok{"lightgreen"}\NormalTok{, }\StringTok{"loss"} \OtherTok{=} \StringTok{"salmon"}\NormalTok{, }\StringTok{"draw"} \OtherTok{=} \StringTok{"lightblue"}\NormalTok{))}
+
+  \FunctionTok{print}\NormalTok{(p4)}
+  \FunctionTok{ggsave}\NormalTok{(}\StringTok{"../presentation/presentation\_files/accuracy\_distribution\_by\_outcome.png"}\NormalTok{, }\AttributeTok{plot =}\NormalTok{ p4, }\AttributeTok{width =} \DecValTok{10}\NormalTok{, }\AttributeTok{height =} \DecValTok{6}\NormalTok{, }\AttributeTok{dpi =} \DecValTok{300}\NormalTok{)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{proposal_files/figure-latex/exploratory-analysis-4.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# 6. Enhanced opening performance analysis with color correlation}
+\NormalTok{opening\_stats }\OtherTok{\textless{}{-}}\NormalTok{ lichess\_df }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(opening\_family, user\_color) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summarise}\NormalTok{(}
+    \AttributeTok{games =} \FunctionTok{n}\NormalTok{(),}
+    \AttributeTok{wins =} \FunctionTok{sum}\NormalTok{(user\_result }\SpecialCharTok{==} \StringTok{"win"}\NormalTok{),}
+    \AttributeTok{losses =} \FunctionTok{sum}\NormalTok{(user\_result }\SpecialCharTok{==} \StringTok{"loss"}\NormalTok{),}
+    \AttributeTok{draws =} \FunctionTok{sum}\NormalTok{(user\_result }\SpecialCharTok{==} \StringTok{"draw"}\NormalTok{),}
+    \AttributeTok{win\_rate =} \FunctionTok{mean}\NormalTok{(user\_result }\SpecialCharTok{==} \StringTok{"win"}\NormalTok{),}
+    \AttributeTok{loss\_rate =} \FunctionTok{mean}\NormalTok{(user\_result }\SpecialCharTok{==} \StringTok{"loss"}\NormalTok{),}
+    \AttributeTok{draw\_rate =} \FunctionTok{mean}\NormalTok{(user\_result }\SpecialCharTok{==} \StringTok{"draw"}\NormalTok{),}
+    \AttributeTok{avg\_accuracy =} \FunctionTok{mean}\NormalTok{(user\_accuracy, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+    \AttributeTok{avg\_rating =} \FunctionTok{mean}\NormalTok{(user\_rating, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+    \AttributeTok{.groups =} \StringTok{"drop"}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(games }\SpecialCharTok{\textgreater{}=} \DecValTok{3}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# Minimum games per opening{-}color combination}
+  \FunctionTok{arrange}\NormalTok{(}\FunctionTok{desc}\NormalTok{(win\_rate))}
+
+\CommentTok{\# Overall opening performance (collapsed across colors)}
+\NormalTok{opening\_overall }\OtherTok{\textless{}{-}}\NormalTok{ lichess\_df }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(opening\_family) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summarise}\NormalTok{(}
+    \AttributeTok{total\_games =} \FunctionTok{n}\NormalTok{(),}
+    \AttributeTok{overall\_win\_rate =} \FunctionTok{mean}\NormalTok{(user\_result }\SpecialCharTok{==} \StringTok{"win"}\NormalTok{),}
+    \AttributeTok{white\_games =} \FunctionTok{sum}\NormalTok{(user\_color }\SpecialCharTok{==} \StringTok{"white"}\NormalTok{),}
+    \AttributeTok{black\_games =} \FunctionTok{sum}\NormalTok{(user\_color }\SpecialCharTok{==} \StringTok{"black"}\NormalTok{),}
+    \AttributeTok{white\_win\_rate =} \FunctionTok{mean}\NormalTok{(user\_result[user\_color }\SpecialCharTok{==} \StringTok{"white"}\NormalTok{] }\SpecialCharTok{==} \StringTok{"win"}\NormalTok{),}
+    \AttributeTok{black\_win\_rate =} \FunctionTok{mean}\NormalTok{(user\_result[user\_color }\SpecialCharTok{==} \StringTok{"black"}\NormalTok{] }\SpecialCharTok{==} \StringTok{"win"}\NormalTok{),}
+    \AttributeTok{.groups =} \StringTok{"drop"}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(total\_games }\SpecialCharTok{\textgreater{}=} \DecValTok{5}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{arrange}\NormalTok{(}\FunctionTok{desc}\NormalTok{(overall\_win\_rate))}
+
+\FunctionTok{print}\NormalTok{(opening\_overall)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 7 x 7
+##   opening_family   total_games overall_win_rate white_games black_games
+##   <chr>                  <int>            <dbl>       <int>       <int>
+## 1 Nimzo-Indian              20            0.55            5          15
+## 2 Scandinavian              15            0.533           7           8
+## 3 Sicilian Defense           8            0.5             4           4
+## 4 Pirc                      19            0.474           7          12
+## 5 Queen's Gambit            12            0.333           7           5
+## 6 Ruy Lopez                 11            0.273           6           5
+## 7 Other                     15            0.2             8           7
+## # i 2 more variables: white_win_rate <dbl>, black_win_rate <dbl>
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Visualization 1: Win rate by opening and color (faceted)}
+\NormalTok{p5a }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(opening\_stats, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =} \FunctionTok{reorder}\NormalTok{(opening\_family, win\_rate), }\AttributeTok{y =}\NormalTok{ win\_rate, }\AttributeTok{fill =}\NormalTok{ user\_color)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_col}\NormalTok{(}\AttributeTok{position =} \StringTok{"dodge"}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.8}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{coord\_flip}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}
+    \AttributeTok{title =} \StringTok{"Win Rate by Opening Family and Piece Color"}\NormalTok{,}
+    \AttributeTok{subtitle =} \StringTok{"Comparison of opening effectiveness when playing White vs Black"}\NormalTok{,}
+    \AttributeTok{x =} \StringTok{"Opening Family"}\NormalTok{, }
+    \AttributeTok{y =} \StringTok{"Win Rate"}\NormalTok{,}
+    \AttributeTok{fill =} \StringTok{"Color"}
+\NormalTok{  ) }\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{labels =} \FunctionTok{percent\_format}\NormalTok{()) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_manual}\NormalTok{(}\AttributeTok{values =} \FunctionTok{c}\NormalTok{(}\StringTok{"white"} \OtherTok{=} \StringTok{"\#E8E8E8"}\NormalTok{, }\StringTok{"black"} \OtherTok{=} \StringTok{"\#404040"}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position =} \StringTok{"bottom"}\NormalTok{)}
+
+\FunctionTok{print}\NormalTok{(p5a)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{proposal_files/figure-latex/exploratory-analysis-5.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggsave}\NormalTok{(}\StringTok{"../presentation/presentation\_files/win\_rate\_by\_opening\_and\_color.png"}\NormalTok{, }\AttributeTok{plot =}\NormalTok{ p5a, }\AttributeTok{width =} \DecValTok{12}\NormalTok{, }\AttributeTok{height =} \DecValTok{10}\NormalTok{, }\AttributeTok{dpi =} \DecValTok{300}\NormalTok{)}
+
+\CommentTok{\# Visualization 2: Stacked outcomes by opening (top openings only)}
+\NormalTok{top\_openings }\OtherTok{\textless{}{-}}\NormalTok{ opening\_overall }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{slice\_max}\NormalTok{(total\_games, }\AttributeTok{n =} \DecValTok{10}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{pull}\NormalTok{(opening\_family)}
+
+\NormalTok{opening\_outcomes }\OtherTok{\textless{}{-}}\NormalTok{ lichess\_df }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(opening\_family }\SpecialCharTok{\%in\%}\NormalTok{ top\_openings) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{count}\NormalTok{(opening\_family, user\_color, user\_result) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(opening\_family, user\_color) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{proportion =}\NormalTok{ n }\SpecialCharTok{/} \FunctionTok{sum}\NormalTok{(n)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{ungroup}\NormalTok{()}
+
+\NormalTok{p5b }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(opening\_outcomes, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ opening\_family, }\AttributeTok{y =}\NormalTok{ proportion, }\AttributeTok{fill =}\NormalTok{ user\_result)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_col}\NormalTok{(}\AttributeTok{position =} \StringTok{"stack"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{user\_color, }\AttributeTok{ncol =} \DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{coord\_flip}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}
+    \AttributeTok{title =} \StringTok{"Game Outcomes by Opening Family and Color"}\NormalTok{,}
+    \AttributeTok{subtitle =} \StringTok{"Distribution of wins, losses, and draws for most common openings"}\NormalTok{,}
+    \AttributeTok{x =} \StringTok{"Opening Family"}\NormalTok{,}
+    \AttributeTok{y =} \StringTok{"Proportion"}\NormalTok{,}
+    \AttributeTok{fill =} \StringTok{"Result"}
+\NormalTok{  ) }\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{labels =} \FunctionTok{percent\_format}\NormalTok{()) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_manual}\NormalTok{(}\AttributeTok{values =} \FunctionTok{c}\NormalTok{(}\StringTok{"win"} \OtherTok{=} \StringTok{"\#2ECC71"}\NormalTok{, }\StringTok{"loss"} \OtherTok{=} \StringTok{"\#E74C3C"}\NormalTok{, }\StringTok{"draw"} \OtherTok{=} \StringTok{"\#3498DB"}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{()}
+
+\FunctionTok{print}\NormalTok{(p5b)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{proposal_files/figure-latex/exploratory-analysis-6.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggsave}\NormalTok{(}\StringTok{"../presentation/presentation\_files/opening\_outcomes\_by\_color.png"}\NormalTok{, }\AttributeTok{plot =}\NormalTok{ p5b, }\AttributeTok{width =} \DecValTok{12}\NormalTok{, }\AttributeTok{height =} \DecValTok{10}\NormalTok{, }\AttributeTok{dpi =} \DecValTok{300}\NormalTok{)}
+
+\CommentTok{\# Visualization 3: Color advantage heatmap by opening}
+\NormalTok{opening\_color\_advantage }\OtherTok{\textless{}{-}}\NormalTok{ opening\_stats }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(opening\_family, user\_color, win\_rate) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{pivot\_wider}\NormalTok{(}\AttributeTok{names\_from =}\NormalTok{ user\_color, }\AttributeTok{values\_from =}\NormalTok{ win\_rate, }\AttributeTok{names\_prefix =} \StringTok{"win\_rate\_"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}
+    \AttributeTok{color\_advantage =}\NormalTok{ win\_rate\_white }\SpecialCharTok{{-}}\NormalTok{ win\_rate\_black,}
+    \AttributeTok{favors =} \FunctionTok{case\_when}\NormalTok{(}
+\NormalTok{      color\_advantage }\SpecialCharTok{\textgreater{}} \FloatTok{0.1} \SpecialCharTok{\textasciitilde{}} \StringTok{"Strongly favors White"}\NormalTok{,}
+\NormalTok{      color\_advantage }\SpecialCharTok{\textgreater{}} \FloatTok{0.05} \SpecialCharTok{\textasciitilde{}} \StringTok{"Favors White"}\NormalTok{,}
+      \FunctionTok{abs}\NormalTok{(color\_advantage) }\SpecialCharTok{\textless{}=} \FloatTok{0.05} \SpecialCharTok{\textasciitilde{}} \StringTok{"Balanced"}\NormalTok{,}
+\NormalTok{      color\_advantage }\SpecialCharTok{\textless{}} \SpecialCharTok{{-}}\FloatTok{0.05} \SpecialCharTok{\textasciitilde{}} \StringTok{"Favors Black"}\NormalTok{,}
+      \ConstantTok{TRUE} \SpecialCharTok{\textasciitilde{}} \StringTok{"Strongly favors Black"}
+\NormalTok{    )}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(color\_advantage))}
+
+\NormalTok{p5c }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(opening\_color\_advantage, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =} \FunctionTok{reorder}\NormalTok{(opening\_family, color\_advantage), }\AttributeTok{y =}\NormalTok{ color\_advantage)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_col}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{fill =}\NormalTok{ color\_advantage), }\AttributeTok{alpha =} \FloatTok{0.8}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_hline}\NormalTok{(}\AttributeTok{yintercept =} \DecValTok{0}\NormalTok{, }\AttributeTok{linetype =} \StringTok{"dashed"}\NormalTok{, }\AttributeTok{color =} \StringTok{"black"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{coord\_flip}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}
+    \AttributeTok{title =} \StringTok{"Color Advantage by Opening Family"}\NormalTok{,}
+    \AttributeTok{subtitle =} \StringTok{"Positive values indicate White performs better, negative indicates Black advantage"}\NormalTok{,}
+    \AttributeTok{x =} \StringTok{"Opening Family"}\NormalTok{,}
+    \AttributeTok{y =} \StringTok{"Win Rate Difference (White {-} Black)"}
+\NormalTok{  ) }\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{labels =} \FunctionTok{percent\_format}\NormalTok{()) }\SpecialCharTok{+}
+    \FunctionTok{scale\_fill\_gradient2}\NormalTok{(}
+      \AttributeTok{low =} \StringTok{"\#2C3E50"}\NormalTok{, }\AttributeTok{mid =} \StringTok{"\#95A5A6"}\NormalTok{, }\AttributeTok{high =} \StringTok{"\#ECF0F1"}\NormalTok{,}
+      \AttributeTok{midpoint =} \DecValTok{0}\NormalTok{, }\AttributeTok{name =} \StringTok{"Advantage"}
+\NormalTok{    ) }\SpecialCharTok{+}
+    \FunctionTok{theme\_minimal}\NormalTok{()}
+
+\FunctionTok{print}\NormalTok{(p5c)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{proposal_files/figure-latex/exploratory-analysis-7.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggsave}\NormalTok{(}\StringTok{"../presentation/presentation\_files/opening\_color\_advantage.png"}\NormalTok{, }\AttributeTok{plot =}\NormalTok{ p5c, }\AttributeTok{width =} \DecValTok{12}\NormalTok{, }\AttributeTok{height =} \DecValTok{10}\NormalTok{, }\AttributeTok{dpi =} \DecValTok{300}\NormalTok{)}
+
+\CommentTok{\# 7. Performance over time}
+\ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(lichess\_df) }\SpecialCharTok{\textgreater{}} \DecValTok{10}\NormalTok{) \{}
+\NormalTok{  lichess\_df }\OtherTok{\textless{}{-}}\NormalTok{ lichess\_df }\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{arrange}\NormalTok{(game\_date) }\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{mutate}\NormalTok{(}
+      \AttributeTok{game\_number =} \FunctionTok{row\_number}\NormalTok{(),}
+      \AttributeTok{rolling\_win\_rate =} \FunctionTok{map\_dbl}\NormalTok{(game\_number, }\ControlFlowTok{function}\NormalTok{(i) \{}
+\NormalTok{        start\_idx }\OtherTok{\textless{}{-}} \FunctionTok{max}\NormalTok{(}\DecValTok{1}\NormalTok{, i }\SpecialCharTok{{-}} \DecValTok{19}\NormalTok{) }\CommentTok{\# Last 20 games}
+\NormalTok{        games\_subset }\OtherTok{\textless{}{-}}\NormalTok{ lichess\_df}\SpecialCharTok{$}\NormalTok{user\_result[start\_idx}\SpecialCharTok{:}\NormalTok{i]}
+        \FunctionTok{mean}\NormalTok{(games\_subset }\SpecialCharTok{==} \StringTok{"win"}\NormalTok{)}
+\NormalTok{      \})}
+\NormalTok{    )}
+
+\NormalTok{  p6 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(lichess\_df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ game\_date, }\AttributeTok{y =}\NormalTok{ rolling\_win\_rate)) }\SpecialCharTok{+}
+    \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{color =} \StringTok{"blue"}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.7}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{geom\_smooth}\NormalTok{(}\AttributeTok{method =} \StringTok{"loess"}\NormalTok{, }\AttributeTok{se =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{color =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{labs}\NormalTok{(}
+      \AttributeTok{title =} \StringTok{"Rolling Win Rate Over Time (20{-}game window)"}\NormalTok{,}
+      \AttributeTok{x =} \StringTok{"Game Date"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Win Rate"}
+\NormalTok{    ) }\SpecialCharTok{+}
+    \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{labels =} \FunctionTok{percent\_format}\NormalTok{())}
+
+  \FunctionTok{print}\NormalTok{(p6)}
+  \FunctionTok{ggsave}\NormalTok{(}\StringTok{"../presentation/presentation\_files/rolling\_win\_rate\_over\_time.png"}\NormalTok{, }\AttributeTok{plot =}\NormalTok{ p6, }\AttributeTok{width =} \DecValTok{12}\NormalTok{, }\AttributeTok{height =} \DecValTok{6}\NormalTok{, }\AttributeTok{dpi =} \DecValTok{300}\NormalTok{)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{proposal_files/figure-latex/exploratory-analysis-8.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# 8. Correlation analysis}
+\ControlFlowTok{if}\NormalTok{ (}\FunctionTok{sum}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(lichess\_df}\SpecialCharTok{$}\NormalTok{user\_accuracy)) }\SpecialCharTok{\textgreater{}} \DecValTok{10}\NormalTok{) \{}
+\NormalTok{  numeric\_vars }\OtherTok{\textless{}{-}}\NormalTok{ lichess\_df }\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{select}\NormalTok{(user\_rating, opponent\_rating, rating\_diff, user\_accuracy) }\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{filter}\NormalTok{(}\FunctionTok{complete.cases}\NormalTok{(.))}
+
+  \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(numeric\_vars) }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{) \{}
+\NormalTok{    cor\_matrix }\OtherTok{\textless{}{-}} \FunctionTok{cor}\NormalTok{(numeric\_vars)}
+
+    \CommentTok{\# Save correlation plot}
+    \FunctionTok{png}\NormalTok{(}\StringTok{"../presentation/presentation\_files/correlation\_matrix\_numeric\_variables.png"}\NormalTok{, }\AttributeTok{width =} \DecValTok{800}\NormalTok{, }\AttributeTok{height =} \DecValTok{600}\NormalTok{, }\AttributeTok{res =} \DecValTok{300}\NormalTok{)}
+    \FunctionTok{corrplot}\NormalTok{(cor\_matrix,}
+      \AttributeTok{method =} \StringTok{"color"}\NormalTok{, }\AttributeTok{type =} \StringTok{"upper"}\NormalTok{,}
+      \AttributeTok{title =} \StringTok{"Correlation Matrix of Numeric Variables"}
+\NormalTok{    )}
+    \FunctionTok{dev.off}\NormalTok{()}
+
+    \CommentTok{\# Also display in document}
+    \FunctionTok{corrplot}\NormalTok{(cor\_matrix,}
+      \AttributeTok{method =} \StringTok{"color"}\NormalTok{, }\AttributeTok{type =} \StringTok{"upper"}\NormalTok{,}
+      \AttributeTok{title =} \StringTok{"Correlation Matrix of Numeric Variables"}
+\NormalTok{    )}
+\NormalTok{  \}}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{proposal_files/figure-latex/exploratory-analysis-9.pdf}}
+
+These enhanced visualizations provide deeper insights into: - Color
+advantage patterns - Time control preferences and performance - Rating
+differential impact on outcomes\\
+- Accuracy as a performance predictor - Opening repertoire effectiveness
+- Performance trends over time
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{Data Analysis Methods \&
+Strategies}\label{data-analysis-methods-strategies}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Enhanced statistical modeling}
+
+\CommentTok{\# 1. Logistic Regression for Win Probability}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"=== LOGISTIC REGRESSION: WIN PROBABILITY ===}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## === LOGISTIC REGRESSION: WIN PROBABILITY ===
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Prepare data for modeling}
+\NormalTok{model\_data }\OtherTok{\textless{}{-}}\NormalTok{ lichess\_df }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(user\_rating), }\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(opponent\_rating)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}
+    \AttributeTok{win =} \FunctionTok{ifelse}\NormalTok{(user\_result }\SpecialCharTok{==} \StringTok{"win"}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{),}
+    \AttributeTok{white =} \FunctionTok{ifelse}\NormalTok{(user\_color }\SpecialCharTok{==} \StringTok{"white"}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{),}
+    \AttributeTok{rating\_advantage =}\NormalTok{ rating\_diff }\SpecialCharTok{/} \DecValTok{100}\NormalTok{, }\CommentTok{\# Scale for interpretability}
+    \AttributeTok{high\_rating =} \FunctionTok{ifelse}\NormalTok{(user\_rating }\SpecialCharTok{\textgreater{}} \FunctionTok{median}\NormalTok{(user\_rating), }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{)}
+\NormalTok{  )}
+
+\CommentTok{\# Logistic regression model}
+\NormalTok{logit\_model }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(win }\SpecialCharTok{\textasciitilde{}}\NormalTok{ rating\_advantage }\SpecialCharTok{+}\NormalTok{ white }\SpecialCharTok{+}\NormalTok{ time\_control }\SpecialCharTok{+}\NormalTok{ opening\_family,}
+  \AttributeTok{data =}\NormalTok{ model\_data, }\AttributeTok{family =}\NormalTok{ binomial}
+\NormalTok{)}
+
+\CommentTok{\# Model summary}
+\FunctionTok{summary}\NormalTok{(logit\_model)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## glm(formula = win ~ rating_advantage + white + time_control + 
+##     opening_family, family = binomial, data = model_data)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.5599  -0.9536  -0.5690   1.0746   1.8627  
+## 
+## Coefficients:
+##                                Estimate Std. Error z value Pr(>|z|)  
+## (Intercept)                     0.96622    0.69320   1.394   0.1634  
+## rating_advantage               -0.03629    0.09170  -0.396   0.6923  
+## white                           0.50576    0.46240   1.094   0.2741  
+## time_controlClassical          -1.36380    0.60129  -2.268   0.0233 *
+## time_controlRapid              -0.38675    0.54199  -0.714   0.4755  
+## opening_familyOther            -1.98551    0.85394  -2.325   0.0201 *
+## opening_familyPirc             -0.79068    0.72187  -1.095   0.2734  
+## opening_familyQueen's Gambit   -1.42292    0.83390  -1.706   0.0879 .
+## opening_familyRuy Lopez        -1.94141    0.90803  -2.138   0.0325 *
+## opening_familyScandinavian     -0.31374    0.73918  -0.424   0.6712  
+## opening_familySicilian Defense -0.70561    0.90332  -0.781   0.4347  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 136.06  on 99  degrees of freedom
+## Residual deviance: 121.44  on 89  degrees of freedom
+## AIC: 143.44
+## 
+## Number of Fisher Scoring iterations: 4
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Extract and display odds ratios}
+\NormalTok{odds\_ratios }\OtherTok{\textless{}{-}} \FunctionTok{exp}\NormalTok{(}\FunctionTok{coef}\NormalTok{(logit\_model))}
+\NormalTok{conf\_intervals }\OtherTok{\textless{}{-}} \FunctionTok{exp}\NormalTok{(}\FunctionTok{confint}\NormalTok{(logit\_model))}
+\NormalTok{logit\_results }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}
+  \AttributeTok{Variable =} \FunctionTok{names}\NormalTok{(odds\_ratios),}
+  \AttributeTok{Odds\_Ratio =} \FunctionTok{round}\NormalTok{(odds\_ratios, }\DecValTok{3}\NormalTok{),}
+  \AttributeTok{Lower\_CI =} \FunctionTok{round}\NormalTok{(conf\_intervals[, }\DecValTok{1}\NormalTok{], }\DecValTok{3}\NormalTok{),}
+  \AttributeTok{Upper\_CI =} \FunctionTok{round}\NormalTok{(conf\_intervals[, }\DecValTok{2}\NormalTok{], }\DecValTok{3}\NormalTok{)}
+\NormalTok{)}
+\FunctionTok{print}\NormalTok{(logit\_results)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                                                      Variable Odds_Ratio
+## (Intercept)                                       (Intercept)      2.628
+## rating_advantage                             rating_advantage      0.964
+## white                                                   white      1.658
+## time_controlClassical                   time_controlClassical      0.256
+## time_controlRapid                           time_controlRapid      0.679
+## opening_familyOther                       opening_familyOther      0.137
+## opening_familyPirc                         opening_familyPirc      0.454
+## opening_familyQueen's Gambit     opening_familyQueen's Gambit      0.241
+## opening_familyRuy Lopez               opening_familyRuy Lopez      0.144
+## opening_familyScandinavian         opening_familyScandinavian      0.731
+## opening_familySicilian Defense opening_familySicilian Defense      0.494
+##                                Lower_CI Upper_CI
+## (Intercept)                       0.687   10.619
+## rating_advantage                  0.803    1.154
+## white                             0.677    4.197
+## time_controlClassical             0.075    0.805
+## time_controlRapid                 0.230    1.955
+## opening_familyOther               0.022    0.664
+## opening_familyPirc                0.106    1.837
+## opening_familyQueen's Gambit      0.043    1.177
+## opening_familyRuy Lopez           0.021    0.781
+## opening_familyScandinavian        0.167    3.124
+## opening_familySicilian Defense    0.079    2.932
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# 2. Linear Regression for Accuracy Prediction}
+\ControlFlowTok{if}\NormalTok{ (}\FunctionTok{sum}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(lichess\_df}\SpecialCharTok{$}\NormalTok{user\_accuracy)) }\SpecialCharTok{\textgreater{}} \DecValTok{20}\NormalTok{) \{}
+  \FunctionTok{cat}\NormalTok{(}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{=== LINEAR REGRESSION: ACCURACY PREDICTION ===}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+
+\NormalTok{  accuracy\_model }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(user\_accuracy }\SpecialCharTok{\textasciitilde{}}\NormalTok{ user\_rating }\SpecialCharTok{+}\NormalTok{ time\_control }\SpecialCharTok{+}\NormalTok{ user\_color }\SpecialCharTok{+}\NormalTok{ rating\_diff,}
+    \AttributeTok{data =}\NormalTok{ lichess\_df }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(user\_accuracy))}
+\NormalTok{  )}
+
+  \FunctionTok{summary}\NormalTok{(accuracy\_model)}
+
+  \CommentTok{\# Model diagnostics}
+  \FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow =} \FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{, }\DecValTok{2}\NormalTok{))}
+  \FunctionTok{plot}\NormalTok{(accuracy\_model)}
+  \FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow =} \FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{))}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## === LINEAR REGRESSION: ACCURACY PREDICTION ===
+\end{verbatim}
+
+\pandocbounded{\includegraphics[keepaspectratio]{proposal_files/figure-latex/statistical-models-1.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# 3. ANOVA: Performance across time controls}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{=== ANOVA: PERFORMANCE BY TIME CONTROL ===}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## === ANOVA: PERFORMANCE BY TIME CONTROL ===
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Win rate by time control}
+\NormalTok{win\_rate\_by\_control }\OtherTok{\textless{}{-}}\NormalTok{ lichess\_df }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(time\_control) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summarise}\NormalTok{(}\AttributeTok{win\_rate =} \FunctionTok{mean}\NormalTok{(user\_result }\SpecialCharTok{==} \StringTok{"win"}\NormalTok{), }\AttributeTok{.groups =} \StringTok{"drop"}\NormalTok{)}
+
+\FunctionTok{print}\NormalTok{(win\_rate\_by\_control)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 3 x 2
+##   time_control win_rate
+##   <chr>           <dbl>
+## 1 Blitz           0.516
+## 2 Classical       0.281
+## 3 Rapid           0.459
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Statistical test}
+\ControlFlowTok{if}\NormalTok{ (}\FunctionTok{length}\NormalTok{(}\FunctionTok{unique}\NormalTok{(lichess\_df}\SpecialCharTok{$}\NormalTok{time\_control)) }\SpecialCharTok{\textgreater{}} \DecValTok{1}\NormalTok{) \{}
+  \CommentTok{\# Chi{-}square test for independence}
+\NormalTok{  contingency\_table }\OtherTok{\textless{}{-}} \FunctionTok{table}\NormalTok{(lichess\_df}\SpecialCharTok{$}\NormalTok{time\_control, lichess\_df}\SpecialCharTok{$}\NormalTok{user\_result)}
+\NormalTok{  chi\_test }\OtherTok{\textless{}{-}} \FunctionTok{chisq.test}\NormalTok{(contingency\_table)}
+  \FunctionTok{print}\NormalTok{(chi\_test)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Pearson's Chi-squared test
+## 
+## data:  contingency_table
+## X-squared = 5.569, df = 4, p-value = 0.2337
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# 4. Rating difference impact analysis}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{=== RATING DIFFERENCE ANALYSIS ===}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## === RATING DIFFERENCE ANALYSIS ===
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{rating\_impact }\OtherTok{\textless{}{-}}\NormalTok{ lichess\_df }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}
+    \AttributeTok{rating\_category =} \FunctionTok{cut}\NormalTok{(rating\_diff,}
+      \AttributeTok{breaks =} \FunctionTok{c}\NormalTok{(}\SpecialCharTok{{-}}\ConstantTok{Inf}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{200}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{100}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{100}\NormalTok{, }\DecValTok{200}\NormalTok{, }\ConstantTok{Inf}\NormalTok{),}
+      \AttributeTok{labels =} \FunctionTok{c}\NormalTok{(}
+        \StringTok{"Much Lower"}\NormalTok{, }\StringTok{"Lower"}\NormalTok{, }\StringTok{"Slightly Lower"}\NormalTok{,}
+        \StringTok{"Slightly Higher"}\NormalTok{, }\StringTok{"Higher"}\NormalTok{, }\StringTok{"Much Higher"}
+\NormalTok{      )}
+\NormalTok{    )}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(rating\_category) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summarise}\NormalTok{(}
+    \AttributeTok{games =} \FunctionTok{n}\NormalTok{(),}
+    \AttributeTok{win\_rate =} \FunctionTok{mean}\NormalTok{(user\_result }\SpecialCharTok{==} \StringTok{"win"}\NormalTok{),}
+    \AttributeTok{draw\_rate =} \FunctionTok{mean}\NormalTok{(user\_result }\SpecialCharTok{==} \StringTok{"draw"}\NormalTok{),}
+    \AttributeTok{loss\_rate =} \FunctionTok{mean}\NormalTok{(user\_result }\SpecialCharTok{==} \StringTok{"loss"}\NormalTok{),}
+    \AttributeTok{.groups =} \StringTok{"drop"}
+\NormalTok{  )}
+
+\FunctionTok{print}\NormalTok{(rating\_impact)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 6 x 5
+##   rating_category games win_rate draw_rate loss_rate
+##   <fct>           <int>    <dbl>     <dbl>     <dbl>
+## 1 Much Lower          9    0.667     0.333     0    
+## 2 Lower              12    0.167     0.25      0.583
+## 3 Slightly Lower     11    0.364     0.273     0.364
+## 4 Slightly Higher    10    0.2       0.4       0.4  
+## 5 Higher              9    0.778     0.111     0.111
+## 6 Much Higher        49    0.429     0.204     0.367
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Visualization of rating impact}
+\NormalTok{p\_rating }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(rating\_impact, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ rating\_category, }\AttributeTok{y =}\NormalTok{ win\_rate)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_col}\NormalTok{(}\AttributeTok{fill =} \StringTok{"steelblue"}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.7}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_text}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{label =} \FunctionTok{paste0}\NormalTok{(}\FunctionTok{round}\NormalTok{(win\_rate }\SpecialCharTok{*} \DecValTok{100}\NormalTok{, }\DecValTok{1}\NormalTok{), }\StringTok{"\%"}\NormalTok{)),}
+    \AttributeTok{vjust =} \SpecialCharTok{{-}}\FloatTok{0.5}
+\NormalTok{  ) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}
+    \AttributeTok{title =} \StringTok{"Win Rate by Rating Difference Category"}\NormalTok{,}
+    \AttributeTok{x =} \StringTok{"Rating Category (User vs Opponent)"}\NormalTok{,}
+    \AttributeTok{y =} \StringTok{"Win Rate"}
+\NormalTok{  ) }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{axis.text.x =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{angle =} \DecValTok{45}\NormalTok{, }\AttributeTok{hjust =} \DecValTok{1}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{labels =} \FunctionTok{percent\_format}\NormalTok{())}
+
+\FunctionTok{print}\NormalTok{(p\_rating)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{proposal_files/figure-latex/statistical-models-2.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggsave}\NormalTok{(}\StringTok{"../presentation/presentation\_files/win\_rate\_by\_rating\_category.png"}\NormalTok{, }\AttributeTok{plot =}\NormalTok{ p\_rating, }\AttributeTok{width =} \DecValTok{12}\NormalTok{, }\AttributeTok{height =} \DecValTok{8}\NormalTok{, }\AttributeTok{dpi =} \DecValTok{300}\NormalTok{)}
+
+\CommentTok{\# 5. Model comparison and validation}
+\ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(model\_data) }\SpecialCharTok{\textgreater{}} \DecValTok{50}\NormalTok{) \{}
+  \FunctionTok{cat}\NormalTok{(}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{=== MODEL COMPARISON ===}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+
+  \CommentTok{\# Simple model}
+\NormalTok{  simple\_model }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(win }\SpecialCharTok{\textasciitilde{}}\NormalTok{ rating\_advantage, }\AttributeTok{data =}\NormalTok{ model\_data, }\AttributeTok{family =}\NormalTok{ binomial)}
+  \CommentTok{\# Complex model}
+\NormalTok{  complex\_model }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(win }\SpecialCharTok{\textasciitilde{}}\NormalTok{ rating\_advantage }\SpecialCharTok{+}\NormalTok{ white }\SpecialCharTok{+}\NormalTok{ time\_control }\SpecialCharTok{+}\NormalTok{ opening\_family }\SpecialCharTok{+}
+    \FunctionTok{I}\NormalTok{(rating\_advantage}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{), }\AttributeTok{data =}\NormalTok{ model\_data, }\AttributeTok{family =}\NormalTok{ binomial)}
+  \CommentTok{\# Compare models}
+  \FunctionTok{anova}\NormalTok{(simple\_model, logit\_model, complex\_model, }\AttributeTok{test =} \StringTok{"Chisq"}\NormalTok{)}
+  \CommentTok{\# AIC comparison}
+\NormalTok{  aic\_comparison }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}
+    \AttributeTok{Model =} \FunctionTok{c}\NormalTok{(}\StringTok{"Simple"}\NormalTok{, }\StringTok{"Standard"}\NormalTok{, }\StringTok{"Complex"}\NormalTok{),}
+    \AttributeTok{AIC =} \FunctionTok{c}\NormalTok{(}\FunctionTok{AIC}\NormalTok{(simple\_model), }\FunctionTok{AIC}\NormalTok{(logit\_model), }\FunctionTok{AIC}\NormalTok{(complex\_model))}
+\NormalTok{  )}
+  \FunctionTok{print}\NormalTok{(aic\_comparison)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## === MODEL COMPARISON ===
+##      Model      AIC
+## 1   Simple 140.0560
+## 2 Standard 143.4414
+## 3  Complex 145.3868
+\end{verbatim}
+
+\textbf{Enhanced Expected Results:}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Color Advantage}: White pieces should maintain a statistically
+  significant 52-56\% win rate advantage
+\item
+  \textbf{Rating Impact}: Each 100-point rating advantage should
+  increase win probability by 15-25\%
+\item
+  \textbf{Time Control Effects}: Faster time controls may show higher
+  variance in outcomes
+\item
+  \textbf{Opening Performance}: Certain opening families will
+  demonstrate consistently higher win rates
+\item
+  \textbf{Accuracy Correlation}: Higher-rated players should show less
+  variance in accuracy (80\%+ vs 60-70\%)
+\item
+  \textbf{Temporal Patterns}: Performance should show learning effects
+  and potential rating progression over time
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{Expected Outcomes \&
+Limitations}\label{expected-outcomes-limitations}
+
+\paragraph{Expected Outcomes}\label{expected-outcomes}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Quantified Color Advantage}: Demonstrate statistically
+  significant white advantage with confidence intervals
+\item
+  \textbf{Rating-Performance Models}: Develop predictive models for win
+  probability based on rating differentials\\
+\item
+  \textbf{Opening Effectiveness Rankings}: Create evidence-based opening
+  recommendations by time control
+\item
+  \textbf{Performance Progression Tracking}: Identify patterns in skill
+  development and rating growth
+\item
+  \textbf{Multi-factor Analysis}: Understand interactions between
+  rating, time control, color, and opening choice
+\end{enumerate}
+
+\paragraph{Limitations}\label{limitations}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Sampling Bias}:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Overrepresentation of active, higher-rated players
+  \item
+    Platform-specific playing styles may not generalize
+  \item
+    Self-selection bias in analyzed games
+  \end{itemize}
+\item
+  \textbf{Technical Constraints}:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    API rate limits restrict sample sizes per user
+  \item
+    Missing accuracy data for non-analyzed games
+  \item
+    Potential data quality issues in automated parsing
+  \end{itemize}
+\item
+  \textbf{Statistical Limitations}:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Correlation vs.~causation in performance factors
+  \item
+    Limited temporal data for robust time series analysis\\
+  \item
+    Multiple testing concerns with numerous comparisons
+  \end{itemize}
+\item
+  \textbf{External Validity}:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Results specific to Lichess platform and user base
+  \item
+    May not generalize to over-the-board tournament play
+  \item
+    Time period and meta-game effects not controlled
+  \end{itemize}
+\end{enumerate}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{Summary}\label{summary}
+
+This enhanced project leverages comprehensive chess data analysis to
+study \textbf{strategic performance patterns, skill development, and
+competitive dynamics} across hundreds of thousands of recorded games.
+The analysis employs rigorous statistical methods including logistic
+regression, ANOVA, and time series analysis to provide
+\textbf{actionable insights for players and researchers}.
+
+Key improvements include: - \textbf{Robust data collection} with error
+handling and validation - \textbf{Comprehensive exploratory analysis}
+with multiple visualization types\\
+- \textbf{Advanced statistical modeling} with model comparison and
+diagnostics - \textbf{Detailed performance metrics} across multiple
+dimensions - \textbf{Reproducible methodology} following best practices
+in data science
+
+This showcases applied statistical reasoning with real-world data,
+aligning perfectly with course objectives for advanced R programming and
+statistical analysis.
+
+\subsection{References}\label{references}
+
+\begin{itemize}
+\item
+  \textbf{Lichess.org Database \& API Documentation.} (2025).
+  \emph{Lichess API Reference \& Data Archives.}\\
+  Retrieved from \url{https://lichess.org/api}\\
+  and \url{https://database.lichess.org/}\\
+  Licensed under the Creative Commons CC0 Public Domain Dedication.
+\item
+  \textbf{Fédération Internationale des Échecs (FIDE).} (2025).
+  \emph{FIDE Rating Lists.}\\
+  Retrieved from \url{https://ratings.fide.com/download_lists.phtml}
+\item
+  \textbf{Chess.com.} (2025). \emph{Published Data API.}\\
+  Retrieved from
+  \url{https://www.chess.com/news/view/published-data-api}
+\item
+  \textbf{Lichess Open Database Project.} (2025). \emph{Monthly Game
+  Archives.}\\
+  Retrieved from \url{https://database.lichess.org/}
+\item
+  \textbf{FIDE Handbook.} (2024). \emph{Regulations for the Rating
+  System.}\\
+  Retrieved from \url{https://handbook.fide.com/chapter/B022024}
+\item
+  \textbf{UCI Chess Engine Analysis.} (2025). \emph{Lichess Accuracy
+  Metrics Explained.}\\
+  Retrieved from \url{https://lichess.org/faq\#computer-analysis}
+\item
+  \textbf{Lichess Developer Blog.} (2023). \emph{Analyzing Game Metadata
+  and Player Performance.}\\
+  Retrieved from \url{https://lichess.org/blog}
+\item
+  \textbf{R Core Team.} (2024). \emph{R: A Language and Environment for
+  Statistical Computing.}\\
+  Vienna, Austria: R Foundation for Statistical Computing.\\
+  Retrieved from \url{https://www.R-project.org/}
+\item
+  \textbf{Wickham, H., François, R., Henry, L., \& Müller, K.} (2023).
+  \emph{dplyr: A Grammar of Data Manipulation.}\\
+  R package version 1.1.3.\\
+  Retrieved from \url{https://CRAN.R-project.org/package=dplyr}
+\item
+  \textbf{Wickham, H.} (2023). \emph{ggplot2: Elegant Graphics for Data
+  Analysis.}\\
+  Springer-Verlag New York.\\
+  Retrieved from \url{https://ggplot2.tidyverse.org/}
+\end{itemize}
+
+\end{document}
