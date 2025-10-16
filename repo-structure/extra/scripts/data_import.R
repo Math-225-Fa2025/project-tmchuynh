@@ -208,6 +208,74 @@ exchange_code_for_token <- function(
     }
   )
 }
+
+# Get access token (from .env, environment, or interactive setup)
+get_access_token <- function(interactive = TRUE) {
+  # First, try to load from .env file
+  load_dotenv()
+
+  # Then get from environment (now includes .env variables)
+  token <- Sys.getenv("LICHESS_ACCESS_TOKEN")
+
+  if (nchar(token) > 0) {
+    env_source <- if (file.exists(".env")) ".env file" else "environment"
+    message(paste("✅ Using access token from", env_source))
+    return(token)
+  }
+
+  if (!interactive) {
+    warning("No access token found. Some API endpoints may be rate-limited.")
+    return(NULL)
+  }
+
+  message("\n=== LICHESS OAUTH SETUP ===")
+  message("No access token found. You have three options:")
+  message("\n1. PERSONAL ACCESS TOKEN via .env file (Recommended):")
+  message("   - Go to: https://lichess.org/account/oauth/token")
+  message(
+    "   - Create a new token with scopes: ",
+    paste(REQUIRED_SCOPES, collapse = ", ")
+  )
+  message("   - Save in .env file: LICHESS_ACCESS_TOKEN=your_token")
+  message("\n2. ENVIRONMENT VARIABLE:")
+  message(
+    "   - Set environment variable: Sys.setenv(LICHESS_ACCESS_TOKEN = 'your_token')"
+  )
+  message("\n3. OAUTH2 FLOW (For applications):")
+  message("   - Set up OAuth2 application and use generate_auth_url() function")
+
+  choice <- readline(
+    "\nDo you want to enter a personal access token now? (y/n): "
+  )
+
+  if (tolower(choice) %in% c("y", "yes")) {
+    token <- readline("Enter your personal access token: ")
+    if (nchar(token) > 0) {
+      # Save to .env file
+      env_content <- paste0("LICHESS_ACCESS_TOKEN=", token, "\n")
+
+      if (file.exists(".env")) {
+        # Read existing .env and update token line
+        existing_lines <- readLines(".env", warn = FALSE)
+        existing_lines <- existing_lines[
+          !grepl("^LICHESS_ACCESS_TOKEN=", existing_lines)
+        ]
+        env_content <- paste(
+          c(existing_lines, paste0("LICHESS_ACCESS_TOKEN=", token)),
+          collapse = "\n"
+        )
+      }
+
+      writeLines(env_content, ".env")
+      Sys.setenv(LICHESS_ACCESS_TOKEN = token)
+      message("✅ Token saved to .env file")
+      return(token)
+    }
+  }
+
+  message("Proceeding without authentication (rate-limited requests)")
+  return(NULL)
+}
   Sys.sleep(runif(1, 0.5, 1.2)) # polite pause between calls
   url <- paste0(
     "https://lichess.org/api/games/user/", username,
