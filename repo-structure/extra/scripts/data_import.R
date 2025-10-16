@@ -737,11 +737,23 @@ fetch_usernames_safe <- function(endpoint, max_retries = 3) {
         response <- fromJSON(endpoint)
         usernames <- response$users$username
         usernames <- usernames[!is.na(usernames)]
-        message(paste("  ✓ Fetched", length(usernames), "users from", basename(endpoint)))
+        message(paste(
+          "  ✓ Fetched",
+          length(usernames),
+          "users from",
+          basename(endpoint)
+        ))
         return(usernames)
       },
       error = function(e) {
-        message(paste("  × Attempt", attempt, "failed for", basename(endpoint), ":", e$message))
+        message(paste(
+          "  × Attempt",
+          attempt,
+          "failed for",
+          basename(endpoint),
+          ":",
+          e$message
+        ))
         if (attempt < max_retries) Sys.sleep(2^attempt) # Exponential backoff
       }
     )
@@ -782,13 +794,33 @@ tryCatch(
     # online_response <- fromJSON("https://lichess.org/api/player")
     # Instead, use a sample of known active usernames
     common_active_users <- c(
-      "magnuscarlsen", "hikaru", "gothamchess", "penguingm1", "chessnetwork",
-      "saint_louis_chess_club", "agadmator", "chessbrah", "gmhikaru",
-      "chess24", "speedchess", "chessexplained", "kingscrusher", "chess",
-      "lichess", "thibault", "german11", "lovlas", "thiery", "revoof"
+      "magnuscarlsen",
+      "hikaru",
+      "gothamchess",
+      "penguingm1",
+      "chessnetwork",
+      "saint_louis_chess_club",
+      "agadmator",
+      "chessbrah",
+      "gmhikaru",
+      "chess24",
+      "speedchess",
+      "chessexplained",
+      "kingscrusher",
+      "chess",
+      "lichess",
+      "thibault",
+      "german11",
+      "lovlas",
+      "thiery",
+      "revoof"
     )
     all_usernames <- c(all_usernames, common_active_users)
-    message(paste("  ✓ Added", length(common_active_users), "known active users"))
+    message(paste(
+      "  ✓ Added",
+      length(common_active_users),
+      "known active users"
+    ))
   },
   error = function(e) {
     message("  × Failed to fetch online users:", e$message)
@@ -805,7 +837,11 @@ if (length(all_usernames) >= target_users) {
   message(paste("✓ Sampled", target_users, "users for data collection"))
 } else {
   lichess_users <- all_usernames
-  message(paste("⚠ Using all available", length(all_usernames), "users (less than target)"))
+  message(paste(
+    "⚠ Using all available",
+    length(all_usernames),
+    "users (less than target)"
+  ))
 }
 
 # Show sample of selected users
