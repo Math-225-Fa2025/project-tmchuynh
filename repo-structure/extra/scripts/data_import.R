@@ -880,7 +880,8 @@ fide_clean <- map2_dfr(fide_rating_groups$group, players_per_group, function(gro
 
 message(sprintf(
   "✓ FIDE data generated: %d players across %d rating groups",
-  nrow(fide_clean), length(unique(fide_clean$rating_group))
+  nrow(fide_clean),
+  length(unique(fide_clean$rating_group))
 ))
 
 write_csv(fide_clean, paste0(data_dir, "fide_clean.csv"))
