@@ -89,7 +89,7 @@ message(paste("Data dir:", data_dir))
 message(paste("Output dir:", output_dir))
 
 ############################################################
-# 2. FUNCTION DEFINITIONS
+# 2. OAUTH AUTHENTICATION FUNCTIONS
 ############################################################
 
 # Generate code verifier and challenge for PKCE
@@ -117,6 +117,40 @@ generate_pkce_pair <- function() {
     verifier = code_verifier,
     challenge = code_challenge
   )
+}
+
+# Generate OAuth authorization URL
+generate_auth_url <- function(
+  client_id,
+  redirect_uri,
+  scopes = REQUIRED_SCOPES,
+  state = NULL
+) {
+  if (is.null(state)) {
+    state <- paste0(
+      sample(c(letters, LETTERS, 0:9), size = 16, replace = TRUE),
+      collapse = ""
+    )
+  }
+
+  pkce_pair <- generate_pkce_pair()
+
+  # Store PKCE verifier and state in environment for later use
+  Sys.setenv(OAUTH_CODE_VERIFIER = pkce_pair$verifier)
+  Sys.setenv(OAUTH_STATE = state)
+
+  params <- list(
+    response_type = "code",
+    client_id = client_id,
+    redirect_uri = redirect_uri,
+    code_challenge_method = "S256",
+    code_challenge = pkce_pair$challenge,
+    scope = paste(scopes, collapse = " "),
+    state = state
+  )
+
+  query_string <- paste(names(params), params, sep = "=", collapse = "&")
+  paste0(LICHESS_AUTH_URL, "?", query_string)
 }
   Sys.sleep(runif(1, 0.5, 1.2)) # polite pause between calls
   url <- paste0(
