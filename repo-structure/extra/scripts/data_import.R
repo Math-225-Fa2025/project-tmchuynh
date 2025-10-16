@@ -406,7 +406,20 @@ get_lichess_data <- function(username, max_games = 20, access_token = NULL) {
         return(NULL)
       }
 
-      json_games <- map(lines, ~ tryCatch(fromJSON(.x, flatten = TRUE), error = function(e) NULL))
+      message(paste("Found", length(lines), "game lines for user:", username))
+
+      json_games <- map(
+        lines,
+        ~ tryCatch(fromJSON(.x, flatten = TRUE), error = function(e) {
+          message(paste(
+            "JSON parsing error for line:",
+            substr(.x, 1, 100),
+            "..."
+          ))
+          message(paste("Error:", e$message))
+          return(NULL)
+        })
+      )
       json_games <- compact(json_games)
 
       if (length(json_games) == 0) {
