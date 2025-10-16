@@ -14,6 +14,38 @@ library(purrr)
 library(jsonlite)
 library(lubridate)
 library(httr)
+library(digest) # For OAuth PKCE code challenge
+library(base64enc) # For base64 encoding
+
+# Load .env file if it exists
+load_dotenv <- function() {
+  env_file <- ".env"
+  if (file.exists(env_file)) {
+    lines <- readLines(env_file, warn = FALSE)
+    lines <- lines[nzchar(lines) & !startsWith(lines, "#")]
+
+    for (line in lines) {
+      if (grepl("=", line)) {
+        parts <- strsplit(line, "=", fixed = TRUE)[[1]]
+        if (length(parts) >= 2) {
+          key <- trimws(parts[1])
+          value <- trimws(paste(parts[-1], collapse = "="))
+          # Remove quotes if present
+          value <- gsub('^"(.*)"$', '\\1', value)
+          value <- gsub("^'(.*)'$", '\\1', value)
+          # Set environment variable
+          do.call(Sys.setenv, setNames(list(value), key))
+        }
+      }
+    }
+    message("✅ Loaded environment variables from .env")
+    return(TRUE)
+  }
+  return(FALSE)
+}
+
+# Load .env on script start
+load_dotenv()
 
 # Initialize timing for progress tracking
 collection_start <- Sys.time()
