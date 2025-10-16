@@ -92,8 +92,32 @@ message(paste("Output dir:", output_dir))
 # 2. FUNCTION DEFINITIONS
 ############################################################
 
-# Helper: safely fetch user games from Lichess
-get_lichess_data <- function(username, max_games = 20) {
+# Generate code verifier and challenge for PKCE
+generate_pkce_pair <- function() {
+  # Generate random code verifier (43-128 characters)
+  code_verifier <- paste0(
+    sample(
+      c(letters, LETTERS, 0:9, "-", ".", "_", "~"),
+      size = 64,
+      replace = TRUE
+    ),
+    collapse = ""
+  )
+
+  # Generate code challenge (Base64URL-encoded SHA256 hash)
+  code_challenge <- code_verifier %>%
+    charToRaw() %>%
+    digest("sha256", serialize = FALSE, raw = TRUE) %>%
+    base64encode(linebreaks = FALSE) %>%
+    gsub("\\+", "-", .) %>%
+    gsub("/", "_", .) %>%
+    gsub("=", "", .)
+
+  list(
+    verifier = code_verifier,
+    challenge = code_challenge
+  )
+}
   Sys.sleep(runif(1, 0.5, 1.2)) # polite pause between calls
   url <- paste0(
     "https://lichess.org/api/games/user/", username,
