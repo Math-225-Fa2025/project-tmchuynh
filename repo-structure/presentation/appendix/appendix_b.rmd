@@ -21,6 +21,7 @@ library(tidyverse)
 library(jsonlite)
 library(lubridate)
 library(httr)
+library(dplyr)
 
 # Load random subset of users from the Lichess summary
 lichess_path <- "../../data/lichess_clean.csv"
@@ -64,18 +65,18 @@ get_rating_history <- function(username) {
                         next  # Skip if unexpected format
                     }
                     
-                    result_list[[i]] <- tibble(
+                    result_list[[i]] <- dplyr::tibble(
                         user = username,
                         category = game_type,
                         date_index = points_matrix[, 1],
                         rating = points_matrix[, 2]
                     ) %>%
-                        mutate(date = as_date("2013-01-01") + weeks(date_index))
+                        dplyr::mutate(date = lubridate::as_date("2013-01-01") + lubridate::weeks(date_index))
                 }
             }
             
             if (length(result_list) > 0) {
-                return(bind_rows(result_list))
+                return(dplyr::bind_rows(result_list))
             } else {
                 cat("  No valid rating points found\n")
                 return(NULL)
