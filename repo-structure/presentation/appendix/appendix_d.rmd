@@ -80,3 +80,25 @@ p1 <- ggplot(rating_comparison, aes(x = rating_group, y = rating, fill = source,
 
 ggplotly(p1, tooltip = "text")
 ```
+
+---
+
+### D.4 Win Rate Analysis by Rating Tier
+
+```{r winrate-interactive, fig.height=5, fig.width=9}
+p2 <- ggplot(player_summary, aes(x = rating_group, y = lichess_avg_win_rate,
+                                  text = paste0("Win Rate: ", 
+                                               scales::percent(lichess_avg_win_rate, accuracy = 0.1),
+                                               "<br>Group: ", rating_group))) +
+  geom_col(fill = "#16A085", width = 0.6, alpha = 0.8) +
+  labs(
+    title = "Average Win Rate by Rating Group (Lichess)",
+    x = "Rating Group",
+    y = "Average Win Rate"
+  ) +
+  theme_minimal(base_size = 12)
+
+ggplotly(p2, tooltip = "text")
+```
+
+---
