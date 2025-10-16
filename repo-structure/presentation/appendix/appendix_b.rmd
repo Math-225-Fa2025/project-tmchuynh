@@ -251,7 +251,7 @@ if (nrow(rating_summary) == 0) {
     rating_plot_data <- rating_summary %>%
         filter(category %in% top_categories)
 
-    ggplot(rating_plot_data, aes(x = relative_time, y = rating_smooth, color = user)) +
+    p1 <- ggplot(rating_plot_data, aes(x = relative_time, y = rating_smooth, color = user)) +
         geom_line(linewidth = 0.8, alpha = 0.7) +
         facet_wrap(~category, scales = "free_y", ncol = 2) +
         labs(
@@ -263,6 +263,8 @@ if (nrow(rating_summary) == 0) {
         ) +
         theme_minimal(base_size = 12) +
         theme(legend.position = "bottom")
+    print(p1)
+    ggsave("../../presentation/presentation_files/lichess-rating-progression-over-time.png", plot = p1, width = 10, height = 6, dpi = 300)
 }
 ```
 
@@ -290,7 +292,7 @@ if (nrow(rating_summary) == 0) {
             .groups = "drop"
         )
 
-    ggplot(volatility_stats, aes(x = category, y = sd_rating, fill = category)) +
+    p2 <- ggplot(volatility_stats, aes(x = category, y = sd_rating, fill = category)) +
         geom_boxplot(alpha = 0.7) +
         geom_jitter(width = 0.2, alpha = 0.4, size = 2) +
         labs(
@@ -301,6 +303,8 @@ if (nrow(rating_summary) == 0) {
         ) +
         theme_minimal(base_size = 12) +
         theme(legend.position = "none")
+    print(p2)
+    ggsave("../../presentation/presentation_files/rating_volatility.png", plot = p2, width = 10, height = 6, dpi = 300)
 }
 ```
 
@@ -331,7 +335,7 @@ if (nrow(rating_summary) == 0) {
         select(-model)
 
     # Visualize growth rates
-    ggplot(growth_models, aes(x = reorder(user, slope), y = slope, fill = r_squared)) +
+    p3 <- ggplot(growth_models, aes(x = reorder(user, slope), y = slope, fill = r_squared)) +
         geom_col() +
         scale_fill_gradient2(
             low = "#d73027", mid = "#fee090", high = "#1a9850",
@@ -345,6 +349,8 @@ if (nrow(rating_summary) == 0) {
             y = "Rating Points per Week"
         ) +
         theme_minimal(base_size = 11)
+    print(p3)
+    ggsave("../../presentation/presentation_files/rating_growth.png", plot = p3, width = 10, height = 6, dpi = 300)
 
     # Summary statistics for growth rates
     growth_summary <- growth_models %>%
@@ -416,7 +422,7 @@ if (nrow(rating_summary) == 0) {
     cumulative_data <- rating_summary %>%
         filter(category == "Blitz", user %in% top_blitz_users)
 
-    ggplot(cumulative_data, aes(x = relative_time, y = cumulative_change, color = user)) +
+    p6 <- ggplot(cumulative_data, aes(x = relative_time, y = cumulative_change, color = user)) +
         geom_line(linewidth = 1) +
         geom_hline(yintercept = 0, linetype = "dashed", color = "gray40") +
         labs(
@@ -428,6 +434,8 @@ if (nrow(rating_summary) == 0) {
         ) +
         theme_minimal(base_size = 12) +
         theme(legend.position = "right")
+    print(p6)
+    ggsave("../../presentation/presentation_files/cumulative_rating_change.png", plot = p6, width = 10, height = 6, dpi = 300)
 }
 ```
 
@@ -608,6 +616,9 @@ if (nrow(period_summary) > 0 && nrow(user_correlations) > 0) {
             y = "Average Rating Improvement per Period"
         ) +
         theme_minimal()
+    print(p1)
+    ggsave("../../presentation/presentation_files/activity-vs-rating-improvement.png", plot = p1, width = 8, height = 5, dpi = 300)
+
 
     # Distribution of user-level correlations
     p2 <- ggplot(user_correlations, aes(x = correlation)) +
@@ -624,6 +635,8 @@ if (nrow(period_summary) > 0 && nrow(user_correlations) > 0) {
             y = "Number of Users"
         ) +
         theme_minimal()
+    print(p2)
+    ggsave("../../presentation/presentation_files/user-level-correlation-distribution.png", plot = p2, width = 8, height = 5, dpi = 300)
 
     # Combine plots
     library(patchwork)
@@ -727,7 +740,7 @@ if (nrow(period_summary) > 0) {
                         cat("Warning: No valid combinations for heatmap\n")
                     } else {
                         # Create the plot
-                        print(ggplot(heatmap_summary, aes(x = activity_bin, y = improvement_bin, fill = proportion)) +
+                        p8 <- ggplot(heatmap_summary, aes(x = activity_bin, y = improvement_bin, fill = proportion)) +
                             geom_tile(color = "white") +
                             geom_text(aes(label = ifelse(n > 0, paste0(n, "\n(", scales::percent(proportion, accuracy = 1), ")"), "")),
                                 color = "white", size = 3
@@ -740,7 +753,9 @@ if (nrow(period_summary) > 0) {
                                 y = "Rating Improvement Category"
                             ) +
                             theme_minimal() +
-                            theme(panel.grid = element_blank()))
+                            theme(panel.grid = element_blank())
+                            print(p8)
+                            ggsave("../../presentation/presentation_files/activity-improvement-heatmap.png", plot = p8, width = 8, height = 6, dpi = 300)
                     }
                 }
             }

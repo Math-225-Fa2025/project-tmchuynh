@@ -118,7 +118,7 @@
 
 \title{Appendix B --- Longitudinal Analysis of Rating Growth (Lichess)}
 \author{Tina Huynh}
-\date{2025-10-15}
+\date{2025-10-16}
 
 \begin{document}
 \maketitle
@@ -424,7 +424,7 @@ Time}\label{b.3-visualization-rating-progression-over-time}
 \NormalTok{    rating\_plot\_data }\OtherTok{\textless{}{-}}\NormalTok{ rating\_summary }\SpecialCharTok{\%\textgreater{}\%}
         \FunctionTok{filter}\NormalTok{(category }\SpecialCharTok{\%in\%}\NormalTok{ top\_categories)}
 
-    \FunctionTok{ggplot}\NormalTok{(rating\_plot\_data, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ relative\_time, }\AttributeTok{y =}\NormalTok{ rating\_smooth, }\AttributeTok{color =}\NormalTok{ user)) }\SpecialCharTok{+}
+\NormalTok{    p1 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(rating\_plot\_data, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ relative\_time, }\AttributeTok{y =}\NormalTok{ rating\_smooth, }\AttributeTok{color =}\NormalTok{ user)) }\SpecialCharTok{+}
         \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{linewidth =} \FloatTok{0.8}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.7}\NormalTok{) }\SpecialCharTok{+}
         \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{category, }\AttributeTok{scales =} \StringTok{"free\_y"}\NormalTok{, }\AttributeTok{ncol =} \DecValTok{2}\NormalTok{) }\SpecialCharTok{+}
         \FunctionTok{labs}\NormalTok{(}
@@ -436,12 +436,16 @@ Time}\label{b.3-visualization-rating-progression-over-time}
 \NormalTok{        ) }\SpecialCharTok{+}
         \FunctionTok{theme\_minimal}\NormalTok{(}\AttributeTok{base\_size =} \DecValTok{12}\NormalTok{) }\SpecialCharTok{+}
         \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position =} \StringTok{"bottom"}\NormalTok{)}
+    \FunctionTok{print}\NormalTok{(p1)}
+    \FunctionTok{ggsave}\NormalTok{(}\StringTok{"../../presentation/presentation\_files/lichess{-}rating{-}progression{-}over{-}time.png"}\NormalTok{, }\AttributeTok{plot =}\NormalTok{ p1, }\AttributeTok{width =} \DecValTok{10}\NormalTok{, }\AttributeTok{height =} \DecValTok{6}\NormalTok{, }\AttributeTok{dpi =} \DecValTok{300}\NormalTok{)}
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
 ## Warning: Removed 10 rows containing missing values or values outside the scale range
+## (`geom_line()`).
+## Removed 10 rows containing missing values or values outside the scale range
 ## (`geom_line()`).
 \end{verbatim}
 
@@ -476,7 +480,7 @@ Analysis}\label{b.4-rating-volatility-analysis}
             \AttributeTok{.groups =} \StringTok{"drop"}
 \NormalTok{        )}
 
-    \FunctionTok{ggplot}\NormalTok{(volatility\_stats, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ category, }\AttributeTok{y =}\NormalTok{ sd\_rating, }\AttributeTok{fill =}\NormalTok{ category)) }\SpecialCharTok{+}
+\NormalTok{    p2 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(volatility\_stats, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ category, }\AttributeTok{y =}\NormalTok{ sd\_rating, }\AttributeTok{fill =}\NormalTok{ category)) }\SpecialCharTok{+}
         \FunctionTok{geom\_boxplot}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.7}\NormalTok{) }\SpecialCharTok{+}
         \FunctionTok{geom\_jitter}\NormalTok{(}\AttributeTok{width =} \FloatTok{0.2}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.4}\NormalTok{, }\AttributeTok{size =} \DecValTok{2}\NormalTok{) }\SpecialCharTok{+}
         \FunctionTok{labs}\NormalTok{(}
@@ -487,6 +491,8 @@ Analysis}\label{b.4-rating-volatility-analysis}
 \NormalTok{        ) }\SpecialCharTok{+}
         \FunctionTok{theme\_minimal}\NormalTok{(}\AttributeTok{base\_size =} \DecValTok{12}\NormalTok{) }\SpecialCharTok{+}
         \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position =} \StringTok{"none"}\NormalTok{)}
+    \FunctionTok{print}\NormalTok{(p2)}
+    \FunctionTok{ggsave}\NormalTok{(}\StringTok{"../../presentation/presentation\_files/rating\_volatility.png"}\NormalTok{, }\AttributeTok{plot =}\NormalTok{ p2, }\AttributeTok{width =} \DecValTok{10}\NormalTok{, }\AttributeTok{height =} \DecValTok{6}\NormalTok{, }\AttributeTok{dpi =} \DecValTok{300}\NormalTok{)}
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
@@ -521,7 +527,7 @@ Analysis}\label{b.4-rating-volatility-analysis}
         \FunctionTok{select}\NormalTok{(}\SpecialCharTok{{-}}\NormalTok{model)}
 
     \CommentTok{\# Visualize growth rates}
-    \FunctionTok{ggplot}\NormalTok{(growth\_models, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =} \FunctionTok{reorder}\NormalTok{(user, slope), }\AttributeTok{y =}\NormalTok{ slope, }\AttributeTok{fill =}\NormalTok{ r\_squared)) }\SpecialCharTok{+}
+\NormalTok{    p3 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(growth\_models, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =} \FunctionTok{reorder}\NormalTok{(user, slope), }\AttributeTok{y =}\NormalTok{ slope, }\AttributeTok{fill =}\NormalTok{ r\_squared)) }\SpecialCharTok{+}
         \FunctionTok{geom\_col}\NormalTok{() }\SpecialCharTok{+}
         \FunctionTok{scale\_fill\_gradient2}\NormalTok{(}
             \AttributeTok{low =} \StringTok{"\#d73027"}\NormalTok{, }\AttributeTok{mid =} \StringTok{"\#fee090"}\NormalTok{, }\AttributeTok{high =} \StringTok{"\#1a9850"}\NormalTok{,}
@@ -535,6 +541,8 @@ Analysis}\label{b.4-rating-volatility-analysis}
             \AttributeTok{y =} \StringTok{"Rating Points per Week"}
 \NormalTok{        ) }\SpecialCharTok{+}
         \FunctionTok{theme\_minimal}\NormalTok{(}\AttributeTok{base\_size =} \DecValTok{11}\NormalTok{)}
+    \FunctionTok{print}\NormalTok{(p3)}
+    \FunctionTok{ggsave}\NormalTok{(}\StringTok{"../../presentation/presentation\_files/rating\_growth.png"}\NormalTok{, }\AttributeTok{plot =}\NormalTok{ p3, }\AttributeTok{width =} \DecValTok{10}\NormalTok{, }\AttributeTok{height =} \DecValTok{6}\NormalTok{, }\AttributeTok{dpi =} \DecValTok{300}\NormalTok{)}
 
     \CommentTok{\# Summary statistics for growth rates}
 \NormalTok{    growth\_summary }\OtherTok{\textless{}{-}}\NormalTok{ growth\_models }\SpecialCharTok{\%\textgreater{}\%}
@@ -560,6 +568,8 @@ Analysis}\label{b.4-rating-volatility-analysis}
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{appendix_b_files/figure-latex/growth-rate-analysis-1.pdf}}
 
 \begin{longtable}[]{@{}rrrrrrr@{}}
 \caption{Summary Statistics: Rating Growth Rates (Blitz
@@ -655,7 +665,7 @@ Change}\label{b.6-cumulative-rating-change}
 \NormalTok{    cumulative\_data }\OtherTok{\textless{}{-}}\NormalTok{ rating\_summary }\SpecialCharTok{\%\textgreater{}\%}
         \FunctionTok{filter}\NormalTok{(category }\SpecialCharTok{==} \StringTok{"Blitz"}\NormalTok{, user }\SpecialCharTok{\%in\%}\NormalTok{ top\_blitz\_users)}
 
-    \FunctionTok{ggplot}\NormalTok{(cumulative\_data, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ relative\_time, }\AttributeTok{y =}\NormalTok{ cumulative\_change, }\AttributeTok{color =}\NormalTok{ user)) }\SpecialCharTok{+}
+\NormalTok{    p6 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(cumulative\_data, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ relative\_time, }\AttributeTok{y =}\NormalTok{ cumulative\_change, }\AttributeTok{color =}\NormalTok{ user)) }\SpecialCharTok{+}
         \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{linewidth =} \DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
         \FunctionTok{geom\_hline}\NormalTok{(}\AttributeTok{yintercept =} \DecValTok{0}\NormalTok{, }\AttributeTok{linetype =} \StringTok{"dashed"}\NormalTok{, }\AttributeTok{color =} \StringTok{"gray40"}\NormalTok{) }\SpecialCharTok{+}
         \FunctionTok{labs}\NormalTok{(}
@@ -667,6 +677,8 @@ Change}\label{b.6-cumulative-rating-change}
 \NormalTok{        ) }\SpecialCharTok{+}
         \FunctionTok{theme\_minimal}\NormalTok{(}\AttributeTok{base\_size =} \DecValTok{12}\NormalTok{) }\SpecialCharTok{+}
         \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position =} \StringTok{"right"}\NormalTok{)}
+    \FunctionTok{print}\NormalTok{(p6)}
+    \FunctionTok{ggsave}\NormalTok{(}\StringTok{"../../presentation/presentation\_files/cumulative\_rating\_change.png"}\NormalTok{, }\AttributeTok{plot =}\NormalTok{ p6, }\AttributeTok{width =} \DecValTok{10}\NormalTok{, }\AttributeTok{height =} \DecValTok{6}\NormalTok{, }\AttributeTok{dpi =} \DecValTok{300}\NormalTok{)}
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
@@ -949,6 +961,8 @@ Analysis}\label{b.8-activity-performance-correlation-analysis}
             \AttributeTok{y =} \StringTok{"Average Rating Improvement per Period"}
 \NormalTok{        ) }\SpecialCharTok{+}
         \FunctionTok{theme\_minimal}\NormalTok{()}
+    \FunctionTok{print}\NormalTok{(p1)}
+    \FunctionTok{ggsave}\NormalTok{(}\StringTok{"../../presentation/presentation\_files/activity{-}vs{-}rating{-}improvement.png"}\NormalTok{, }\AttributeTok{plot =}\NormalTok{ p1, }\AttributeTok{width =} \DecValTok{8}\NormalTok{, }\AttributeTok{height =} \DecValTok{5}\NormalTok{, }\AttributeTok{dpi =} \DecValTok{300}\NormalTok{)}
 
     \CommentTok{\# Distribution of user{-}level correlations}
 \NormalTok{    p2 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(user\_correlations, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ correlation)) }\SpecialCharTok{+}
@@ -965,6 +979,8 @@ Analysis}\label{b.8-activity-performance-correlation-analysis}
             \AttributeTok{y =} \StringTok{"Number of Users"}
 \NormalTok{        ) }\SpecialCharTok{+}
         \FunctionTok{theme\_minimal}\NormalTok{()}
+    \FunctionTok{print}\NormalTok{(p2)}
+    \FunctionTok{ggsave}\NormalTok{(}\StringTok{"../../presentation/presentation\_files/user{-}level{-}correlation{-}distribution.png"}\NormalTok{, }\AttributeTok{plot =}\NormalTok{ p2, }\AttributeTok{width =} \DecValTok{8}\NormalTok{, }\AttributeTok{height =} \DecValTok{5}\NormalTok{, }\AttributeTok{dpi =} \DecValTok{300}\NormalTok{)}
 
     \CommentTok{\# Combine plots}
     \FunctionTok{library}\NormalTok{(patchwork)}
@@ -1074,7 +1090,7 @@ Analysis}\label{b.8-activity-performance-correlation-analysis}
                         \FunctionTok{cat}\NormalTok{(}\StringTok{"Warning: No valid combinations for heatmap}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
 \NormalTok{                    \} }\ControlFlowTok{else}\NormalTok{ \{}
                         \CommentTok{\# Create the plot}
-                        \FunctionTok{print}\NormalTok{(}\FunctionTok{ggplot}\NormalTok{(heatmap\_summary, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ activity\_bin, }\AttributeTok{y =}\NormalTok{ improvement\_bin, }\AttributeTok{fill =}\NormalTok{ proportion)) }\SpecialCharTok{+}
+\NormalTok{                        p8 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(heatmap\_summary, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ activity\_bin, }\AttributeTok{y =}\NormalTok{ improvement\_bin, }\AttributeTok{fill =}\NormalTok{ proportion)) }\SpecialCharTok{+}
                             \FunctionTok{geom\_tile}\NormalTok{(}\AttributeTok{color =} \StringTok{"white"}\NormalTok{) }\SpecialCharTok{+}
                             \FunctionTok{geom\_text}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{label =} \FunctionTok{ifelse}\NormalTok{(n }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{, }\FunctionTok{paste0}\NormalTok{(n, }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{("}\NormalTok{, scales}\SpecialCharTok{::}\FunctionTok{percent}\NormalTok{(proportion, }\AttributeTok{accuracy =} \DecValTok{1}\NormalTok{), }\StringTok{")"}\NormalTok{), }\StringTok{""}\NormalTok{)),}
                                 \AttributeTok{color =} \StringTok{"white"}\NormalTok{, }\AttributeTok{size =} \DecValTok{3}
@@ -1087,7 +1103,9 @@ Analysis}\label{b.8-activity-performance-correlation-analysis}
                                 \AttributeTok{y =} \StringTok{"Rating Improvement Category"}
 \NormalTok{                            ) }\SpecialCharTok{+}
                             \FunctionTok{theme\_minimal}\NormalTok{() }\SpecialCharTok{+}
-                            \FunctionTok{theme}\NormalTok{(}\AttributeTok{panel.grid =} \FunctionTok{element\_blank}\NormalTok{()))}
+                            \FunctionTok{theme}\NormalTok{(}\AttributeTok{panel.grid =} \FunctionTok{element\_blank}\NormalTok{())}
+                            \FunctionTok{print}\NormalTok{(p8)}
+                            \FunctionTok{ggsave}\NormalTok{(}\StringTok{"../../presentation/presentation\_files/activity{-}improvement{-}heatmap.png"}\NormalTok{, }\AttributeTok{plot =}\NormalTok{ p8, }\AttributeTok{width =} \DecValTok{8}\NormalTok{, }\AttributeTok{height =} \DecValTok{6}\NormalTok{, }\AttributeTok{dpi =} \DecValTok{300}\NormalTok{)}
 \NormalTok{                    \}}
 \NormalTok{                \}}
 \NormalTok{            \}}
