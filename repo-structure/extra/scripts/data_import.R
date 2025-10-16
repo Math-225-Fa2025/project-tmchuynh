@@ -745,7 +745,8 @@ lichess_clean <- lichess_all %>%
     # Temporal statistics
     first_game = min(datetime, na.rm = TRUE),
     last_game = max(datetime, na.rm = TRUE),
-    days_active = as.numeric(difftime(max(datetime, na.rm = TRUE),
+    days_active = as.numeric(difftime(
+      max(datetime, na.rm = TRUE),
       min(datetime, na.rm = TRUE),
       units = "days"
     )),
@@ -823,48 +824,89 @@ total_fide_players <- sample(800:1200, 1) # Slightly larger FIDE sample
 players_per_group <- round(total_fide_players * fide_rating_groups$proportion)
 
 set.seed(42) # Reproducibility
-fide_clean <- map2_dfr(fide_rating_groups$group, players_per_group, function(group, n_players) {
-  group_data <- fide_rating_groups[fide_rating_groups$group == group, ]
+fide_clean <- map2_dfr(
+  fide_rating_groups$group,
+  players_per_group,
+  function(group, n_players) {
+    group_data <- fide_rating_groups[fide_rating_groups$group == group, ]
 
-  tibble(
-    fide_id = sprintf("%08d", sample(10000000:99999999, n_players)),
-    player_name = paste0("Player_", group, "_", sprintf("%04d", seq_len(n_players))),
-    title = sample(c("None", "CM", "FM", "IM", "GM", "WCM", "WFM", "WIM", "WGM"),
-      n_players,
-      replace = TRUE,
-      prob = case_when(
-        group == "2600+" ~ c(0.1, 0.05, 0.1, 0.25, 0.4, 0.02, 0.03, 0.03, 0.02),
-        group == "2400–2599" ~ c(0.3, 0.1, 0.25, 0.3, 0.02, 0.01, 0.01, 0.01, 0.0),
-        group == "2000–2399" ~ c(0.6, 0.15, 0.2, 0.04, 0.005, 0.002, 0.002, 0.001, 0.0),
-        TRUE ~ c(0.85, 0.1, 0.04, 0.008, 0.001, 0.001, 0.0, 0.0, 0.0)
-      )
-    ),
-    country = sample(
-      c(
-        "USA", "RUS", "CHN", "IND", "GER", "FRA", "ESP", "ITA", "GBR", "NOR",
-        "UKR", "POL", "NED", "CAN", "ARG", "BRA", "JPN", "KOR", "TUR", "Other"
+    tibble(
+      fide_id = sprintf("%08d", sample(10000000:99999999, n_players)),
+      player_name = paste0(
+        "Player_",
+        group,
+        "_",
+        sprintf("%04d", seq_len(n_players))
       ),
-      n_players,
-      replace = TRUE
-    ),
-    gender = sample(c("M", "F"), n_players, replace = TRUE, prob = c(0.85, 0.15)),
-    birth_year = sample(1950:2010, n_players, replace = TRUE),
+      title = sample(
+        c("None", "CM", "FM", "IM", "GM", "WCM", "WFM", "WIM", "WGM"),
+        n_players,
+        replace = TRUE,
+        prob = case_when(
+          group == "2600+" ~
+            c(0.1, 0.05, 0.1, 0.25, 0.4, 0.02, 0.03, 0.03, 0.02),
+          group == "2400–2599" ~
+            c(0.3, 0.1, 0.25, 0.3, 0.02, 0.01, 0.01, 0.01, 0.0),
+          group == "2000–2399" ~
+            c(0.6, 0.15, 0.2, 0.04, 0.005, 0.002, 0.002, 0.001, 0.0),
+          TRUE ~ c(0.85, 0.1, 0.04, 0.008, 0.001, 0.001, 0.0, 0.0, 0.0)
+        )
+      ),
+      country = sample(
+        c(
+          "USA",
+          "RUS",
+          "CHN",
+          "IND",
+          "GER",
+          "FRA",
+          "ESP",
+          "ITA",
+          "GBR",
+          "NOR",
+          "UKR",
+          "POL",
+          "NED",
+          "CAN",
+          "ARG",
+          "BRA",
+          "JPN",
+          "KOR",
+          "TUR",
+          "Other"
+        ),
+        n_players,
+        replace = TRUE
+      ),
+      gender = sample(
+        c("M", "F"),
+        n_players,
+        replace = TRUE,
+        prob = c(0.85, 0.15)
+      ),
+      birth_year = sample(1950:2010, n_players, replace = TRUE),
 
-    # Realistic rating distributions within groups
-    rating_standard = sample(group_data$min_rating:group_data$max_rating, n_players, replace = TRUE),
-    rating_rapid = rating_standard + sample(-100:50, n_players, replace = TRUE),
-    rating_blitz = rating_rapid + sample(-80:80, n_players, replace = TRUE),
+      # Realistic rating distributions within groups
+      rating_standard = sample(
+        group_data$min_rating:group_data$max_rating,
+        n_players,
+        replace = TRUE
+      ),
+      rating_rapid = rating_standard +
+        sample(-100:50, n_players, replace = TRUE),
+      rating_blitz = rating_rapid + sample(-80:80, n_players, replace = TRUE),
 
-    # Activity levels
-    games_played = case_when(
-      group == "2600+" ~ sample(50:200, n_players, replace = TRUE),
-      group == "2400–2599" ~ sample(30:150, n_players, replace = TRUE),
-      TRUE ~ sample(10:100, n_players, replace = TRUE)
-    ),
-    federation_rating = rating_standard + rnorm(n_players, 0, 25),
-    rating_group = group
-  )
-}) %>%
+      # Activity levels
+      games_played = case_when(
+        group == "2600+" ~ sample(50:200, n_players, replace = TRUE),
+        group == "2400–2599" ~ sample(30:150, n_players, replace = TRUE),
+        TRUE ~ sample(10:100, n_players, replace = TRUE)
+      ),
+      federation_rating = rating_standard + rnorm(n_players, 0, 25),
+      rating_group = group
+    )
+  }
+) %>%
   mutate(
     age = 2025 - birth_year,
     rating_rapid = pmax(800, rating_rapid),
