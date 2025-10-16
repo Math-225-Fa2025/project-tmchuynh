@@ -594,119 +594,119 @@ if (nrow(period_summary) > 0 && nrow(user_correlations) > 0) {
 
 ```{r activity-improvement-heatmap, fig.height=5, fig.width=8}
 if (nrow(period_summary) > 0) {
-# Validate that period_summary exists and has required data
-if (!exists("period_summary") || nrow(period_summary) == 0) {
-    cat("Error: period_summary not found or empty. Skipping heatmap.\n")
-} else {
-    cat("Creating heatmap with", nrow(period_summary), "observations\n")
-
-    # Check for required columns
-    required_cols <- c("avg_activity", "avg_improvement")
-    missing_cols <- setdiff(required_cols, names(period_summary))
-
-    if (length(missing_cols) > 0) {
-        cat("Error: Missing required columns:", paste(missing_cols, collapse = ", "), "\n")
+    # Validate that period_summary exists and has required data
+    if (!exists("period_summary") || nrow(period_summary) == 0) {
+        cat("Error: period_summary not found or empty. Skipping heatmap.\n")
     } else {
-        # Remove any rows with missing values
-        clean_data <- period_summary %>%
-            filter(
-                !is.na(avg_activity), !is.na(avg_improvement),
-                is.finite(avg_activity), is.finite(avg_improvement)
-            )
+        cat("Creating heatmap with", nrow(period_summary), "observations\n")
 
-        if (nrow(clean_data) < 4) {
-            cat("Error: Insufficient data for binning (need at least 4 observations)\n")
+        # Check for required columns
+        required_cols <- c("avg_activity", "avg_improvement")
+        missing_cols <- setdiff(required_cols, names(period_summary))
+
+        if (length(missing_cols) > 0) {
+            cat("Error: Missing required columns:", paste(missing_cols, collapse = ", "), "\n")
         } else {
-            cat("Data summary:\n")
-            cat(sprintf("  Activity range: [%.3f, %.3f]\n", min(clean_data$avg_activity), max(clean_data$avg_activity)))
-            cat(sprintf("  Improvement range: [%.3f, %.3f]\n", min(clean_data$avg_improvement), max(clean_data$avg_improvement)))
-
-            # Robust binning function
-            create_bins <- function(x, labels, var_name) {
-                tryCatch(
-                    {
-                        # Try quantile-based binning first
-                        breaks <- quantile(x, probs = seq(0, 1, 0.25), na.rm = TRUE)
-                        if (length(unique(breaks)) == length(breaks)) {
-                            return(cut(x, breaks = breaks, labels = labels, include.lowest = TRUE))
-                        } else {
-                            cat(sprintf("  Quantile breaks not unique for %s, using equal-width bins\n", var_name))
-                            # Fall back to equal-width binning
-                            return(cut(x, breaks = 4, labels = labels, include.lowest = TRUE))
-                        }
-                    },
-                    error = function(e) {
-                        cat(sprintf("  Error in binning %s: %s\n", var_name, e$message))
-                        cat(sprintf("  Using simple binning based on range\n"))
-                        # Last resort: manual binning based on range
-                        min_val <- min(x, na.rm = TRUE)
-                        max_val <- max(x, na.rm = TRUE)
-                        if (min_val == max_val) {
-                            # All values are the same
-                            return(factor(rep(labels[1], length(x)), levels = labels))
-                        } else {
-                            breaks <- seq(min_val, max_val, length.out = 5)
-                            return(cut(x, breaks = breaks, labels = labels, include.lowest = TRUE))
-                        }
-                    }
+            # Remove any rows with missing values
+            clean_data <- period_summary %>%
+                filter(
+                    !is.na(avg_activity), !is.na(avg_improvement),
+                    is.finite(avg_activity), is.finite(avg_improvement)
                 )
-            }
 
-            # Create activity and improvement bins for heatmap
-            heatmap_data <- clean_data %>%
-                mutate(
-                    activity_bin = create_bins(
-                        avg_activity,
-                        c("Low", "Med-Low", "Med-High", "High"),
-                        "activity"
-                    ),
-                    improvement_bin = create_bins(
-                        avg_improvement,
-                        c("Declining", "Stable", "Improving", "Fast Growth"),
-                        "improvement"
-                    )
-                ) %>%
-                filter(!is.na(activity_bin), !is.na(improvement_bin))
-
-            # Check if binning was successful
-            if (nrow(heatmap_data) == 0) {
-                cat("Error: No data remaining after binning\n")
+            if (nrow(clean_data) < 4) {
+                cat("Error: Insufficient data for binning (need at least 4 observations)\n")
             } else {
-                cat(sprintf("Successfully binned %d observations\n", nrow(heatmap_data)))
+                cat("Data summary:\n")
+                cat(sprintf("  Activity range: [%.3f, %.3f]\n", min(clean_data$avg_activity), max(clean_data$avg_activity)))
+                cat(sprintf("  Improvement range: [%.3f, %.3f]\n", min(clean_data$avg_improvement), max(clean_data$avg_improvement)))
 
-                # Create contingency table and heatmap
-                heatmap_summary <- heatmap_data %>%
-                    count(activity_bin, improvement_bin, .drop = FALSE) %>%
-                    group_by(activity_bin) %>%
-                    mutate(proportion = n / sum(n)) %>%
-                    ungroup()
+                # Robust binning function
+                create_bins <- function(x, labels, var_name) {
+                    tryCatch(
+                        {
+                            # Try quantile-based binning first
+                            breaks <- quantile(x, probs = seq(0, 1, 0.25), na.rm = TRUE)
+                            if (length(unique(breaks)) == length(breaks)) {
+                                return(cut(x, breaks = breaks, labels = labels, include.lowest = TRUE))
+                            } else {
+                                cat(sprintf("  Quantile breaks not unique for %s, using equal-width bins\n", var_name))
+                                # Fall back to equal-width binning
+                                return(cut(x, breaks = 4, labels = labels, include.lowest = TRUE))
+                            }
+                        },
+                        error = function(e) {
+                            cat(sprintf("  Error in binning %s: %s\n", var_name, e$message))
+                            cat(sprintf("  Using simple binning based on range\n"))
+                            # Last resort: manual binning based on range
+                            min_val <- min(x, na.rm = TRUE)
+                            max_val <- max(x, na.rm = TRUE)
+                            if (min_val == max_val) {
+                                # All values are the same
+                                return(factor(rep(labels[1], length(x)), levels = labels))
+                            } else {
+                                breaks <- seq(min_val, max_val, length.out = 5)
+                                return(cut(x, breaks = breaks, labels = labels, include.lowest = TRUE))
+                            }
+                        }
+                    )
+                }
 
-                # Check if we have valid data for plotting
-                if (nrow(heatmap_summary) == 0 || all(heatmap_summary$n == 0)) {
-                    cat("Warning: No valid combinations for heatmap\n")
+                # Create activity and improvement bins for heatmap
+                heatmap_data <- clean_data %>%
+                    mutate(
+                        activity_bin = create_bins(
+                            avg_activity,
+                            c("Low", "Med-Low", "Med-High", "High"),
+                            "activity"
+                        ),
+                        improvement_bin = create_bins(
+                            avg_improvement,
+                            c("Declining", "Stable", "Improving", "Fast Growth"),
+                            "improvement"
+                        )
+                    ) %>%
+                    filter(!is.na(activity_bin), !is.na(improvement_bin))
+
+                # Check if binning was successful
+                if (nrow(heatmap_data) == 0) {
+                    cat("Error: No data remaining after binning\n")
                 } else {
-                    # Create the plot
-                    print(ggplot(heatmap_summary, aes(x = activity_bin, y = improvement_bin, fill = proportion)) +
-                        geom_tile(color = "white") +
-                        geom_text(aes(label = ifelse(n > 0, paste0(n, "\n(", scales::percent(proportion, accuracy = 1), ")"), "")),
-                            color = "white", size = 3
-                        ) +
-                        scale_fill_gradient(low = "#3366CC", high = "#DC3912", name = "Proportion") +
-                        labs(
-                            title = "Activity Level vs. Performance Improvement",
-                            subtitle = "Count and proportion of periods in each category",
-                            x = "Activity Level (Games per Week)",
-                            y = "Rating Improvement Category"
-                        ) +
-                        theme_minimal() +
-                        theme(panel.grid = element_blank()))
+                    cat(sprintf("Successfully binned %d observations\n", nrow(heatmap_data)))
+
+                    # Create contingency table and heatmap
+                    heatmap_summary <- heatmap_data %>%
+                        count(activity_bin, improvement_bin, .drop = FALSE) %>%
+                        group_by(activity_bin) %>%
+                        mutate(proportion = n / sum(n)) %>%
+                        ungroup()
+
+                    # Check if we have valid data for plotting
+                    if (nrow(heatmap_summary) == 0 || all(heatmap_summary$n == 0)) {
+                        cat("Warning: No valid combinations for heatmap\n")
+                    } else {
+                        # Create the plot
+                        print(ggplot(heatmap_summary, aes(x = activity_bin, y = improvement_bin, fill = proportion)) +
+                            geom_tile(color = "white") +
+                            geom_text(aes(label = ifelse(n > 0, paste0(n, "\n(", scales::percent(proportion, accuracy = 1), ")"), "")),
+                                color = "white", size = 3
+                            ) +
+                            scale_fill_gradient(low = "#3366CC", high = "#DC3912", name = "Proportion") +
+                            labs(
+                                title = "Activity Level vs. Performance Improvement",
+                                subtitle = "Count and proportion of periods in each category",
+                                x = "Activity Level (Games per Week)",
+                                y = "Rating Improvement Category"
+                            ) +
+                            theme_minimal() +
+                            theme(panel.grid = element_blank()))
+                    }
                 }
             }
         }
     }
-}
 } else {
-  cat("Insufficient data for activity-improvement heatmap.\n")
+    cat("Insufficient data for activity-improvement heatmap.\n")
 }
 ```
 
