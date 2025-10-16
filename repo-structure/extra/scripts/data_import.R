@@ -69,7 +69,7 @@ REQUIRED_SCOPES <- c(
   "follow:read"
 )
 
-# Environment variables for OAuth (set these in R environment)
+# Environment variables for OAuth (set these in your R environment)
 # Sys.setenv(LICHESS_CLIENT_ID = "your_app_id_here")
 # Sys.setenv(LICHESS_ACCESS_TOKEN = "your_personal_access_token_here")
 
@@ -614,12 +614,23 @@ get_lichess_data <- function(username, max_games = 20, access_token = NULL) {
       }
 
       # Debug: Check available columns
-      cat("Available columns:", paste(names(df), collapse = ", "), "\n")
-
-      # More robust color detection
-      # More robust color detection
-      df <- data.frame()  # Placeholder for now
-      return(df)
+                      if (
+                        "user" %in%
+                          names(player) &&
+                          "id" %in% names(player$user)
+                      ) {
+                        return(as.character(player$user$id))
+                      }
+                    } else if (field == "user_name") {
+                      if (
+                        "user" %in%
+                          names(player) &&
+                          "name" %in% names(player$user)
+                      ) {
+                        return(as.character(player$user$name))
+                      }
+                    } else if (field %in% names(player)) {
+                      value <- player[[field]]
                       if (field %in% c("rating", "ratingDiff")) {
                         return(as.integer(value))
                       } else {
