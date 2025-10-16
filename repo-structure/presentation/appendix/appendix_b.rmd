@@ -429,8 +429,16 @@ ggplot(cumulative_data, aes(x = relative_time, y = cumulative_change, color = us
 ### B.8 Activity-Performance Correlation Analysis
 
 ```{r activity-performance-setup, message=FALSE, warning=FALSE}
-# Calculate activity metrics and performance improvements
-activity_performance <- rating_summary %>%
+if (nrow(rating_summary) == 0) {
+    cat("No data available. Skipping activity-performance analysis.\n")
+    period_summary <- tibble()
+    correlation_results <- tibble(pearson_r = NA, spearman_rho = NA, n_observations = 0, users = 0)
+    user_correlations <- tibble()
+    user_corr_summary <- tibble(users = 0, positive_corr = 0, strong_positive = 0, 
+                                 negative_corr = 0, mean_correlation = NA, median_correlation = NA)
+} else {
+    # Calculate activity metrics and performance improvements
+    activity_performance <- rating_summary %>%
     filter(category == "Blitz") %>%
     group_by(user) %>%
     arrange(relative_time) %>%
