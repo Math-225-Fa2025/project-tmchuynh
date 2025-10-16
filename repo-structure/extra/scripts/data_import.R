@@ -1294,7 +1294,7 @@ merged_summary <- lichess_clean %>%
 message("✓ Comprehensive summary created with cross-platform comparisons")
 
 write_csv(merged_summary, paste0(output_dir, "player_summary.csv"))
-message("✓ Summary table written to extra/output/player_summary.csv")
+message("✓ Summary table written to data/player_summary.csv")
 
 ############################################################
 # 8. CODEBOOK SUMMARY
