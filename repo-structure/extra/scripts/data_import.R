@@ -614,7 +614,24 @@ get_lichess_data <- function(username, max_games = 20, access_token = NULL) {
       }
 
       # Debug: Check available columns
-                      if (
+      cat("Available columns:", paste(names(df), collapse = ", "), "\n")
+
+      # More robust color detection
+      df <- df %>%
+        mutate(
+          user = username,
+          # Fix color detection logic using safer column access
+          color = case_when(
+            # Check white player ID
+            !is.na(players.white.user.id) & players.white.user.id == username ~ "White",
+            # Check black player ID  
+            !is.na(players.black.user.id) & players.black.user.id == username ~ "Black",
+            # Fallback: check usernames if IDs don't exist
+            !is.na(players.white.user.name) & players.white.user.name == username ~ "White",
+            !is.na(players.black.user.name) & players.black.user.name == username ~ "Black",
+            TRUE ~ "Unknown"
+          )
+        )
                         "user" %in%
                           names(player) &&
                           "id" %in% names(player$user)
