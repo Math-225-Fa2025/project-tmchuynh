@@ -1,0 +1,6 @@
+rating_group,lichess_players,lichess_avg_rating,lichess_rating_sd,lichess_avg_games,lichess_avg_win_rate,lichess_avg_rating_change,pct_high_activity,avg_days_active,pct_prefer_blitz,pct_prefer_rapid,pct_prefer_bullet,fide_players,fide_avg_rating_standard,fide_avg_rating_blitz,fide_rating_sd,fide_avg_games,fide_pct_titled,fide_pct_active,fide_avg_age,total_players,rating_gap_standard,rating_gap_blitz,activity_ratio,platform_preference
+1600–1999,60,1815.5,122.4,14.6,0.553,9.07,0,151.7,0.4,0.067,0.483,285,1805.5,1778.4,115.4,54.4,0.144,0.761,44.6,345,10,37.1,0.27,Balanced
+2000–2399,129,2240.9,109.7,14.9,0.62,3.07,0,46,0.388,0.109,0.403,238,2208.2,2186.8,117.1,55,0.416,0.773,47.7,367,32.7,54.1,0.27,Balanced
+2400–2599,93,2504.3,58.3,15,0.619,0.26,0,26,0.398,0.129,0.409,76,2487.9,2461.3,56.1,85.3,0.711,0.842,43.8,169,16.4,43,0.18,Online Preferred
+2600+,207,2867.6,177.8,15,0.665,0.53,0,16.4,0.319,0.048,0.628,19,2872.5,2804.5,187,129.9,0.842,0.842,45.6,226,-4.9,63.1,0.12,Strongly Online
+Under 1600,38,1383.8,154.7,12.3,0.449,-13.91,0,125.2,0.316,0.184,0.447,332,1207.3,1180.5,217.7,53.1,0.127,0.744,46,370,176.5,203.3,0.23,Balanced
