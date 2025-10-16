@@ -372,10 +372,18 @@ get_lichess_data <- function(username, max_games = 20, access_token = NULL) {
 
   tryCatch(
     {
-      response <- GET(url, add_headers("Accept" = "application/x-ndjson"), timeout(30))
+      response <- GET(url, headers, timeout(30))
 
       if (status_code(response) != 200) {
-        message(paste("API request failed for", username, "with status:", status_code(response)))
+        error_msg <- content(response, as = "text", encoding = "UTF-8")
+        message(paste(
+          "API request failed for",
+          username,
+          "with status:",
+          status_code(response),
+          "- Error:",
+          substr(error_msg, 1, 200)
+        ))
         return(NULL)
       }
 
