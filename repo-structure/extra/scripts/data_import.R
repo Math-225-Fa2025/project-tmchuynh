@@ -355,12 +355,14 @@ get_lichess_data <- function(username, max_games = 20, access_token = NULL) {
   Sys.sleep(runif(1, 0.5, 1.2)) # polite pause between calls
 
   # Use games export endpoint for better data access
+  # Include all time controls and variants for comprehensive analysis
   url <- paste0(
     "https://lichess.org/api/games/user/",
     username,
     "?max=",
     max_games,
-    "&rated=true&perfType=blitz,rapid,classical,bullet&format=ndjson"
+    "&rated=true&perfType=ultraBullet,bullet,blitz,rapid,classical,correspondence,",
+    "chess960,crazyhouse,antichess,atomic,horde,kingOfTheHill,racingKings,threeCheck&format=ndjson"
   )
 
   # Prepare headers
@@ -867,7 +869,7 @@ for (i in seq_along(lichess_users)) {
   # Collect user data with OAuth token
   user_data <- get_lichess_data(
     username,
-    max_games = 15,
+    max_games = 25,
     access_token = access_token
   )
 
@@ -917,7 +919,7 @@ if (is.null(lichess_all) || nrow(lichess_all) == 0) {
   games_per_user <- sample(10:30, length(sample_users), replace = TRUE)
   total_games <- sum(games_per_user)
 
-  # Create comprehensive sample data
+  # Create comprehensive sample data including all game types
   lichess_all <- tibble(
     user = rep(sample_users, games_per_user),
     id = paste0("game_", sprintf("%06d", seq_len(total_games))),
@@ -928,10 +930,40 @@ if (is.null(lichess_all) || nrow(lichess_all) == 0) {
       prob = c(0.8, 0.2)
     ),
     speed = sample(
-      c("bullet", "blitz", "rapid", "classical"),
+      c(
+        "ultraBullet",
+        "bullet",
+        "blitz",
+        "rapid",
+        "classical",
+        "correspondence",
+        "chess960",
+        "crazyhouse",
+        "antichess",
+        "atomic",
+        "horde",
+        "kingOfTheHill",
+        "racingKings",
+        "threeCheck"
+      ),
       total_games,
       replace = TRUE,
-      prob = c(0.3, 0.4, 0.25, 0.05)
+      prob = c(
+        0.02,
+        0.25,
+        0.35,
+        0.20,
+        0.08,
+        0.01, # Time controls
+        0.02,
+        0.02,
+        0.01,
+        0.01,
+        0.01,
+        0.01,
+        0.005,
+        0.005
+      ) # Variants
     ),
     color = sample(c("White", "Black"), total_games, replace = TRUE),
     winner = sample(
@@ -1004,11 +1036,26 @@ lichess_clean <- lichess_all %>%
     win_rate = round(mean(result, na.rm = TRUE), 3),
     total_games = n(),
 
-    # Game type distribution
+    # Game type distribution - Time controls
+    pct_ultraBullet = round(mean(speed == "ultraBullet", na.rm = TRUE), 3),
     pct_bullet = round(mean(speed == "bullet", na.rm = TRUE), 3),
     pct_blitz = round(mean(speed == "blitz", na.rm = TRUE), 3),
     pct_rapid = round(mean(speed == "rapid", na.rm = TRUE), 3),
     pct_classical = round(mean(speed == "classical", na.rm = TRUE), 3),
+    pct_correspondence = round(
+      mean(speed == "correspondence", na.rm = TRUE),
+      3
+    ),
+
+    # Chess variants
+    pct_chess960 = round(mean(speed == "chess960", na.rm = TRUE), 3),
+    pct_crazyhouse = round(mean(speed == "crazyhouse", na.rm = TRUE), 3),
+    pct_antichess = round(mean(speed == "antichess", na.rm = TRUE), 3),
+    pct_atomic = round(mean(speed == "atomic", na.rm = TRUE), 3),
+    pct_horde = round(mean(speed == "horde", na.rm = TRUE), 3),
+    pct_kingOfTheHill = round(mean(speed == "kingOfTheHill", na.rm = TRUE), 3),
+    pct_racingKings = round(mean(speed == "racingKings", na.rm = TRUE), 3),
+    pct_threeCheck = round(mean(speed == "threeCheck", na.rm = TRUE), 3),
 
     # Temporal statistics
     first_game = min(datetime, na.rm = TRUE),
@@ -1036,10 +1083,20 @@ lichess_clean <- lichess_all %>%
       TRUE ~ "Very High"
     ),
     preferred_time_control = case_when(
+      pct_ultraBullet > 0.3 ~ "UltraBullet",
       pct_bullet > 0.4 ~ "Bullet",
       pct_blitz > 0.4 ~ "Blitz",
       pct_rapid > 0.4 ~ "Rapid",
       pct_classical > 0.3 ~ "Classical",
+      pct_correspondence > 0.3 ~ "Correspondence",
+      pct_chess960 > 0.2 ~ "Chess960",
+      pct_crazyhouse > 0.2 ~ "Crazyhouse",
+      pct_antichess > 0.2 ~ "Antichess",
+      pct_atomic > 0.2 ~ "Atomic",
+      pct_horde > 0.2 ~ "Horde",
+      pct_kingOfTheHill > 0.2 ~ "KingOfTheHill",
+      pct_racingKings > 0.2 ~ "RacingKings",
+      pct_threeCheck > 0.2 ~ "ThreeCheck",
       TRUE ~ "Mixed"
     )
   ) %>%
