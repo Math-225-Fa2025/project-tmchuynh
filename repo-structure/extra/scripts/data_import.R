@@ -69,6 +69,10 @@ REQUIRED_SCOPES <- c(
   "follow:read"
 )
 
+# Environment variables for OAuth (set these in R environment)
+# Sys.setenv(LICHESS_CLIENT_ID = "your_app_id_here")
+# Sys.setenv(LICHESS_ACCESS_TOKEN = "your_personal_access_token_here")
+
 ############################################################
 # 1. PROJECT DIRECTORY CONFIGURATION
 ############################################################
