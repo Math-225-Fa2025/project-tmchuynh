@@ -748,19 +748,19 @@ message("Fetching usernames from Lichess leaderboards...")
 
 # Top players (high rating tier)
 top_endpoints <- c(
-  "https://lichess.org/api/player/top/50/ultraBullet",
-  "https://lichess.org/api/player/top/50/bullet",
-  "https://lichess.org/api/player/top/50/blitz",
-  "https://lichess.org/api/player/top/50/rapid",
-  "https://lichess.org/api/player/top/50/classical",
-  "https://lichess.org/api/player/top/50/chess960",
-  "https://lichess.org/api/player/top/50/crazyhouse",
-  "https://lichess.org/api/player/top/50/antichess",
-  "https://lichess.org/api/player/top/50/atomic",
-  "https://lichess.org/api/player/top/50/horde",
-  "https://lichess.org/api/player/top/50/kingOfTheHill",
-  "https://lichess.org/api/player/top/50/racingKings",
-  "https://lichess.org/api/player/top/50/threeCheck"
+  "https://lichess.org/api/player/top/200/ultraBullet",
+  "https://lichess.org/api/player/top/200/bullet",
+  "https://lichess.org/api/player/top/200/blitz",
+  "https://lichess.org/api/player/top/200/rapid",
+  "https://lichess.org/api/player/top/200/classical",
+  "https://lichess.org/api/player/top/200/chess960",
+  "https://lichess.org/api/player/top/200/crazyhouse",
+  "https://lichess.org/api/player/top/200/antichess",
+  "https://lichess.org/api/player/top/200/atomic",
+  "https://lichess.org/api/player/top/200/horde",
+  "https://lichess.org/api/player/top/200/kingOfTheHill",
+  "https://lichess.org/api/player/top/200/racingKings",
+  "https://lichess.org/api/player/top/200/threeCheck"
 )
 
 for (endpoint in top_endpoints) {
@@ -1051,7 +1051,7 @@ message(sprintf(
   nrow(lichess_clean)
 ))
 message(sprintf(
-  "✓ Rating range: %d - %d",
+  "✓ Rating range: %.0f - %.0f",
   min(lichess_clean$avg_rating),
   max(lichess_clean$avg_rating)
 ))
@@ -1360,10 +1360,10 @@ Comparative statistics by rating group
 - `platform_preference`: Categorical platform usage
 
 ## Key Insights
-- **Rating Coverage**: %d - %d (Lichess), %d - %d (FIDE)
+- **Rating Coverage**: %.0f - %.0f (Lichess), %.0f - %.0f (FIDE)
 - **Platform Differences**: Cross-platform rating analysis available
 - **Time Controls**: Full spectrum from bullet (1-2 min) to classical (90+ min)
-- **Activity Levels**: %d%% users classified as high/very high activity
+- **Activity Levels**: %.0f%% users classified as high/very high activity
 
 ## Usage Notes
 - All ratings are Elo-based but may have different scales across platforms
