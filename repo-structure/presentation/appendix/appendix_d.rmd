@@ -38,4 +38,45 @@ rating_hist_path <- "../../data/lichess_rating_history.csv"
 player_summary <- read_csv(summary_path, show_col_types = FALSE)
 lichess_clean <- read_csv(lichess_path, show_col_types = FALSE)
 rating_history <- read_csv(rating_hist_path, show_col_types = FALSE)
+
+# Preview data structures
+glimpse(player_summary)
+glimpse(lichess_clean)
+glimpse(rating_history)
+```
+
+---
+
+### D.3 Interactive Rating Distribution Comparison
+
+```{r rating-distribution, fig.height=6, fig.width=9}
+# Prepare long format for FIDE vs Lichess comparison
+rating_comparison <- player_summary %>%
+  select(rating_group, fide_avg_rating_standard, lichess_avg_rating) %>%
+  pivot_longer(
+    cols = c(fide_avg_rating_standard, lichess_avg_rating),
+    names_to = "source",
+    values_to = "rating"
+  ) %>%
+  mutate(source = recode(source,
+    fide_avg_rating_standard = "FIDE (Standard)",
+    lichess_avg_rating = "Lichess (Online)"
+  ))
+
+# Create interactive plotly chart
+p1 <- ggplot(rating_comparison, aes(x = rating_group, y = rating, fill = source, 
+                                     text = paste0("Rating: ", round(rating, 0), 
+                                                  "<br>Group: ", rating_group,
+                                                  "<br>Source: ", source))) +
+  geom_col(position = "dodge", width = 0.7) +
+  scale_fill_manual(values = c("#2E86AB", "#E67E22")) +
+  labs(
+    title = "Average Player Ratings: FIDE vs Lichess",
+    x = "Rating Group",
+    y = "Average Rating",
+    fill = "Data Source"
+  ) +
+  theme_minimal(base_size = 12)
+
+ggplotly(p1, tooltip = "text")
 ```
