@@ -367,9 +367,7 @@ knitr::kable(
 ```
 
 ---
-```
 
----
 # Summary statistics for growth rates
 ```{r growth-summary-stats}
 growth_summary <- growth_models %>%
