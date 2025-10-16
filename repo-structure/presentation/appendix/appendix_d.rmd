@@ -579,7 +579,7 @@ p4 <- ggplot(predicted_curves, aes(x = time_index, y = rating, color = category)
     subtitle = "Comparing learning curves across different game types",
     x = "Game Sequence",
     y = "Rating",
-    color <- "Category"
+    color = "Category"
   ) +
   theme_minimal(base_size = 11) +
       theme(legend.position = "right")
