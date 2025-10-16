@@ -149,3 +149,28 @@ ggplotly(p3, tooltip = "text")
 ```
 
 ---
+
+### D.6 Player Summary Table (Interactive)
+
+```{r summary-table}
+# Create interactive data table
+player_summary %>%
+  select(rating_group, fide_avg_rating_standard, lichess_avg_rating, 
+         lichess_avg_win_rate, rating_gap_standard, 
+         lichess_players, fide_players) %>%
+  mutate(across(where(is.numeric), round, 2)) %>%
+  datatable(
+    caption = "Player Summary Statistics: FIDE vs Lichess Comparison",
+    colnames = c("Rating Group", "FIDE Avg", "Lichess Avg", "Win Rate", 
+                 "Rating Gap", "Lichess N", "FIDE N"),
+    filter = "top",
+    options = list(
+      pageLength = 10,
+      scrollX = TRUE,
+      dom = 'Bfrtip',
+      buttons = c('copy', 'csv', 'excel')
+    )
+  )
+```
+
+---
