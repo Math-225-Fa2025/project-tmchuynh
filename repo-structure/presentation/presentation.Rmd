@@ -1,20 +1,18 @@
 ---
-title: "Presentation title"
-subtitle: "Presentation subtitle (if any)"
-author: "Team name <br> Names of team members"
+title: "Chess Rating Analysis"
+subtitle: "Lichess vs. FIDE Rating Patterns"
+author: "Tina Huynh"
 institute: "University of Edinburgh"
 date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
-    css: xaringan-themer.css
+    css: ["default", "tamu-fonts", "tamu"]
     lib_dir: libs
     nature:
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
-  revealjs::revealjs_presentation:
-    theme: simple
-    highlight: zenburn
+      autoplay: 9000
 ---
 
 ```{r load-packages, include = FALSE}
