@@ -1,3 +1,17 @@
+---
+title: "Appendix D — Interactive Dashboard: Chess Performance Analytics"
+author: "Tina Huynh"
+date: "`r Sys.Date()`"
+output: 
+  pdf_document:
+    latex_engine: xelatex
+    toc: true
+    number_sections: true
+    fig_caption: true
+    citation_package: natbib
+    keep_tex: true
+---
+
 ## Appendix D — Interactive Dashboard: Chess Performance Analytics
 
 > **Objective:**  
@@ -13,7 +27,7 @@
 
 ```{r dashboard-setup, message=FALSE, warning=FALSE}
 # Install once if not already
-# install.packages(c("flexdashboard","plotly","DT","broom","here","minpack.lm","lme4","zoo"))
+install.packages(c("flexdashboard", "plotly", "DT", "broom", "here", "minpack.lm", "lme4", "zoo"))
 
 library(flexdashboard)
 library(plotly)
