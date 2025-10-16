@@ -306,6 +306,40 @@ test_access_token <- function(token) {
     }
   )
 }
+
+############################################################
+# 3. FUNCTION DEFINITIONS
+############################################################
+
+# Helper: check if Lichess user exists
+check_lichess_user <- function(username) {
+  url <- paste0("https://lichess.org/api/user/", username)
+
+  tryCatch(
+    {
+      response <- GET(url, timeout(10))
+
+      if (status_code(response) == 404) {
+        message(paste("User", username, "does not exist on Lichess"))
+        return(FALSE)
+      } else if (status_code(response) != 200) {
+        message(paste(
+          "Error checking user",
+          username,
+          "- status:",
+          status_code(response)
+        ))
+        return(FALSE)
+      }
+
+      return(TRUE)
+    },
+    error = function(e) {
+      message(paste("Error checking user", username, ":", e$message))
+      return(FALSE)
+    }
+  )
+}
   Sys.sleep(runif(1, 0.5, 1.2)) # polite pause between calls
   url <- paste0(
     "https://lichess.org/api/games/user/", username,
