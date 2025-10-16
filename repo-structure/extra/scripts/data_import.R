@@ -580,6 +580,39 @@ get_lichess_data <- function(username, max_games = 20, access_token = NULL) {
             )
           }
 
+          # Remove any NULL entries and combine
+          game_list <- game_list[!sapply(game_list, is.null)]
+
+          if (length(game_list) == 0) {
+            message(paste(
+              "No valid games could be processed for user:",
+              username
+            ))
+            return(NULL)
+          }
+
+          message(paste(
+            "Successfully processed",
+            length(game_list),
+            "games manually"
+          ))
+
+          # Combine the data frames safely
+          tryCatch(
+            {
+              do.call(rbind, game_list)
+            },
+            error = function(e) {
+              message(paste("Error combining manual data frames:", e$message))
+              return(NULL)
+            }
+          )
+
+      if (is.null(df) || nrow(df) == 0) {
+        message(paste("No valid data extracted for user:", username))
+        return(NULL)
+      }
+
       # Debug: Check available columns
       cat("Available columns:", paste(names(df), collapse = ", "), "\n")
 
