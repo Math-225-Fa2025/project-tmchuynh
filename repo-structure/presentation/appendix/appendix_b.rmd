@@ -582,9 +582,13 @@ p2 <- ggplot(user_correlations, aes(x = correlation)) +
 # Combine plots
 library(patchwork)
 p1 / p2
+} else {
+  cat("Insufficient data for activity-performance visualization.\n")
+}
 ```
 
 ```{r activity-improvement-heatmap, fig.height=5, fig.width=8}
+if (nrow(period_summary) > 0) {
 # Validate that period_summary exists and has required data
 if (!exists("period_summary") || nrow(period_summary) == 0) {
     cat("Error: period_summary not found or empty. Skipping heatmap.\n")
