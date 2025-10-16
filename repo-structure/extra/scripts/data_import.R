@@ -690,9 +690,12 @@ if (is.null(lichess_all) || nrow(lichess_all) == 0) {
     # Realistic rating distribution across all tiers
     rating_pre = case_when(
       runif(total_games) < 0.15 ~ sample(800:1400, total_games, replace = TRUE), # Beginner
-      runif(total_games) < 0.35 ~ sample(1400:1800, total_games, replace = TRUE), # Intermediate
-      runif(total_games) < 0.65 ~ sample(1800:2200, total_games, replace = TRUE), # Advanced
-      runif(total_games) < 0.90 ~ sample(2200:2600, total_games, replace = TRUE), # Expert
+      runif(total_games) < 0.35 ~
+        sample(1400:1800, total_games, replace = TRUE), # Intermediate
+      runif(total_games) < 0.65 ~
+        sample(1800:2200, total_games, replace = TRUE), # Advanced
+      runif(total_games) < 0.90 ~
+        sample(2200:2600, total_games, replace = TRUE), # Expert
       TRUE ~ sample(2600:3000, total_games, replace = TRUE) # Master
     ),
     rating_diff = sample(-80:80, total_games, replace = TRUE),
