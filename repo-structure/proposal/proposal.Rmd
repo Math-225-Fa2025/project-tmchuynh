@@ -540,6 +540,57 @@ p2 <- ggplot(lichess_df, aes(x = time_control, fill = user_result)) +
 print(p2)
 ggsave("../presentation/presentation_files/game_outcomes_by_time_control.png", plot = p2, width = 10, height = 6, dpi = 300)
 
+# 3b. Performance across time controls by color (faceted)
+p2b <- ggplot(lichess_df, aes(x = time_control, fill = user_result)) +
+  geom_bar(position = "fill") +
+  facet_wrap(~user_color, ncol = 2) +
+  labs(
+    title = "Game Outcomes by Time Control and Piece Color",
+    subtitle = "Comparing performance when playing White vs Black across different time controls",
+    y = "Proportion", x = "Time Control",
+    fill = "Result"
+  ) +
+  scale_fill_manual(values = c("win" = "lightgreen", "loss" = "salmon", "draw" = "lightblue")) +
+  scale_y_continuous(labels = percent_format()) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+print(p2b)
+ggsave("../presentation/presentation_files/game_outcomes_by_time_control_and_color.png", plot = p2b, width = 12, height = 6, dpi = 300)
+
+# 3c. Win rate comparison by time control and color
+time_color_stats <- lichess_df %>%
+  group_by(time_control, user_color) %>%
+  summarise(
+    games = n(),
+    win_rate = mean(user_result == "win"),
+    draw_rate = mean(user_result == "draw"),
+    loss_rate = mean(user_result == "loss"),
+    .groups = "drop"
+  ) %>%
+  filter(games >= 3)
+
+p2c <- ggplot(time_color_stats, aes(
+  x = time_control, y = win_rate, fill = user_color,
+  label = scales::percent(win_rate, accuracy = 0.1)
+)) +
+  geom_col(position = "dodge", alpha = 0.8) +
+  geom_text(position = position_dodge(width = 0.9), vjust = -0.5, size = 3) +
+  labs(
+    title = "Win Rate by Time Control and Piece Color",
+    subtitle = "Direct comparison showing color advantage across different game speeds",
+    x = "Time Control",
+    y = "Win Rate",
+    fill = "Color"
+  ) +
+  scale_y_continuous(labels = percent_format(), limits = c(0, max(time_color_stats$win_rate) * 1.1)) +
+  scale_fill_manual(values = c("white" = "#E8E8E8", "black" = "#404040")) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+print(p2c)
+ggsave("../presentation/presentation_files/winrate_by_time_control_and_color.png", plot = p2c, width = 12, height = 6, dpi = 300)
+
 # 4. Rating difference vs. outcome
 p3 <- ggplot(lichess_df, aes(x = rating_diff, fill = user_result)) +
   geom_histogram(position = "identity", alpha = 0.7, bins = 20, color = "black") +

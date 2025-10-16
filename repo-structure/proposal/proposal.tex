@@ -963,6 +963,71 @@ Analysis}\label{exploratory-data-analysis}
 \begin{Highlighting}[]
 \FunctionTok{ggsave}\NormalTok{(}\StringTok{"../presentation/presentation\_files/game\_outcomes\_by\_time\_control.png"}\NormalTok{, }\AttributeTok{plot =}\NormalTok{ p2, }\AttributeTok{width =} \DecValTok{10}\NormalTok{, }\AttributeTok{height =} \DecValTok{6}\NormalTok{, }\AttributeTok{dpi =} \DecValTok{300}\NormalTok{)}
 
+\CommentTok{\# 3b. Performance across time controls by color (faceted)}
+\NormalTok{p2b }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(lichess\_df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ time\_control, }\AttributeTok{fill =}\NormalTok{ user\_result)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{position =} \StringTok{"fill"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{user\_color, }\AttributeTok{ncol =} \DecValTok{2}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}
+    \AttributeTok{title =} \StringTok{"Game Outcomes by Time Control and Piece Color"}\NormalTok{,}
+    \AttributeTok{subtitle =} \StringTok{"Comparing performance when playing White vs Black across different time controls"}\NormalTok{,}
+    \AttributeTok{y =} \StringTok{"Proportion"}\NormalTok{, }\AttributeTok{x =} \StringTok{"Time Control"}\NormalTok{,}
+    \AttributeTok{fill =} \StringTok{"Result"}
+\NormalTok{  ) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_manual}\NormalTok{(}\AttributeTok{values =} \FunctionTok{c}\NormalTok{(}\StringTok{"win"} \OtherTok{=} \StringTok{"lightgreen"}\NormalTok{, }\StringTok{"loss"} \OtherTok{=} \StringTok{"salmon"}\NormalTok{, }\StringTok{"draw"} \OtherTok{=} \StringTok{"lightblue"}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{labels =} \FunctionTok{percent\_format}\NormalTok{()) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{axis.text.x =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{angle =} \DecValTok{45}\NormalTok{, }\AttributeTok{hjust =} \DecValTok{1}\NormalTok{))}
+
+\FunctionTok{print}\NormalTok{(p2b)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{proposal_files/figure-latex/exploratory-analysis-3.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggsave}\NormalTok{(}\StringTok{"../presentation/presentation\_files/game\_outcomes\_by\_time\_control\_and\_color.png"}\NormalTok{, }\AttributeTok{plot =}\NormalTok{ p2b, }\AttributeTok{width =} \DecValTok{12}\NormalTok{, }\AttributeTok{height =} \DecValTok{6}\NormalTok{, }\AttributeTok{dpi =} \DecValTok{300}\NormalTok{)}
+
+\CommentTok{\# 3c. Win rate comparison by time control and color}
+\NormalTok{time\_color\_stats }\OtherTok{\textless{}{-}}\NormalTok{ lichess\_df }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(time\_control, user\_color) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summarise}\NormalTok{(}
+    \AttributeTok{games =} \FunctionTok{n}\NormalTok{(),}
+    \AttributeTok{win\_rate =} \FunctionTok{mean}\NormalTok{(user\_result }\SpecialCharTok{==} \StringTok{"win"}\NormalTok{),}
+    \AttributeTok{draw\_rate =} \FunctionTok{mean}\NormalTok{(user\_result }\SpecialCharTok{==} \StringTok{"draw"}\NormalTok{),}
+    \AttributeTok{loss\_rate =} \FunctionTok{mean}\NormalTok{(user\_result }\SpecialCharTok{==} \StringTok{"loss"}\NormalTok{),}
+    \AttributeTok{.groups =} \StringTok{"drop"}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(games }\SpecialCharTok{\textgreater{}=} \DecValTok{3}\NormalTok{)}
+
+\NormalTok{p2c }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(time\_color\_stats, }\FunctionTok{aes}\NormalTok{(}
+  \AttributeTok{x =}\NormalTok{ time\_control, }\AttributeTok{y =}\NormalTok{ win\_rate, }\AttributeTok{fill =}\NormalTok{ user\_color,}
+  \AttributeTok{label =}\NormalTok{ scales}\SpecialCharTok{::}\FunctionTok{percent}\NormalTok{(win\_rate, }\AttributeTok{accuracy =} \FloatTok{0.1}\NormalTok{)}
+\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_col}\NormalTok{(}\AttributeTok{position =} \StringTok{"dodge"}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.8}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_text}\NormalTok{(}\AttributeTok{position =} \FunctionTok{position\_dodge}\NormalTok{(}\AttributeTok{width =} \FloatTok{0.9}\NormalTok{), }\AttributeTok{vjust =} \SpecialCharTok{{-}}\FloatTok{0.5}\NormalTok{, }\AttributeTok{size =} \DecValTok{3}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}
+    \AttributeTok{title =} \StringTok{"Win Rate by Time Control and Piece Color"}\NormalTok{,}
+    \AttributeTok{subtitle =} \StringTok{"Direct comparison showing color advantage across different game speeds"}\NormalTok{,}
+    \AttributeTok{x =} \StringTok{"Time Control"}\NormalTok{,}
+    \AttributeTok{y =} \StringTok{"Win Rate"}\NormalTok{,}
+    \AttributeTok{fill =} \StringTok{"Color"}
+\NormalTok{  ) }\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{labels =} \FunctionTok{percent\_format}\NormalTok{(), }\AttributeTok{limits =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\FunctionTok{max}\NormalTok{(time\_color\_stats}\SpecialCharTok{$}\NormalTok{win\_rate) }\SpecialCharTok{*} \FloatTok{1.1}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_manual}\NormalTok{(}\AttributeTok{values =} \FunctionTok{c}\NormalTok{(}\StringTok{"white"} \OtherTok{=} \StringTok{"\#E8E8E8"}\NormalTok{, }\StringTok{"black"} \OtherTok{=} \StringTok{"\#404040"}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position =} \StringTok{"bottom"}\NormalTok{)}
+
+\FunctionTok{print}\NormalTok{(p2c)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{proposal_files/figure-latex/exploratory-analysis-4.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggsave}\NormalTok{(}\StringTok{"../presentation/presentation\_files/winrate\_by\_time\_control\_and\_color.png"}\NormalTok{, }\AttributeTok{plot =}\NormalTok{ p2c, }\AttributeTok{width =} \DecValTok{12}\NormalTok{, }\AttributeTok{height =} \DecValTok{6}\NormalTok{, }\AttributeTok{dpi =} \DecValTok{300}\NormalTok{)}
+
 \CommentTok{\# 4. Rating difference vs. outcome}
 \NormalTok{p3 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(lichess\_df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ rating\_diff, }\AttributeTok{fill =}\NormalTok{ user\_result)) }\SpecialCharTok{+}
   \FunctionTok{geom\_histogram}\NormalTok{(}\AttributeTok{position =} \StringTok{"identity"}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.7}\NormalTok{, }\AttributeTok{bins =} \DecValTok{20}\NormalTok{, }\AttributeTok{color =} \StringTok{"black"}\NormalTok{) }\SpecialCharTok{+}
@@ -979,7 +1044,7 @@ Analysis}\label{exploratory-data-analysis}
 \end{Highlighting}
 \end{Shaded}
 
-\pandocbounded{\includegraphics[keepaspectratio]{proposal_files/figure-latex/exploratory-analysis-3.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{proposal_files/figure-latex/exploratory-analysis-5.pdf}}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1006,7 +1071,7 @@ Analysis}\label{exploratory-data-analysis}
 \end{Highlighting}
 \end{Shaded}
 
-\pandocbounded{\includegraphics[keepaspectratio]{proposal_files/figure-latex/exploratory-analysis-4.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{proposal_files/figure-latex/exploratory-analysis-6.pdf}}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1083,7 +1148,7 @@ Analysis}\label{exploratory-data-analysis}
 \end{Highlighting}
 \end{Shaded}
 
-\pandocbounded{\includegraphics[keepaspectratio]{proposal_files/figure-latex/exploratory-analysis-5.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{proposal_files/figure-latex/exploratory-analysis-7.pdf}}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1120,7 +1185,7 @@ Analysis}\label{exploratory-data-analysis}
 \end{Highlighting}
 \end{Shaded}
 
-\pandocbounded{\includegraphics[keepaspectratio]{proposal_files/figure-latex/exploratory-analysis-6.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{proposal_files/figure-latex/exploratory-analysis-8.pdf}}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1163,7 +1228,7 @@ Analysis}\label{exploratory-data-analysis}
 \end{Highlighting}
 \end{Shaded}
 
-\pandocbounded{\includegraphics[keepaspectratio]{proposal_files/figure-latex/exploratory-analysis-7.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{proposal_files/figure-latex/exploratory-analysis-9.pdf}}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1197,7 +1262,7 @@ Analysis}\label{exploratory-data-analysis}
 \end{Highlighting}
 \end{Shaded}
 
-\pandocbounded{\includegraphics[keepaspectratio]{proposal_files/figure-latex/exploratory-analysis-8.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{proposal_files/figure-latex/exploratory-analysis-10.pdf}}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1228,7 +1293,7 @@ Analysis}\label{exploratory-data-analysis}
 \end{Highlighting}
 \end{Shaded}
 
-\pandocbounded{\includegraphics[keepaspectratio]{proposal_files/figure-latex/exploratory-analysis-9.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{proposal_files/figure-latex/exploratory-analysis-11.pdf}}
 
 These enhanced visualizations provide deeper insights into: - Color
 advantage patterns - Time control preferences and performance - Rating
