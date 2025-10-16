@@ -341,10 +341,12 @@ ggplot(growth_models, aes(x = reorder(user, slope), y = slope, fill = r_squared)
         y = "Rating Points per Week"
     ) +
     theme_minimal(base_size = 11)
+}
 ```
 
-```{r growth-summary-stats}
+---
 # Summary statistics for growth rates
+```{r growth-summary-stats}
 growth_summary <- growth_models %>%
     summarise(
         users = n(),
@@ -365,7 +367,10 @@ knitr::kable(
         "SD Rate", "Mean R²"
     )
 )
+
 ```
+
+
 
 ---
 
