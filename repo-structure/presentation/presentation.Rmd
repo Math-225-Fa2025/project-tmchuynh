@@ -1,8 +1,7 @@
 ---
 title: "Chess Rating Analysis"
-subtitle: "Lichess vs. FIDE Rating Patterns"
+subtitle: "Statistical Analysis of Player Performance and Progression"
 author: "Tina Huynh"
-institute: "University of Edinburgh"
 date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
@@ -12,7 +11,7 @@ output:
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
-      autoplay: 9000
+      ratio: "12:8"
 ---
 
 ```{r load-packages, include = FALSE}
@@ -33,171 +32,415 @@ knitr::opts_chunk$set(fig.retina = 3, dpi = 300, fig.width = 6, fig.asp = 0.618,
 # Load your data here
 ```
 
-```{r}
-style_xaringan(
-  title_slide_background_image = "img/confetti.jpg"
-)
-```
+class: center, left
 
+## Research Questions
 
-class: center, middle
+**How do chess players perform and progress across different platforms and contexts?**
 
-## A statement of the overall goal / research question
+1. What are the rating differences between Lichess and FIDE systems?
+2. How do players improve over time?
+3. What factors influence game outcomes?
 
 ---
 
 class: inverse, center, middle
 
-# Section title
+# Part 1: Rating Systems Comparison
 
 ---
 
-# Hello World
+# Lichess vs. FIDE Ratings
 
-- Click the `Knit` button to compile your presentation
+.center[
+```{r rating-comparison, echo=FALSE, out.width="75%"}
+knitr::include_graphics("presentation_files/rating_comparison.png")
+```
+]
 
-- Make sure to commit and push all resulting files to your GitHub repo
-
----
-
-class: inverse, middle, center
-
-# Using xaringan
+**Key Finding:** Lichess ratings are systematically higher than FIDE across most rating groups, indicating platform-specific rating inflation.
 
 ---
 
-# xaringan
-
-- The presentation is created using the `xaringan` package
-
-- Use `---` to separate slides and `--` for incremental builds
-
---
-
-- Like this
-
----
-
-# Layouts
-
-You can use plain text
-
-- or bullet points
+# Rating Gap Distribution
 
 .pull-left[
-or text in two columns $^*$
+```{r rating-gap, echo=FALSE, out.width="100%"}
+knitr::include_graphics("presentation_files/rating_gap_distribution.png")
+```
 ]
+
 .pull-right[
-- like
-- this
+**Observations:**
+- Positive gaps across all tiers
+- Largest differences at extremes (Under-1600 and 2600+)
+- Average gap: ~150-200 rating points
+- Reflects different player pools and rating calculation methods
 ]
+
+---
+
+# Distribution Comparison
+
+.center[
+```{r rating-dist-comp, echo=FALSE, out.width="70%"}
+knitr::include_graphics("presentation_files/rating_distribution_comparison.png")
+```
+]
+
+Lichess attracts a broader range of online players, while FIDE focuses on over-the-board tournament participants.
+
+---
+
+class: inverse, center, middle
+
+# Part 2: Performance Analysis
+
+---
+
+# Win Rate by Rating Tier
+
+.pull-left[
+```{r winrate-tier, echo=FALSE, out.width="100%"}
+knitr::include_graphics("presentation_files/winrate_by_tier.png")
+```
+]
+
+.pull-right[
+**Key Insights:**
+- Win rates remain stable around 50% across tiers
+- Slight upward trend at higher ratings
+- Elite players show greater consistency
+- Lower variance in outcomes at top levels
+]
+
+---
+
+# Game Outcomes by Color
+
+.center[
+```{r outcomes-color, echo=FALSE, out.width="65%"}
+knitr::include_graphics("presentation_files/game_outcomes_by_color.png")
+```
+]
+
+**White advantage confirmed:** Approximately 52-54% better outcomes when playing White, consistent with chess theory.
+
+---
+
+# Performance by Time Control
+
+.center[
+```{r outcomes-time, echo=FALSE, out.width="70%"}
+knitr::include_graphics("presentation_files/game_outcomes_by_time_control.png")
+```
+]
+
+Faster time controls (Bullet, Blitz) show more decisive results; Classical games have higher draw rates.
+
+---
+
+# Accuracy and Outcomes
+
+.center[
+```{r accuracy-outcome, echo=FALSE, out.width="65%"}
+knitr::include_graphics("presentation_files/accuracy_distribution_by_outcome.png")
+```
+]
+
+**Strong correlation:** Higher accuracy directly predicts winning outcomes, with clear separation between wins, draws, and losses.
+
+---
+
+class: inverse, center, middle
+
+# Part 3: Opening Analysis
+
+---
+
+# Win Rate by Opening Family
+
+.center[
+```{r opening-winrate, echo=FALSE, out.width="70%"}
+knitr::include_graphics("presentation_files/win_rate_by_opening_family.png")
+```
+]
+
+Different opening systems show varying effectiveness, with some providing consistent advantages.
+
+---
+
+# Opening Performance by Color
+
+.center[
+```{r opening-color, echo=FALSE, out.width="75%"}
+knitr::include_graphics("presentation_files/win_rate_by_opening_and_color.png")
+```
+]
+
+Opening effectiveness varies significantly based on whether you're playing White or Black pieces.
+
+---
+
+# Color Advantage by Opening
+
+.center[
+```{r opening-advantage, echo=FALSE, out.width="70%"}
+knitr::include_graphics("presentation_files/opening_color_advantage.png")
+```
+]
+
+Some openings strongly favor White (positive values), while others provide better chances for Black (negative values).
+
+---
+
+# Opening Outcomes Distribution
+
+.center[
+```{r opening-outcomes, echo=FALSE, out.width="70%"}
+knitr::include_graphics("presentation_files/opening_outcomes_by_color.png")
+```
+]
+
+Complete win/loss/draw breakdown shows how opening choice impacts game decisiveness.
+
+---
+
+class: inverse, center, middle
+
+# Part 4: Longitudinal Analysis
+
+---
+
+# Rating Progression Over Time
+
+.center[
+```{r rating-progression, echo=FALSE, out.width="75%"}
+knitr::include_graphics("presentation_files/lichess-rating-progression-over-time.png")
+```
+]
+
+Individual player trajectories show diverse learning patterns and skill development paths.
+
+---
+
+# Cumulative Rating Change
+
+.center[
+```{r cumulative-change, echo=FALSE, out.width="70%"}
+knitr::include_graphics("presentation_files/cumulative_rating_change.png")
+```
+]
+
+Net rating changes reveal which players improve, plateau, or decline over their playing history.
+
+---
+
+# Rating Volatility Analysis
+
+.pull-left[
+```{r volatility, echo=FALSE, out.width="100%"}
+knitr::include_graphics("presentation_files/rating_volatility.png")
+```
+]
+
+.pull-right[
+**Findings:**
+- Higher volatility in faster time controls
+- Individual variation in consistency
+- Skill stabilization over time
+- Lower variance indicates mastery
+]
+
+---
+
+# Rolling Win Rate Trends
+
+.center[
+```{r rolling-winrate, echo=FALSE, out.width="70%"}
+knitr::include_graphics("presentation_files/rolling_win_rate_over_time.png")
+```
+]
+
+20-game rolling averages smooth short-term fluctuations and reveal genuine performance trends.
+
+---
+
+class: inverse, center, middle
+
+# Part 5: Growth Modeling
+
+---
+
+# Linear Growth Rates
+
+.center[
+```{r growth-linear, echo=FALSE, out.width="70%"}
+knitr::include_graphics("presentation_files/rating_growth.png")
+```
+]
+
+Linear regression reveals weekly improvement rates, with R² indicating model fit quality for each player.
+
+---
+
+# Nonlinear Growth Models
+
+.center[
+```{r growth-nonlinear, echo=FALSE, out.width="75%"}
+knitr::include_graphics("presentation_files/nonlinear_growth_models.png")
+```
+]
+
+**Exponential saturation model:** `R = A - B × e^(-kt)`
+
+Captures rapid initial improvement followed by plateauing near skill ceiling.
+
+---
+
+# Nonlinear Rating Progression
+
+.center[
+```{r nonlinear-prog, echo=FALSE, out.width="70%"}
+knitr::include_graphics("presentation_files/nonlinear_rating_progression.png")
+```
+]
+
+Model fits demonstrate characteristic S-curve learning patterns across multiple players.
+
+---
+
+class: inverse, center, middle
+
+# Part 6: Advanced Analytics
+
+---
+
+# Activity-Performance Correlation
+
+.center[
+```{r activity-performance, echo=FALSE, out.width="65%"}
+knitr::include_graphics("presentation_files/activity-improvement-heatmap.png")
+```
+]
+
+Heatmap reveals relationship between playing frequency and rating improvement across different activity levels.
+
+---
+
+# Correlation Matrix
+
+.center[
+```{r correlation-matrix, echo=FALSE, out.width="65%"}
+knitr::include_graphics("presentation_files/pairwise-correlations.png")
+```
+]
+
+Pairwise correlations identify key relationships between rating, win rate, rating gap, and sample size.
+
+---
+
+# Rating Difference Impact
+
+.center[
+```{r rating-diff, echo=FALSE, out.width="70%"}
+knitr::include_graphics("presentation_files/rating_difference_distribution.png")
+```
+]
+
+Distribution of rating differentials shows expected outcomes: positive differences predict wins, negative predict losses.
+
+---
+
+# Win Rate by Rating Category
+
+.center[
+```{r winrate-category, echo=FALSE, out.width="70%"}
+knitr::include_graphics("presentation_files/win_rate_by_rating_category.png")
+```
+]
+
+Clear monotonic relationship: as rating advantage increases, win probability rises systematically.
+
+---
+
+class: inverse, center, middle
+
+# Key Findings Summary
+
+---
+
+# Major Conclusions
+
+.pull-left[
+**Rating Systems:**
+- Lichess inflates ratings by ~150-200 points
+- Platform differences reflect player pools
+- Rating gaps consistent across skill levels
+
+**Performance Factors:**
+- White advantage: 52-54% win rate
+- Accuracy strongly predicts outcomes
+- Time control affects decisiveness
+]
+
+.pull-right[
+**Skill Development:**
+- Exponential learning curves
+- Initial rapid improvement
+- Plateau near skill ceiling
+- Individual variation in learning rates
+
+**Strategic Insights:**
+- Opening choice matters
+- Color impacts opening effectiveness
+- Activity correlates with improvement
+]
+
+---
+
+# Statistical Methods Used
+
+- **Descriptive Statistics:** Mean, median, SD across groups
+- **Correlation Analysis:** Pearson and Spearman coefficients
+- **Linear Regression:** Growth rate estimation
+- **Nonlinear Regression:** Exponential saturation models
+- **Time Series Analysis:** Rolling averages, trend decomposition
+- **Categorical Analysis:** Chi-square tests, contingency tables
+- **Data Visualization:** ggplot2, interactive plotly dashboards
+
+---
+
+# Limitations & Future Work
+
+**Limitations:**
+- Platform-specific results (Lichess focus)
+- Self-selection bias in sample
+- Limited temporal scope
+- Rating system differences
+
+**Future Directions:**
+- Cross-platform validation (Chess.com, FIDE data)
+- Machine learning for outcome prediction
+- Deeper opening theory analysis
+- Psychological factors in performance
+- Real-time rating adjustment models
+
+---
+
+class: center, middle
+
+# Thank You!
+
+**Questions?**
+
+For detailed analysis, see:
+- Appendix A: Summary Statistics
+- Appendix B: Longitudinal Analysis  
+- Appendix C: Nonlinear Modeling
+- Appendix D: Interactive Dashboard
 
 .footnote[
-[*] And add footnotes
+Data sources: Lichess API, FIDE Rating Lists  
+Analysis performed in R with tidyverse, ggplot2, and statistical modeling packages
 ]
-
----
-
-# Code
-
-```{r boring-regression}
-# a boring regression
-model <- lm(dist ~ speed, data = cars)
-tidy(model)
-glance(model)
-```
-
----
-
-# Plots
-
-```{r recode-species, echo = FALSE}
-# In this chunk I'm doing a bunch of analysis that I don't want to present
-# in my slides. But I need the resulting data frame for a plot I want to present.
-iris_modified <- iris %>%
-  mutate(Species = fct_other(Species, keep = "setosa"))
-```
-
-```{r plot-iris, echo = FALSE}
-# Code hidden with echo = FALSE
-# Uses modified iris dataset from previous chunk
-# Play around with height and width until you're happy with the look
-ggplot(data = iris_modified, mapping = aes(x = Sepal.Width, y = Sepal.Length, color = Species)) +
-  geom_point() +
-  theme_minimal() # theme options: https://ggplot2.tidyverse.org/reference/ggtheme.html
-```
-
----
-
-## Plot and text
-
-.pull-left[
-- Some text
-- goes here
-]
-.pull-right[
-```{r warning=FALSE, out.width="100%", fig.width=4, echo=FALSE}
-# see how I changed out.width and fig.width from defaults
-# to make the figure bigger
-ggplot(penguins, aes(x = bill_length_mm, y = species, color = species)) +
-  geom_boxplot() +
-  theme_minimal()
-```
-]
-
----
-
-# Tables
-
-If you want to generate a table, make sure it is in the HTML format (instead of Markdown or other formats), e.g.,
-
-```{r iris-table, echo = FALSE}
-kable(head(iris), format = "html")
-```
-
----
-
-# Images
-
-```{r castle, echo = FALSE, out.width = "60%", fig.align = "center", fig.cap = "Image credit: Photo by Jörg Angeli on Unsplash."}
-include_graphics("https://images.unsplash.com/photo-1535448033526-c0e85c9e6968?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80")
-```
-
-Or you can also include a full page image. See next slide.
-
----
-
-background-image: url(https://images.unsplash.com/photo-1535448033526-c0e85c9e6968?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80)
-
----
-
-# Math Expressions
-
-You can write LaTeX math expressions inside a pair of dollar signs, e.g. &#36;\alpha+\beta$ renders $\alpha+\beta$. You can use the display style with double dollar signs:
-
-```
-$$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$
-```
-
-$$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$
-
-Limitations:
-
-1. The source code of a LaTeX math expression must be in one line, unless it is inside a pair of double dollar signs, in which case the starting `$$` must appear in the very beginning of a line, followed immediately by a non-space character, and the ending `$$` must be at the end of a line, led by a non-space character;
-
-1. There should not be spaces after the opening `$` or before the closing `$`.
-
-1. Math does not work on the title slide (see [#61](https://github.com/yihui/xaringan/issues/61) for a workaround).
-
----
-
-# Feeling adventurous?
-
-- Want to find out more about `xaringan`? See https://slides.yihui.name/xaringan/#1.
-
-- You are welcomed to use the default styling of the slides. In fact, that's what I expect majority of you will do. You will differentiate yourself with the content of your presentation.
-
-- But some of you might want to play around with slide styling. The 
-`xaringanthemer` provides some solutions for this that: https://pkg.garrickadenbuie.com/xaringanthemer.
-
-- And if you want more bells and whistles, there is also `xaringanExtra`: https://pkg.garrickadenbuie.com/xaringanExtra.
