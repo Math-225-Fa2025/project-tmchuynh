@@ -39,11 +39,11 @@ player_summary %>%
 ```{r rating-comparison-plot, fig.height=4.5, fig.width=7}
 player_summary_long <- player_summary %>%
   pivot_longer(
-    cols = c(fide_avg_rating, lichess_avg_rating),
+    cols = c(fide_avg_rating_standard, lichess_avg_rating),
     names_to = "source", values_to = "rating"
   ) %>%
   mutate(source = recode(source,
-    fide_avg_rating = "FIDE (Blitz)",
+    fide_avg_rating_standard = "FIDE (Blitz)",
     lichess_avg_rating = "Lichess (Online)"
   ))
 
@@ -70,9 +70,9 @@ ggplot(player_summary_long, aes(x = rating_group, y = rating, fill = source)) +
 ### A.4 Visualization: Win Rate and Game Volume by Tier
 
 ```{r winrate-games, fig.height=4.5, fig.width=7}
-ggplot(player_summary, aes(x = rating_group, y = avg_win_rate)) +
+ggplot(player_summary, aes(x = rating_group, y = lichess_avg_win_rate)) +
   geom_col(fill = "#16A085", width = 0.6, alpha = 0.8) +
-  geom_text(aes(label = percent(avg_win_rate, accuracy = 0.1)), vjust = -0.3, size = 3.5) +
+  geom_text(aes(label = percent(lichess_avg_win_rate, accuracy = 0.1)), vjust = -0.3, size = 3.5) +
   labs(
     title = "Average Win Rate Across Rating Groups (Lichess Sample)",
     subtitle = "Higher tiers generally exhibit increased consistency and lower variance",
@@ -83,7 +83,7 @@ ggplot(player_summary, aes(x = rating_group, y = avg_win_rate)) +
 ```
 
 ```{r games-volume, fig.height=4.5, fig.width=7}
-ggplot(player_summary, aes(x = rating_group, y = avg_games)) +
+ggplot(player_summary, aes(x = rating_group, y = lichess_avg_win_rate)) +
   geom_point(size = 4, color = "#2980B9") +
   geom_line(aes(group = 1), color = "#2980B9", linewidth = 1) +
   labs(
