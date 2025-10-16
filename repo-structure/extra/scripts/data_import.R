@@ -695,7 +695,10 @@ get_lichess_data <- function(username, max_games = 20, access_token = NULL) {
     }
   )
 }
-                        "user" %in%
+
+############################################################
+# 3. FETCH RANDOM LICHESS USERS
+############################################################
                           names(player) &&
                           "id" %in% names(player$user)
                       ) {
