@@ -649,8 +649,5 @@ cat(sprintf("\nEffect size: %.3f (%s effect)\n", effect_size, effect_interpretat
 2. **Nonlinear Growth Modeling:**
    Fit exponential or logistic curves to capture saturation effects (see Appendix C).
 
-3. **Activity-Performance Correlation:**
-   Test whether practice frequency predicts rating improvement using game count data.
-
-4. **Cross-Platform Comparison:**
+3. **Cross-Platform Comparison:**
    Compare Lichess rating trajectories with Chess.com data to assess platform-specific inflation patterns.
