@@ -304,3 +304,12 @@ rmarkdown::render("appendix_d.rmd", output_format = "flexdashboard::flex_dashboa
 - Cross-filtering capabilities (with Shiny runtime)
 
 ---
+
+### D.11 Future Enhancements
+
+1. **User Selection Widget:** Add dropdown to select specific users for analysis
+2. **Date Range Filters:** Enable time-based subsetting of rating history
+3. **Comparison Mode:** Side-by-side comparison of multiple users
+4. **Real-time Updates:** Connect to Lichess API for live data refresh
+5. **Statistical Tests:** Add hypothesis testing for rating differences
+6. **Download Reports:** Generate PDF summaries of selected analyses
