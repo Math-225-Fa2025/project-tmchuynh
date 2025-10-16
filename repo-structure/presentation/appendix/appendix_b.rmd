@@ -435,20 +435,33 @@ if (nrow(rating_summary) == 0) {
 
 ### B.7 Analytical Highlights
 
-**Key Findings:**
+```{r analytical-highlights, results='asis'}
+if (nrow(rating_summary) > 0 && growth_summary$users > 0) {
+    cat("**Key Findings:**\n\n")
 
-1. **Growth Patterns:** Among Blitz players, **`r scales::percent(growth_summary$positive_growth / growth_summary$users)`** show positive growth trends, with an average weekly improvement of **`r round(growth_summary$mean_growth, 2)` rating points**.
+    cat(sprintf(
+        "1. **Growth Patterns:** Among Blitz players, **%s** show positive growth trends, with an average weekly improvement of **%.2f rating points**.\n\n",
+        scales::percent(growth_summary$positive_growth / growth_summary$users, accuracy = 0.1),
+        round(growth_summary$mean_growth, 2)
+    ))
 
-2. **Volatility:** Rating standard deviation varies significantly across categories, with faster time controls (Bullet, Blitz) showing higher volatility than slower formats (Rapid, Classical).
+    cat("2. **Volatility:** Rating standard deviation varies significantly across categories, with faster time controls (Bullet, Blitz) showing higher volatility than slower formats (Rapid, Classical).\n\n")
 
-3. **Learning Curves:** Most users exhibit non-linear growth patterns:
-   - Initial rapid improvement (steep slope in first 10-20 weeks)
-   - Gradual plateauing as ratings converge to skill ceiling
-   - Periodic fluctuations correlating with activity levels
+    cat("3. **Learning Curves:** Most users exhibit non-linear growth patterns:\n")
+    cat("   - Initial rapid improvement (steep slope in first 10-20 weeks)\n")
+    cat("   - Gradual plateauing as ratings converge to skill ceiling\n")
+    cat("   - Periodic fluctuations correlating with activity levels\n\n")
 
-4. **Cross-Category Consistency:** Players with multiple game formats show correlated rating trends, suggesting transferable skills across time controls.
+    cat("4. **Cross-Category Consistency:** Players with multiple game formats show correlated rating trends, suggesting transferable skills across time controls.\n\n")
 
-5. **Model Fit Quality:** Average R² of **`r round(growth_summary$mean_r2, 3)`** for linear models indicates moderate-to-strong linear trends, though nonlinear models may provide better fit for many users.
+    cat(sprintf(
+        "5. **Model Fit Quality:** Average R² of **%.3f** for linear models indicates moderate-to-strong linear trends, though nonlinear models may provide better fit for many users.\n",
+        round(growth_summary$mean_r2, 3)
+    ))
+} else {
+    cat("**Analytical Highlights:** Insufficient data available for comprehensive analysis. Please ensure rating history data has been successfully loaded.\n")
+}
+```
 
 ---
 
