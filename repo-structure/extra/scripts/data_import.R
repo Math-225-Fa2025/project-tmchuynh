@@ -651,7 +651,9 @@ if (length(all_game_data) > 0) {
 # Check if any data was collected
 if (is.null(lichess_all) || nrow(lichess_all) == 0) {
   message("\n=== CREATING SAMPLE DATA ===")
-  message("No data collected from API, creating comprehensive sample dataset...")
+  message(
+    "No data collected from API, creating comprehensive sample dataset..."
+  )
 
   set.seed(42)
   # Use actual sampled users or create sample usernames
