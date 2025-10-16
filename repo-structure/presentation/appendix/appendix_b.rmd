@@ -341,7 +341,32 @@ ggplot(growth_models, aes(x = reorder(user, slope), y = slope, fill = r_squared)
         y = "Rating Points per Week"
     ) +
     theme_minimal(base_size = 11)
+
+# Summary statistics for growth rates
+growth_summary <- growth_models %>%
+    summarise(
+        users = n(),
+        positive_growth = sum(slope > 0),
+        negative_growth = sum(slope < 0),
+        mean_growth = mean(slope, na.rm = TRUE),
+        median_growth = median(slope, na.rm = TRUE),
+        sd_growth = sd(slope, na.rm = TRUE),
+        mean_r2 = mean(r_squared, na.rm = TRUE)
+    )
+
+knitr::kable(
+    growth_summary,
+    digits = 3,
+    caption = "Summary Statistics: Rating Growth Rates (Blitz Category)",
+    col.names = c(
+        "Users", "Positive", "Negative", "Mean Rate", "Median Rate",
+        "SD Rate", "Mean R²"
+    )
+)
 }
+```
+
+---
 ```
 
 ---
