@@ -116,3 +116,36 @@ ggplotly(p2, tooltip = "text")
 ```
 
 ---
+
+### D.5 Time-Series Rating Progression (Sample Users)
+
+```{r rating-timeseries, fig.height=6, fig.width=10}
+# Select top 5 users with most rating history
+top_users <- rating_history %>%
+  count(user, sort = TRUE) %>%
+  slice_head(n = 5) %>%
+  pull(user)
+
+rating_ts_data <- rating_history %>%
+  filter(user %in% top_users, category == "Blitz") %>%
+  group_by(user) %>%
+  mutate(rating_smooth = zoo::rollmean(rating, k = 3, fill = NA, align = "right")) %>%
+  ungroup()
+
+p3 <- ggplot(rating_ts_data, aes(x = date, y = rating_smooth, color = user,
+                                  text = paste0("User: ", user,
+                                               "<br>Date: ", date,
+                                               "<br>Rating: ", round(rating_smooth, 0)))) +
+  geom_line(linewidth = 1, alpha = 0.8) +
+  labs(
+    title = "Rating Progression Over Time (Blitz, Top 5 Active Users)",
+    x = "Date",
+    y = "Smoothed Rating",
+    color = "User"
+  ) +
+  theme_minimal(base_size = 12)
+
+ggplotly(p3, tooltip = "text")
+```
+
+---
