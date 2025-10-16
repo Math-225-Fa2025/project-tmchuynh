@@ -943,8 +943,14 @@ merged_summary <- lichess_clean %>%
   # Calculate comparative metrics
   mutate(
     total_players = lichess_players + coalesce(fide_players, 0),
-    rating_gap_standard = round(lichess_avg_rating - coalesce(fide_avg_rating_standard, 0), 1),
-    rating_gap_blitz = round(lichess_avg_rating - coalesce(fide_avg_rating_blitz, 0), 1),
+    rating_gap_standard = round(
+      lichess_avg_rating - coalesce(fide_avg_rating_standard, 0),
+      1
+    ),
+    rating_gap_blitz = round(
+      lichess_avg_rating - coalesce(fide_avg_rating_blitz, 0),
+      1
+    ),
     activity_ratio = round(lichess_avg_games / coalesce(fide_avg_games, 1), 2),
     platform_preference = case_when(
       lichess_players > coalesce(fide_players, 0) * 2 ~ "Strongly Online",
@@ -960,7 +966,7 @@ write_csv(merged_summary, paste0(output_dir, "player_summary.csv"))
 message("✓ Summary table written to extra/output/player_summary.csv")
 
 ############################################################
-# 6. CODEBOOK SUMMARY
+# 8. CODEBOOK SUMMARY
 ############################################################
 
 codebook_text <- sprintf(
@@ -1059,7 +1065,7 @@ writeLines(codebook_text, paste0(data_dir, "codebook.md"))
 message("✓ Codebook updated at data/codebook.md")
 
 ############################################################
-# 7. SUMMARY OUTPUT
+# 9. SUMMARY OUTPUT
 ############################################################
 
 message(paste(rep("=", 60), collapse = ""))
@@ -1067,15 +1073,21 @@ message("                 COMPREHENSIVE DATA COLLECTION COMPLETE")
 message(paste(rep("=", 60), collapse = ""))
 
 # Calculate final statistics
-total_collection_time <- as.numeric(difftime(Sys.time(), collection_start, units = "mins"))
+total_collection_time <- as.numeric(difftime(
+  Sys.time(),
+  collection_start,
+  units = "mins"
+))
 
 message(sprintf(
   "📊 LICHESS DATA: %d users, %d games collected",
-  nrow(lichess_clean), nrow(lichess_all)
+  nrow(lichess_clean),
+  nrow(lichess_all)
 ))
 message(sprintf(
   "🏆 FIDE DATA: %d players across %d rating groups",
-  nrow(fide_clean), length(unique(fide_clean$rating_group))
+  nrow(fide_clean),
+  length(unique(fide_clean$rating_group))
 ))
 message(sprintf("⏱️  COLLECTION TIME: %.1f minutes", total_collection_time))
 message(sprintf("📁 OUTPUT LOCATION: %s", output_dir))
@@ -1087,8 +1099,10 @@ for (i in seq_len(nrow(merged_summary))) {
   message(sprintf(
     "   %s: %d Lichess (avg %.0f) + %d FIDE (avg %.0f)",
     row$rating_group,
-    row$lichess_players, row$lichess_avg_rating,
-    coalesce(row$fide_players, 0), coalesce(row$fide_avg_rating_standard, 0)
+    row$lichess_players,
+    row$lichess_avg_rating,
+    coalesce(row$fide_players, 0),
+    coalesce(row$fide_avg_rating_standard, 0)
   ))
 }
 
