@@ -31,9 +31,9 @@ library(zoo)
 ### D.2 Load Data
 
 ```{r load-data, message=FALSE}
-summary_path <- here::here("repo-structure/extra/output/player_summary.csv")
-lichess_path <- here::here("repo-structure/data/lichess_clean.csv")
-rating_hist_path <- here::here("repo-structure/data/lichess_rating_history.csv")
+summary_path <- "../../data/player_summary.csv"
+lichess_path <- "../../data/lichess_clean.csv"
+rating_hist_path <- "../../data/lichess_rating_history.csv"
 
 player_summary <- read_csv(summary_path, show_col_types = FALSE)
 lichess_clean <- read_csv(lichess_path, show_col_types = FALSE)
