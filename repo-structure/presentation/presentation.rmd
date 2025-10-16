@@ -12,6 +12,9 @@ output:
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
+  revealjs::revealjs_presentation:
+    theme: simple
+    highlight: zenburn
 ---
 
 ```{r load-packages, include = FALSE}
@@ -111,7 +114,7 @@ glance(model)
 # Plots
 
 ```{r recode-species, echo = FALSE}
-# In this chunk I'm doing a bunch of analysis that I don't want to present 
+# In this chunk I'm doing a bunch of analysis that I don't want to present
 # in my slides. But I need the resulting data frame for a plot I want to present.
 iris_modified <- iris %>%
   mutate(Species = fct_other(Species, keep = "setosa"))
@@ -122,7 +125,7 @@ iris_modified <- iris %>%
 # Uses modified iris dataset from previous chunk
 # Play around with height and width until you're happy with the look
 ggplot(data = iris_modified, mapping = aes(x = Sepal.Width, y = Sepal.Length, color = Species)) +
-  geom_point() + 
+  geom_point() +
   theme_minimal() # theme options: https://ggplot2.tidyverse.org/reference/ggtheme.html
 ```
 
