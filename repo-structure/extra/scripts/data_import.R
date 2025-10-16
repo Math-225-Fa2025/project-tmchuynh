@@ -934,7 +934,10 @@ merged_summary <- lichess_clean %>%
         fide_rating_sd = round(sd(rating_standard, na.rm = TRUE), 1),
         fide_avg_games = round(mean(games_played, na.rm = TRUE), 1),
         fide_pct_titled = round(mean(title != "None", na.rm = TRUE), 3),
-        fide_pct_active = round(mean(active_status == "Active", na.rm = TRUE), 3),
+        fide_pct_active = round(
+          mean(active_status == "Active", na.rm = TRUE),
+          3
+        ),
         fide_avg_age = round(mean(age, na.rm = TRUE), 1),
         .groups = "drop"
       ),
