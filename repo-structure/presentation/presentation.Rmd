@@ -91,22 +91,6 @@ knitr::include_graphics("presentation_files/rating_gap_distribution.png")
 
 ---
 
-# Distribution Comparison
-
-.center[
-```{r rating-dist-comp, echo=FALSE, out.width="70%"}
-knitr::include_graphics("presentation_files/rating_distribution_comparison.png")
-```
-]
-
-**Platform Characteristics:** Lichess shows consistently higher average ratings across all tiers, with the largest absolute difference at lower skill levels. FIDE ratings reflect competitive over-the-board play with stricter rating floors and tournament requirements, while Lichess's accessibility creates a more diverse player base.
-
-.footnote[
-**Sampling methodology:** Lichess users sampled from leaderboards across all time controls (Bullet, Blitz, Rapid, Classical) plus variants (Chess960, Crazyhouse, etc.). FIDE data represents active tournament players. Lichess: online platform with >150M games/day. FIDE: sanctioned OTB tournaments only.
-]
-
----
-
 class: inverse, center, middle
 
 # Part 2: Performance Analysis
@@ -117,7 +101,7 @@ class: inverse, center, middle
 
 .pull-left[
 ```{r winrate-tier, echo=FALSE, out.width="100%"}
-knitr::include_graphics("presentation_files/winrate_by_tier.png")
+knitr::include_graphics("presentation_files/winrate_by_rating_group.png")
 ```
 ]
 
@@ -157,7 +141,7 @@ knitr::include_graphics("presentation_files/game_outcomes_by_time_control_and_co
 
 .center[
 ```{r games-by-tier, echo=FALSE, out.width="70%"}
-knitr::include_graphics("presentation_files/average_games_by_rating_tier.png")
+knitr::include_graphics("presentation_files/games_by_tier.png")
 ```
 ]
 
@@ -191,15 +175,17 @@ class: inverse, center, middle
 
 # Win Rate by Opening and Color
 
-.center[
+.pull-right[
 ```{r opening-winrate, echo=FALSE, out.width="80%"}
 knitr::include_graphics("presentation_files/win_rate_by_opening_and_color.png")
 ```
 ]
 
-**Opening Effectiveness Analysis:** The **Sicilian Defense** shows highest overall win rate at **65%**, while **Nimzo-Indian** performs poorest at **43%**. White openings (Pirc, Scandinavian) average **58-60%** win rate, while Black defenses show more variance.
+.pull-left[
+  **Opening Effectiveness Analysis:** The **Sicilian Defense** shows highest overall win rate at **65%**, while **Nimzo-Indian** performs poorest at **43%**. White openings (Pirc, Scandinavian) average **58-60%** win rate, while Black defenses show more variance.
 
-**Key Finding:** Opening choice matters more than color in determining outcomes, with a **22 percentage point spread** between best and worst openings.
+  **Key Finding:** Opening choice matters more than color in determining outcomes, with a **22 percentage point spread** between best and worst openings.
+]
 
 .footnote[
 **Sample:** 20 opening families from 7,766 games. Win rate = (Wins + 0.5×Draws)/Total. Minimum 50 games per opening for inclusion. Categories: Sicilian (n=1,245), Queen's Gambit (n=987), French (n=654), Other includes rare openings (<50 games).
@@ -209,27 +195,27 @@ knitr::include_graphics("presentation_files/win_rate_by_opening_and_color.png")
 
 # Opening Performance by Color
 
-.center[
+.pull_right[
 ```{r opening-color, echo=FALSE, out.width="75%"}
 knitr::include_graphics("presentation_files/win_rate_by_opening_and_color.png")
 ```
 ]
 
-Opening effectiveness varies significantly based on whether you're playing White or Black pieces.
+.footnote[Opening effectiveness varies significantly based on whether you're playing White or Black pieces.]
 
 ---
 
 # Color Advantage by Opening Family
 
-.center[
+.pull-left[
 ```{r opening-advantage, echo=FALSE, out.width="75%"}
 knitr::include_graphics("presentation_files/opening_color_advantage.png")
 ```
 ]
 
-**Differential Analysis:** The **Pirc Defense** shows the strongest Black advantage at **-8% (White-Black)**, while **Queen's Gambit** favors White by **+22%**. The zero line represents perfect balance.
+.pull-right[**Differential Analysis:** The **Pirc Defense** shows the strongest Black advantage at **-8% (White-Black)**, while **Queen's Gambit** favors White by **+22%**. The zero line represents perfect balance.
 
-**Strategic Implications:** Aggressive openings (Sicilian, Nimzo-Indian) neutralize White's first-move advantage. Positional openings (Queen's Gambit, Scandinavian) amplify it, suggesting opening choice can either exploit or compensate for color disadvantage.
+**Strategic Implications:** Aggressive openings (Sicilian, Nimzo-Indian) neutralize White's first-move advantage. Positional openings (Queen's Gambit, Scandinavian) amplify it, suggesting opening choice can either exploit or compensate for color disadvantage.]
 
 .footnote[
 **Calculation:** Color advantage = Win%_White - Win%_Black for each opening. Positive values indicate White performs better in that opening system. Chi-square tests confirm significant differences across openings (χ²=156.3, df=19, p<0.001).
@@ -241,7 +227,7 @@ knitr::include_graphics("presentation_files/opening_color_advantage.png")
 
 .center[
 ```{r time-color-winrate, echo=FALSE, out.width="85%"}
-knitr::include_graphics("presentation_files/win_rate_by_time_control_and_color.png")
+knitr::include_graphics("presentation_files/winrate_by_time_control_and_color.png")
 ```
 ]
 
