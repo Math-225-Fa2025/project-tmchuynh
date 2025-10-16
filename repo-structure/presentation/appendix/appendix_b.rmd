@@ -243,9 +243,10 @@ if (nrow(rating_summary) == 0) {
     cat("No data available for visualization. Skipping rating progression plot.\n")
 } else {
     # Focus on most popular categories with sufficient data
+    # Expand to include more game types beyond just top 4
     top_categories <- rating_summary %>%
         count(category) %>%
-        slice_max(n, n = 4) %>%
+        slice_max(n, n = 8) %>%  # Increased from 4 to 8 categories
         pull(category)
 
     rating_plot_data <- rating_summary %>%
@@ -253,18 +254,21 @@ if (nrow(rating_summary) == 0) {
 
     p1 <- ggplot(rating_plot_data, aes(x = relative_time, y = rating_smooth, color = user)) +
         geom_line(linewidth = 0.8, alpha = 0.7) +
-        facet_wrap(~category, scales = "free_y", ncol = 2) +
+        facet_wrap(~category, scales = "free_y", ncol = 3) +  # Increased to 3 columns for more categories
         labs(
-            title = "Lichess Rating Progression Over Time",
-            subtitle = paste("Sample of", n_distinct(rating_plot_data$user), "Users Across Top Game Categories"),
+            title = "Lichess Rating Progression Over Time (Expanded Game Types)",
+            subtitle = paste("Sample of", n_distinct(rating_plot_data$user), "Users Across", n_distinct(rating_plot_data$category), "Game Categories"),
             x = "Sequential Game Weeks (relative index)",
             y = "Smoothed Rating (3-period rolling mean)",
             color = "User"
         ) +
-        theme_minimal(base_size = 12) +
-        theme(legend.position = "bottom")
+        theme_minimal(base_size = 10) + # Reduced font size for more categories
+            theme(
+                legend.position = "bottom",
+                strip.text = element_text(size = 9)
+            ) # Smaller facet labels
     print(p1)
-    ggsave("../../presentation/presentation_files/lichess-rating-progression-over-time.png", plot = p1, width = 10, height = 6, dpi = 300)
+    ggsave("../../presentation/presentation_files/lichess-rating-progression-over-time.png", plot = p1, width = 14, height = 10, dpi = 300) # Larger dimensions for more categories
 }
 ```
 
@@ -292,19 +296,23 @@ if (nrow(rating_summary) == 0) {
             .groups = "drop"
         )
 
-    p2 <- ggplot(volatility_stats, aes(x = category, y = sd_rating, fill = category)) +
+    p2 <- ggplot(volatility_stats, aes(x = reorder(category, sd_rating, FUN = median), y = sd_rating, fill = category)) +
         geom_boxplot(alpha = 0.7) +
-        geom_jitter(width = 0.2, alpha = 0.4, size = 2) +
+        geom_jitter(width = 0.2, alpha = 0.4, size = 1.5) +
         labs(
-            title = "Rating Volatility Distribution by Game Category",
-            subtitle = "Standard deviation of ratings over time per user",
+            title = "Rating Volatility Distribution by Game Category (Expanded)",
+            subtitle = "Standard deviation of ratings over time per user - ordered by median volatility",
             x = "Game Category",
             y = "Rating Standard Deviation"
         ) +
-        theme_minimal(base_size = 12) +
-        theme(legend.position = "none")
+        coord_flip() + # Flip for better label readability with more categories
+            theme_minimal(base_size = 11) +
+            theme(
+                legend.position = "none",
+                axis.text.y = element_text(size = 9)
+            )
     print(p2)
-    ggsave("../../presentation/presentation_files/rating_volatility.png", plot = p2, width = 10, height = 6, dpi = 300)
+    ggsave("../../presentation/presentation_files/rating_volatility.png", plot = p2, width = 12, height = 8, dpi = 300) # Larger for more categories
 }
 ```
 
@@ -321,10 +329,11 @@ if (nrow(rating_summary) == 0) {
         mean_growth = NA, median_growth = NA, sd_growth = NA, mean_r2 = NA
     )
 } else {
-    # Fit linear models to estimate growth rates per user
+    # Fit linear models to estimate growth rates per user across multiple categories
+    # Expand analysis beyond just Blitz to include multiple game types
     growth_models <- rating_summary %>%
-        filter(category == "Blitz", !is.na(rating_smooth)) %>%
-        group_by(user) %>%
+        filter(category %in% top_categories, !is.na(rating_smooth)) %>%  # Use all top categories
+        group_by(user, category) %>%  # Group by both user AND category
         filter(n() >= 10) %>%
         do(model = lm(rating_smooth ~ relative_time, data = .)) %>%
         mutate(
@@ -334,8 +343,8 @@ if (nrow(rating_summary) == 0) {
         ) %>%
         select(-model)
 
-    # Visualize growth rates
-    p3 <- ggplot(growth_models, aes(x = reorder(user, slope), y = slope, fill = r_squared)) +
+    # Visualize growth rates across multiple game categories
+    p3 <- ggplot(growth_models, aes(x = reorder(paste(user, category, sep = " - "), slope), y = slope, fill = r_squared)) +
         geom_col() +
         scale_fill_gradient2(
             low = "#d73027", mid = "#fee090", high = "#1a9850",
@@ -343,19 +352,38 @@ if (nrow(rating_summary) == 0) {
         ) +
         coord_flip() +
         labs(
-            title = "Estimated Weekly Rating Growth Rate (Blitz)",
-            subtitle = "Linear trend slope per user (minimum 10 observations)",
-            x = "User",
+            title = "Estimated Weekly Rating Growth Rate (Multiple Game Types)",
+            subtitle = "Linear trend slope per user-category combination (minimum 10 observations)",
+            x = "User - Category",
             y = "Rating Points per Week"
         ) +
-        theme_minimal(base_size = 11)
+        theme_minimal(base_size = 9) +
+            theme(axis.text.y = element_text(size = 7)) # Smaller text for more entries
     print(p3)
-    ggsave("../../presentation/presentation_files/rating_growth.png", plot = p3, width = 10, height = 6, dpi = 300)
+    ggsave("../../presentation/presentation_files/rating_growth.png", plot = p3, width = 12, height = 10, dpi = 300) # Larger for more entries
+    # Additional visualization: Growth rate by category
+    p3b <- ggplot(growth_models, aes(x = category, y = slope, fill = category)) +
+        geom_boxplot(alpha = 0.7) +
+        geom_jitter(width = 0.2, alpha = 0.4, size = 1.5) +
+        geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+        labs(
+            title = "Growth Rate Distribution by Game Category",
+            subtitle = "Comparing learning rates across different game types",
+            x = "Game Category",
+            y = "Weekly Growth Rate (Rating Points)"
+        ) +
+        theme_minimal(base_size = 11) +
+        theme(
+            legend.position = "none",
+            axis.text.x = element_text(angle = 45, hjust = 1)
+        )
+    print(p3b)
+    ggsave("../../presentation/presentation_files/rating_growth_by_category.png", plot = p3b, width = 12, height = 6, dpi = 300)
 
-    # Summary statistics for growth rates
+    # Summary statistics for growth rates - overall
     growth_summary <- growth_models %>%
         summarise(
-            users = n(),
+            user_category_combos = n(),
             positive_growth = sum(slope > 0),
             negative_growth = sum(slope < 0),
             mean_growth = mean(slope, na.rm = TRUE),
@@ -367,11 +395,31 @@ if (nrow(rating_summary) == 0) {
     knitr::kable(
         growth_summary,
         digits = 3,
-        caption = "Summary Statistics: Rating Growth Rates (Blitz Category)",
+        caption = "Summary Statistics: Rating Growth Rates (All Game Categories)",
         col.names = c(
-            "Users", "Positive", "Negative", "Mean Rate", "Median Rate",
+            "User-Category Combos", "Positive", "Negative", "Mean Rate", "Median Rate",
             "SD Rate", "Mean R²"
         )
+    )
+    # Summary by category
+    growth_by_category <- growth_models %>%
+        group_by(category) %>%
+        summarise(
+            users = n_distinct(user),
+            observations = n(),
+            positive_growth = sum(slope > 0),
+            mean_growth = mean(slope, na.rm = TRUE),
+            median_growth = median(slope, na.rm = TRUE),
+            mean_r2 = mean(r_squared, na.rm = TRUE),
+            .groups = "drop"
+        ) %>%
+        arrange(desc(mean_growth))
+
+    knitr::kable(
+        growth_by_category,
+        digits = 3,
+        caption = "Growth Rate Statistics by Game Category",
+        col.names = c("Category", "Users", "Obs", "Positive", "Mean Rate", "Median Rate", "Mean R²")
     )
 }
 ```
@@ -841,17 +889,119 @@ if (nrow(period_summary) > 0 && !is.na(correlation_results$pearson_r)) {
 
 ### B.9 Extension Opportunities
 
-1. **Hierarchical Mixed-Effects Models:**
-   Account for both user-level and category-level variation using `lme4`:
-   
-   ```r
-   library(lme4)
-   mixed_model <- lmer(rating ~ relative_time + (1 + relative_time | user) + 
-                       (1 | category), data = rating_summary)
-   ```
+1. **Hierarchical Mixed-Effects Models**
 
-2. **Nonlinear Growth Modeling:**
-   Fit exponential or logistic curves to capture saturation effects (see Appendix C).
+Mixed-effects models (also known as multilevel models) account for nested or grouped data structures, where observations are not independent — e.g., multiple ratings per user or ratings grouped by category.
+Using the `lme4` package in R:
 
-3. **Cross-Platform Comparison:**
-   Compare Lichess rating trajectories with Chess.com data to assess platform-specific inflation patterns.
+```r
+library(lme4)
+mixed_model <- lmer(
+  rating ~ relative_time + (1 + relative_time | user) + (1 | category),
+  data = rating_summary
+)
+```
+
+* **Purpose:**
+  Models both *within-user* and *between-category* variance, controlling for repeated measures and group-level heterogeneity.
+
+* **Random Effects:**
+
+  * `(1 + relative_time | user)` allows individual users to have unique intercepts and slopes (modeling personalized rating trajectories over time).
+  * `(1 | category)` adjusts for shared variance among categories (e.g., opening types, time controls, or rating brackets).
+
+* **Fixed Effects:**
+
+  * `relative_time` quantifies the temporal evolution of ratings across the observation period.
+
+* **Model Diagnostics:**
+
+  * Evaluate residual normality and homoscedasticity using `plot(mixed_model)`.
+  * Extract random effect variance components using `VarCorr(mixed_model)`.
+  * Assess model fit via AIC/BIC and likelihood ratio tests (using `anova()`).
+
+* **Interpretation:**
+
+  * Quantifies whether improvement rates vary meaningfully across users and whether category effects contribute significantly.
+  * Useful for identifying systematic overperformance or underperformance trends.
+
+2. **Nonlinear Growth Modeling**
+
+Linear models may fail to capture *saturation* or *plateau* dynamics in player ratings over time. Nonlinear modeling allows the estimation of asymptotic behavior.
+
+#### Model Options:
+
+* **Exponential Growth:**
+
+```
+yt​=α(1−e−βt)+ϵt
+```
+
+  * Suitable for early-stage growth that levels off.
+
+* **Logistic Growth:**
+
+```
+yt​=1+e−r(t−t0​)K​+ϵt​
+```
+
+  * Captures S-shaped trajectories where growth slows near a carrying capacity ( K ).
+
+```r
+nls_model <- nls(
+  rating ~ K / (1 + exp(-r * (relative_time - t0))),
+  data = rating_summary,
+  start = list(K = 2500, r = 0.05, t0 = 100)
+)
+```
+
+* **Parameter Meaning:**
+
+  * `K`: The asymptotic (maximum achievable) rating.
+  * `r`: Growth rate parameter.
+  * `t0`: Inflection point (time at which growth rate changes).
+
+* **Model Comparison:**
+
+  * Compare nonlinear vs. mixed-effects linear fits using AIC or adjusted R².
+  * Use `nlsLM` from the `minpack.lm` package for better convergence.
+
+* **Applications:**
+
+  * Quantifies player improvement ceilings.
+  * Reveals if rating gains diminish over extended playtime.
+  * Detects early vs. late bloomers.
+
+1. **Cross-Platform Comparison**
+
+To evaluate **rating inflation or deflation** across online chess platforms (e.g., Lichess vs. Chess.com), perform comparative trajectory analyses.
+
+* **Data Harmonization:**
+
+  * Align rating scales (e.g., convert both to an estimated Elo-equivalent if available).
+  * Normalize timestamps or relative game counts per user.
+
+* **Model Specification:**
+
+  ```r
+  combined_model <- lmer(
+    rating ~ relative_time * platform + (1 | user),
+    data = combined_ratings
+  )
+  ```
+
+  * Interaction term `relative_time * platform` isolates platform-specific time trends.
+
+* **Hypothesis Testing:**
+
+  * `H₀`: Rating growth rate does not differ between platforms.
+  * `H₁`: Growth rate differs, indicating rating inflation or deflation.
+
+* **Post-Estimation Analysis:**
+
+  * Plot predicted trajectories by platform using `ggplot2`.
+  * Compare average slopes (improvement rates) and intercepts (baseline ratings).
+  * Use `emmeans` for marginal means and contrast tests.
+
+* Detects whether one platform systematically awards higher ratings for equivalent performance.
+* Identifies structural biases due to differing rating systems, player pools, or matchmaking algorithms.

@@ -416,9 +416,10 @@ Time}\label{b.3-visualization-rating-progression-over-time}
     \FunctionTok{cat}\NormalTok{(}\StringTok{"No data available for visualization. Skipping rating progression plot.}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
 \NormalTok{\} }\ControlFlowTok{else}\NormalTok{ \{}
     \CommentTok{\# Focus on most popular categories with sufficient data}
+    \CommentTok{\# Expand to include more game types beyond just top 4}
 \NormalTok{    top\_categories }\OtherTok{\textless{}{-}}\NormalTok{ rating\_summary }\SpecialCharTok{\%\textgreater{}\%}
         \FunctionTok{count}\NormalTok{(category) }\SpecialCharTok{\%\textgreater{}\%}
-        \FunctionTok{slice\_max}\NormalTok{(n, }\AttributeTok{n =} \DecValTok{4}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{slice\_max}\NormalTok{(n, }\AttributeTok{n =} \DecValTok{8}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}  \CommentTok{\# Increased from 4 to 8 categories}
         \FunctionTok{pull}\NormalTok{(category)}
 
 \NormalTok{    rating\_plot\_data }\OtherTok{\textless{}{-}}\NormalTok{ rating\_summary }\SpecialCharTok{\%\textgreater{}\%}
@@ -426,18 +427,21 @@ Time}\label{b.3-visualization-rating-progression-over-time}
 
 \NormalTok{    p1 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(rating\_plot\_data, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ relative\_time, }\AttributeTok{y =}\NormalTok{ rating\_smooth, }\AttributeTok{color =}\NormalTok{ user)) }\SpecialCharTok{+}
         \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{linewidth =} \FloatTok{0.8}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.7}\NormalTok{) }\SpecialCharTok{+}
-        \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{category, }\AttributeTok{scales =} \StringTok{"free\_y"}\NormalTok{, }\AttributeTok{ncol =} \DecValTok{2}\NormalTok{) }\SpecialCharTok{+}
+        \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{category, }\AttributeTok{scales =} \StringTok{"free\_y"}\NormalTok{, }\AttributeTok{ncol =} \DecValTok{3}\NormalTok{) }\SpecialCharTok{+}  \CommentTok{\# Increased to 3 columns for more categories}
         \FunctionTok{labs}\NormalTok{(}
-            \AttributeTok{title =} \StringTok{"Lichess Rating Progression Over Time"}\NormalTok{,}
-            \AttributeTok{subtitle =} \FunctionTok{paste}\NormalTok{(}\StringTok{"Sample of"}\NormalTok{, }\FunctionTok{n\_distinct}\NormalTok{(rating\_plot\_data}\SpecialCharTok{$}\NormalTok{user), }\StringTok{"Users Across Top Game Categories"}\NormalTok{),}
+            \AttributeTok{title =} \StringTok{"Lichess Rating Progression Over Time (Expanded Game Types)"}\NormalTok{,}
+            \AttributeTok{subtitle =} \FunctionTok{paste}\NormalTok{(}\StringTok{"Sample of"}\NormalTok{, }\FunctionTok{n\_distinct}\NormalTok{(rating\_plot\_data}\SpecialCharTok{$}\NormalTok{user), }\StringTok{"Users Across"}\NormalTok{, }\FunctionTok{n\_distinct}\NormalTok{(rating\_plot\_data}\SpecialCharTok{$}\NormalTok{category), }\StringTok{"Game Categories"}\NormalTok{),}
             \AttributeTok{x =} \StringTok{"Sequential Game Weeks (relative index)"}\NormalTok{,}
             \AttributeTok{y =} \StringTok{"Smoothed Rating (3{-}period rolling mean)"}\NormalTok{,}
             \AttributeTok{color =} \StringTok{"User"}
 \NormalTok{        ) }\SpecialCharTok{+}
-        \FunctionTok{theme\_minimal}\NormalTok{(}\AttributeTok{base\_size =} \DecValTok{12}\NormalTok{) }\SpecialCharTok{+}
-        \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position =} \StringTok{"bottom"}\NormalTok{)}
+        \FunctionTok{theme\_minimal}\NormalTok{(}\AttributeTok{base\_size =} \DecValTok{10}\NormalTok{) }\SpecialCharTok{+} \CommentTok{\# Reduced font size for more categories}
+            \FunctionTok{theme}\NormalTok{(}
+                \AttributeTok{legend.position =} \StringTok{"bottom"}\NormalTok{,}
+                \AttributeTok{strip.text =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{size =} \DecValTok{9}\NormalTok{)}
+\NormalTok{            ) }\CommentTok{\# Smaller facet labels}
     \FunctionTok{print}\NormalTok{(p1)}
-    \FunctionTok{ggsave}\NormalTok{(}\StringTok{"../../presentation/presentation\_files/lichess{-}rating{-}progression{-}over{-}time.png"}\NormalTok{, }\AttributeTok{plot =}\NormalTok{ p1, }\AttributeTok{width =} \DecValTok{10}\NormalTok{, }\AttributeTok{height =} \DecValTok{6}\NormalTok{, }\AttributeTok{dpi =} \DecValTok{300}\NormalTok{)}
+    \FunctionTok{ggsave}\NormalTok{(}\StringTok{"../../presentation/presentation\_files/lichess{-}rating{-}progression{-}over{-}time.png"}\NormalTok{, }\AttributeTok{plot =}\NormalTok{ p1, }\AttributeTok{width =} \DecValTok{14}\NormalTok{, }\AttributeTok{height =} \DecValTok{10}\NormalTok{, }\AttributeTok{dpi =} \DecValTok{300}\NormalTok{) }\CommentTok{\# Larger dimensions for more categories}
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
@@ -480,19 +484,23 @@ Analysis}\label{b.4-rating-volatility-analysis}
             \AttributeTok{.groups =} \StringTok{"drop"}
 \NormalTok{        )}
 
-\NormalTok{    p2 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(volatility\_stats, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ category, }\AttributeTok{y =}\NormalTok{ sd\_rating, }\AttributeTok{fill =}\NormalTok{ category)) }\SpecialCharTok{+}
+\NormalTok{    p2 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(volatility\_stats, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =} \FunctionTok{reorder}\NormalTok{(category, sd\_rating, }\AttributeTok{FUN =}\NormalTok{ median), }\AttributeTok{y =}\NormalTok{ sd\_rating, }\AttributeTok{fill =}\NormalTok{ category)) }\SpecialCharTok{+}
         \FunctionTok{geom\_boxplot}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.7}\NormalTok{) }\SpecialCharTok{+}
-        \FunctionTok{geom\_jitter}\NormalTok{(}\AttributeTok{width =} \FloatTok{0.2}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.4}\NormalTok{, }\AttributeTok{size =} \DecValTok{2}\NormalTok{) }\SpecialCharTok{+}
+        \FunctionTok{geom\_jitter}\NormalTok{(}\AttributeTok{width =} \FloatTok{0.2}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.4}\NormalTok{, }\AttributeTok{size =} \FloatTok{1.5}\NormalTok{) }\SpecialCharTok{+}
         \FunctionTok{labs}\NormalTok{(}
-            \AttributeTok{title =} \StringTok{"Rating Volatility Distribution by Game Category"}\NormalTok{,}
-            \AttributeTok{subtitle =} \StringTok{"Standard deviation of ratings over time per user"}\NormalTok{,}
+            \AttributeTok{title =} \StringTok{"Rating Volatility Distribution by Game Category (Expanded)"}\NormalTok{,}
+            \AttributeTok{subtitle =} \StringTok{"Standard deviation of ratings over time per user {-} ordered by median volatility"}\NormalTok{,}
             \AttributeTok{x =} \StringTok{"Game Category"}\NormalTok{,}
             \AttributeTok{y =} \StringTok{"Rating Standard Deviation"}
 \NormalTok{        ) }\SpecialCharTok{+}
-        \FunctionTok{theme\_minimal}\NormalTok{(}\AttributeTok{base\_size =} \DecValTok{12}\NormalTok{) }\SpecialCharTok{+}
-        \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position =} \StringTok{"none"}\NormalTok{)}
+        \FunctionTok{coord\_flip}\NormalTok{() }\SpecialCharTok{+} \CommentTok{\# Flip for better label readability with more categories}
+            \FunctionTok{theme\_minimal}\NormalTok{(}\AttributeTok{base\_size =} \DecValTok{11}\NormalTok{) }\SpecialCharTok{+}
+            \FunctionTok{theme}\NormalTok{(}
+                \AttributeTok{legend.position =} \StringTok{"none"}\NormalTok{,}
+                \AttributeTok{axis.text.y =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{size =} \DecValTok{9}\NormalTok{)}
+\NormalTok{            )}
     \FunctionTok{print}\NormalTok{(p2)}
-    \FunctionTok{ggsave}\NormalTok{(}\StringTok{"../../presentation/presentation\_files/rating\_volatility.png"}\NormalTok{, }\AttributeTok{plot =}\NormalTok{ p2, }\AttributeTok{width =} \DecValTok{10}\NormalTok{, }\AttributeTok{height =} \DecValTok{6}\NormalTok{, }\AttributeTok{dpi =} \DecValTok{300}\NormalTok{)}
+    \FunctionTok{ggsave}\NormalTok{(}\StringTok{"../../presentation/presentation\_files/rating\_volatility.png"}\NormalTok{, }\AttributeTok{plot =}\NormalTok{ p2, }\AttributeTok{width =} \DecValTok{12}\NormalTok{, }\AttributeTok{height =} \DecValTok{8}\NormalTok{, }\AttributeTok{dpi =} \DecValTok{300}\NormalTok{) }\CommentTok{\# Larger for more categories}
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
@@ -513,10 +521,11 @@ Analysis}\label{b.4-rating-volatility-analysis}
         \AttributeTok{mean\_growth =} \ConstantTok{NA}\NormalTok{, }\AttributeTok{median\_growth =} \ConstantTok{NA}\NormalTok{, }\AttributeTok{sd\_growth =} \ConstantTok{NA}\NormalTok{, }\AttributeTok{mean\_r2 =} \ConstantTok{NA}
 \NormalTok{    )}
 \NormalTok{\} }\ControlFlowTok{else}\NormalTok{ \{}
-    \CommentTok{\# Fit linear models to estimate growth rates per user}
+    \CommentTok{\# Fit linear models to estimate growth rates per user across multiple categories}
+    \CommentTok{\# Expand analysis beyond just Blitz to include multiple game types}
 \NormalTok{    growth\_models }\OtherTok{\textless{}{-}}\NormalTok{ rating\_summary }\SpecialCharTok{\%\textgreater{}\%}
-        \FunctionTok{filter}\NormalTok{(category }\SpecialCharTok{==} \StringTok{"Blitz"}\NormalTok{, }\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(rating\_smooth)) }\SpecialCharTok{\%\textgreater{}\%}
-        \FunctionTok{group\_by}\NormalTok{(user) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{filter}\NormalTok{(category }\SpecialCharTok{\%in\%}\NormalTok{ top\_categories, }\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(rating\_smooth)) }\SpecialCharTok{\%\textgreater{}\%}  \CommentTok{\# Use all top categories}
+        \FunctionTok{group\_by}\NormalTok{(user, category) }\SpecialCharTok{\%\textgreater{}\%}  \CommentTok{\# Group by both user AND category}
         \FunctionTok{filter}\NormalTok{(}\FunctionTok{n}\NormalTok{() }\SpecialCharTok{\textgreater{}=} \DecValTok{10}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
         \FunctionTok{do}\NormalTok{(}\AttributeTok{model =} \FunctionTok{lm}\NormalTok{(rating\_smooth }\SpecialCharTok{\textasciitilde{}}\NormalTok{ relative\_time, }\AttributeTok{data =}\NormalTok{ .)) }\SpecialCharTok{\%\textgreater{}\%}
         \FunctionTok{mutate}\NormalTok{(}
@@ -526,8 +535,8 @@ Analysis}\label{b.4-rating-volatility-analysis}
 \NormalTok{        ) }\SpecialCharTok{\%\textgreater{}\%}
         \FunctionTok{select}\NormalTok{(}\SpecialCharTok{{-}}\NormalTok{model)}
 
-    \CommentTok{\# Visualize growth rates}
-\NormalTok{    p3 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(growth\_models, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =} \FunctionTok{reorder}\NormalTok{(user, slope), }\AttributeTok{y =}\NormalTok{ slope, }\AttributeTok{fill =}\NormalTok{ r\_squared)) }\SpecialCharTok{+}
+    \CommentTok{\# Visualize growth rates across multiple game categories}
+\NormalTok{    p3 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(growth\_models, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =} \FunctionTok{reorder}\NormalTok{(}\FunctionTok{paste}\NormalTok{(user, category, }\AttributeTok{sep =} \StringTok{" {-} "}\NormalTok{), slope), }\AttributeTok{y =}\NormalTok{ slope, }\AttributeTok{fill =}\NormalTok{ r\_squared)) }\SpecialCharTok{+}
         \FunctionTok{geom\_col}\NormalTok{() }\SpecialCharTok{+}
         \FunctionTok{scale\_fill\_gradient2}\NormalTok{(}
             \AttributeTok{low =} \StringTok{"\#d73027"}\NormalTok{, }\AttributeTok{mid =} \StringTok{"\#fee090"}\NormalTok{, }\AttributeTok{high =} \StringTok{"\#1a9850"}\NormalTok{,}
@@ -535,19 +544,38 @@ Analysis}\label{b.4-rating-volatility-analysis}
 \NormalTok{        ) }\SpecialCharTok{+}
         \FunctionTok{coord\_flip}\NormalTok{() }\SpecialCharTok{+}
         \FunctionTok{labs}\NormalTok{(}
-            \AttributeTok{title =} \StringTok{"Estimated Weekly Rating Growth Rate (Blitz)"}\NormalTok{,}
-            \AttributeTok{subtitle =} \StringTok{"Linear trend slope per user (minimum 10 observations)"}\NormalTok{,}
-            \AttributeTok{x =} \StringTok{"User"}\NormalTok{,}
+            \AttributeTok{title =} \StringTok{"Estimated Weekly Rating Growth Rate (Multiple Game Types)"}\NormalTok{,}
+            \AttributeTok{subtitle =} \StringTok{"Linear trend slope per user{-}category combination (minimum 10 observations)"}\NormalTok{,}
+            \AttributeTok{x =} \StringTok{"User {-} Category"}\NormalTok{,}
             \AttributeTok{y =} \StringTok{"Rating Points per Week"}
 \NormalTok{        ) }\SpecialCharTok{+}
-        \FunctionTok{theme\_minimal}\NormalTok{(}\AttributeTok{base\_size =} \DecValTok{11}\NormalTok{)}
+        \FunctionTok{theme\_minimal}\NormalTok{(}\AttributeTok{base\_size =} \DecValTok{9}\NormalTok{) }\SpecialCharTok{+}
+            \FunctionTok{theme}\NormalTok{(}\AttributeTok{axis.text.y =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{size =} \DecValTok{7}\NormalTok{)) }\CommentTok{\# Smaller text for more entries}
     \FunctionTok{print}\NormalTok{(p3)}
-    \FunctionTok{ggsave}\NormalTok{(}\StringTok{"../../presentation/presentation\_files/rating\_growth.png"}\NormalTok{, }\AttributeTok{plot =}\NormalTok{ p3, }\AttributeTok{width =} \DecValTok{10}\NormalTok{, }\AttributeTok{height =} \DecValTok{6}\NormalTok{, }\AttributeTok{dpi =} \DecValTok{300}\NormalTok{)}
+    \FunctionTok{ggsave}\NormalTok{(}\StringTok{"../../presentation/presentation\_files/rating\_growth.png"}\NormalTok{, }\AttributeTok{plot =}\NormalTok{ p3, }\AttributeTok{width =} \DecValTok{12}\NormalTok{, }\AttributeTok{height =} \DecValTok{10}\NormalTok{, }\AttributeTok{dpi =} \DecValTok{300}\NormalTok{) }\CommentTok{\# Larger for more entries}
+    \CommentTok{\# Additional visualization: Growth rate by category}
+\NormalTok{    p3b }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(growth\_models, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ category, }\AttributeTok{y =}\NormalTok{ slope, }\AttributeTok{fill =}\NormalTok{ category)) }\SpecialCharTok{+}
+        \FunctionTok{geom\_boxplot}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.7}\NormalTok{) }\SpecialCharTok{+}
+        \FunctionTok{geom\_jitter}\NormalTok{(}\AttributeTok{width =} \FloatTok{0.2}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.4}\NormalTok{, }\AttributeTok{size =} \FloatTok{1.5}\NormalTok{) }\SpecialCharTok{+}
+        \FunctionTok{geom\_hline}\NormalTok{(}\AttributeTok{yintercept =} \DecValTok{0}\NormalTok{, }\AttributeTok{linetype =} \StringTok{"dashed"}\NormalTok{, }\AttributeTok{color =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+}
+        \FunctionTok{labs}\NormalTok{(}
+            \AttributeTok{title =} \StringTok{"Growth Rate Distribution by Game Category"}\NormalTok{,}
+            \AttributeTok{subtitle =} \StringTok{"Comparing learning rates across different game types"}\NormalTok{,}
+            \AttributeTok{x =} \StringTok{"Game Category"}\NormalTok{,}
+            \AttributeTok{y =} \StringTok{"Weekly Growth Rate (Rating Points)"}
+\NormalTok{        ) }\SpecialCharTok{+}
+        \FunctionTok{theme\_minimal}\NormalTok{(}\AttributeTok{base\_size =} \DecValTok{11}\NormalTok{) }\SpecialCharTok{+}
+        \FunctionTok{theme}\NormalTok{(}
+            \AttributeTok{legend.position =} \StringTok{"none"}\NormalTok{,}
+            \AttributeTok{axis.text.x =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{angle =} \DecValTok{45}\NormalTok{, }\AttributeTok{hjust =} \DecValTok{1}\NormalTok{)}
+\NormalTok{        )}
+    \FunctionTok{print}\NormalTok{(p3b)}
+    \FunctionTok{ggsave}\NormalTok{(}\StringTok{"../../presentation/presentation\_files/rating\_growth\_by\_category.png"}\NormalTok{, }\AttributeTok{plot =}\NormalTok{ p3b, }\AttributeTok{width =} \DecValTok{12}\NormalTok{, }\AttributeTok{height =} \DecValTok{6}\NormalTok{, }\AttributeTok{dpi =} \DecValTok{300}\NormalTok{)}
 
-    \CommentTok{\# Summary statistics for growth rates}
+    \CommentTok{\# Summary statistics for growth rates {-} overall}
 \NormalTok{    growth\_summary }\OtherTok{\textless{}{-}}\NormalTok{ growth\_models }\SpecialCharTok{\%\textgreater{}\%}
         \FunctionTok{summarise}\NormalTok{(}
-            \AttributeTok{users =} \FunctionTok{n}\NormalTok{(),}
+            \AttributeTok{user\_category\_combos =} \FunctionTok{n}\NormalTok{(),}
             \AttributeTok{positive\_growth =} \FunctionTok{sum}\NormalTok{(slope }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{),}
             \AttributeTok{negative\_growth =} \FunctionTok{sum}\NormalTok{(slope }\SpecialCharTok{\textless{}} \DecValTok{0}\NormalTok{),}
             \AttributeTok{mean\_growth =} \FunctionTok{mean}\NormalTok{(slope, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
@@ -559,38 +587,55 @@ Analysis}\label{b.4-rating-volatility-analysis}
 \NormalTok{    knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(}
 \NormalTok{        growth\_summary,}
         \AttributeTok{digits =} \DecValTok{3}\NormalTok{,}
-        \AttributeTok{caption =} \StringTok{"Summary Statistics: Rating Growth Rates (Blitz Category)"}\NormalTok{,}
+        \AttributeTok{caption =} \StringTok{"Summary Statistics: Rating Growth Rates (All Game Categories)"}\NormalTok{,}
         \AttributeTok{col.names =} \FunctionTok{c}\NormalTok{(}
-            \StringTok{"Users"}\NormalTok{, }\StringTok{"Positive"}\NormalTok{, }\StringTok{"Negative"}\NormalTok{, }\StringTok{"Mean Rate"}\NormalTok{, }\StringTok{"Median Rate"}\NormalTok{,}
+            \StringTok{"User{-}Category Combos"}\NormalTok{, }\StringTok{"Positive"}\NormalTok{, }\StringTok{"Negative"}\NormalTok{, }\StringTok{"Mean Rate"}\NormalTok{, }\StringTok{"Median Rate"}\NormalTok{,}
             \StringTok{"SD Rate"}\NormalTok{, }\StringTok{"Mean R²"}
 \NormalTok{        )}
+\NormalTok{    )}
+    \CommentTok{\# Summary by category}
+\NormalTok{    growth\_by\_category }\OtherTok{\textless{}{-}}\NormalTok{ growth\_models }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{group\_by}\NormalTok{(category) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{summarise}\NormalTok{(}
+            \AttributeTok{users =} \FunctionTok{n\_distinct}\NormalTok{(user),}
+            \AttributeTok{observations =} \FunctionTok{n}\NormalTok{(),}
+            \AttributeTok{positive\_growth =} \FunctionTok{sum}\NormalTok{(slope }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{),}
+            \AttributeTok{mean\_growth =} \FunctionTok{mean}\NormalTok{(slope, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+            \AttributeTok{median\_growth =} \FunctionTok{median}\NormalTok{(slope, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+            \AttributeTok{mean\_r2 =} \FunctionTok{mean}\NormalTok{(r\_squared, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+            \AttributeTok{.groups =} \StringTok{"drop"}
+\NormalTok{        ) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{arrange}\NormalTok{(}\FunctionTok{desc}\NormalTok{(mean\_growth))}
+
+\NormalTok{    knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(}
+\NormalTok{        growth\_by\_category,}
+        \AttributeTok{digits =} \DecValTok{3}\NormalTok{,}
+        \AttributeTok{caption =} \StringTok{"Growth Rate Statistics by Game Category"}\NormalTok{,}
+        \AttributeTok{col.names =} \FunctionTok{c}\NormalTok{(}\StringTok{"Category"}\NormalTok{, }\StringTok{"Users"}\NormalTok{, }\StringTok{"Obs"}\NormalTok{, }\StringTok{"Positive"}\NormalTok{, }\StringTok{"Mean Rate"}\NormalTok{, }\StringTok{"Median Rate"}\NormalTok{, }\StringTok{"Mean R²"}\NormalTok{)}
 \NormalTok{    )}
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
 
 \pandocbounded{\includegraphics[keepaspectratio]{appendix_b_files/figure-latex/growth-rate-analysis-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{appendix_b_files/figure-latex/growth-rate-analysis-2.pdf}}
 
-\begin{longtable}[]{@{}rrrrrrr@{}}
-\caption{Summary Statistics: Rating Growth Rates (Blitz
-Category)}\tabularnewline
+\begin{longtable}[]{@{}lrrrrrr@{}}
+\caption{Growth Rate Statistics by Game Category}\tabularnewline
 \toprule\noalign{}
-Users & Positive & Negative & Mean Rate & Median Rate & SD Rate & Mean
-R² \\
+Category & Users & Obs & Positive & Mean Rate & Median Rate & Mean R² \\
 \midrule\noalign{}
 \endfirsthead
 \toprule\noalign{}
-Users & Positive & Negative & Mean Rate & Median Rate & SD Rate & Mean
-R² \\
+Category & Users & Obs & Positive & Mean Rate & Median Rate & Mean R² \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-1 & 1 & 0 & 4.413 & 4.413 & NA & 0.875 \\
-1 & 0 & 1 & -1.431 & -1.431 & NA & 0.335 \\
-1 & 0 & 1 & -4.702 & -4.702 & NA & 0.915 \\
-1 & 0 & 1 & -2.705 & -2.705 & NA & 0.697 \\
-1 & 1 & 0 & 1.399 & 1.399 & NA & 0.398 \\
+Bullet & 5 & 5 & 3 & 0.780 & 0.067 & 0.230 \\
+Rapid & 5 & 5 & 3 & 0.600 & 1.170 & 0.667 \\
+Classical & 5 & 5 & 2 & 0.576 & -0.434 & 0.411 \\
+Blitz & 5 & 5 & 2 & -0.605 & -1.431 & 0.644 \\
 \end{longtable}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
@@ -639,10 +684,25 @@ R² \\
 \bottomrule\noalign{}
 \endlastfoot
 1 & 1 & 0 & 4.413 & 4.413 & NA & 0.875 \\
+1 & 0 & 1 & -0.045 & -0.045 & NA & 0.000 \\
+1 & 1 & 0 & 1.036 & 1.036 & NA & 0.296 \\
+1 & 0 & 1 & -2.218 & -2.218 & NA & 0.861 \\
 1 & 0 & 1 & -1.431 & -1.431 & NA & 0.335 \\
+1 & 1 & 0 & 0.067 & 0.067 & NA & 0.002 \\
+1 & 1 & 0 & 4.917 & 4.917 & NA & 0.771 \\
+1 & 1 & 0 & 2.292 & 2.292 & NA & 0.642 \\
 1 & 0 & 1 & -4.702 & -4.702 & NA & 0.915 \\
+1 & 1 & 0 & 2.864 & 2.864 & NA & 0.753 \\
+1 & 0 & 1 & -0.737 & -0.737 & NA & 0.151 \\
+1 & 1 & 0 & 1.170 & 1.170 & NA & 0.387 \\
 1 & 0 & 1 & -2.705 & -2.705 & NA & 0.697 \\
+1 & 1 & 0 & 1.591 & 1.591 & NA & 0.365 \\
+1 & 0 & 1 & -0.434 & -0.434 & NA & 0.074 \\
+1 & 1 & 0 & 3.339 & 3.339 & NA & 0.838 \\
 1 & 1 & 0 & 1.399 & 1.399 & NA & 0.398 \\
+1 & 0 & 1 & -0.575 & -0.575 & NA & 0.028 \\
+1 & 0 & 1 & -1.900 & -1.900 & NA & 0.763 \\
+1 & 0 & 1 & -1.583 & -1.583 & NA & 0.603 \\
 \end{longtable}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
@@ -731,11 +791,47 @@ Highlights}\label{b.7-analytical-highlights}
 \item
   \textbf{Growth Patterns:} Among Blitz players, \textbf{0.0\%} show
   positive growth trends, with an average weekly improvement of
+  \textbf{-0.04 rating points}.
+\item
+  \textbf{Growth Patterns:} Among Blitz players, \textbf{100.0\%} show
+  positive growth trends, with an average weekly improvement of
+  \textbf{1.04 rating points}.
+\item
+  \textbf{Growth Patterns:} Among Blitz players, \textbf{0.0\%} show
+  positive growth trends, with an average weekly improvement of
+  \textbf{-2.22 rating points}.
+\item
+  \textbf{Growth Patterns:} Among Blitz players, \textbf{0.0\%} show
+  positive growth trends, with an average weekly improvement of
   \textbf{-1.43 rating points}.
+\item
+  \textbf{Growth Patterns:} Among Blitz players, \textbf{100.0\%} show
+  positive growth trends, with an average weekly improvement of
+  \textbf{0.07 rating points}.
+\item
+  \textbf{Growth Patterns:} Among Blitz players, \textbf{100.0\%} show
+  positive growth trends, with an average weekly improvement of
+  \textbf{4.92 rating points}.
+\item
+  \textbf{Growth Patterns:} Among Blitz players, \textbf{100.0\%} show
+  positive growth trends, with an average weekly improvement of
+  \textbf{2.29 rating points}.
 \item
   \textbf{Growth Patterns:} Among Blitz players, \textbf{0.0\%} show
   positive growth trends, with an average weekly improvement of
   \textbf{-4.70 rating points}.
+\item
+  \textbf{Growth Patterns:} Among Blitz players, \textbf{100.0\%} show
+  positive growth trends, with an average weekly improvement of
+  \textbf{2.86 rating points}.
+\item
+  \textbf{Growth Patterns:} Among Blitz players, \textbf{0.0\%} show
+  positive growth trends, with an average weekly improvement of
+  \textbf{-0.74 rating points}.
+\item
+  \textbf{Growth Patterns:} Among Blitz players, \textbf{100.0\%} show
+  positive growth trends, with an average weekly improvement of
+  \textbf{1.17 rating points}.
 \item
   \textbf{Growth Patterns:} Among Blitz players, \textbf{0.0\%} show
   positive growth trends, with an average weekly improvement of
@@ -743,7 +839,31 @@ Highlights}\label{b.7-analytical-highlights}
 \item
   \textbf{Growth Patterns:} Among Blitz players, \textbf{100.0\%} show
   positive growth trends, with an average weekly improvement of
+  \textbf{1.59 rating points}.
+\item
+  \textbf{Growth Patterns:} Among Blitz players, \textbf{0.0\%} show
+  positive growth trends, with an average weekly improvement of
+  \textbf{-0.43 rating points}.
+\item
+  \textbf{Growth Patterns:} Among Blitz players, \textbf{100.0\%} show
+  positive growth trends, with an average weekly improvement of
+  \textbf{3.34 rating points}.
+\item
+  \textbf{Growth Patterns:} Among Blitz players, \textbf{100.0\%} show
+  positive growth trends, with an average weekly improvement of
   \textbf{1.40 rating points}.
+\item
+  \textbf{Growth Patterns:} Among Blitz players, \textbf{0.0\%} show
+  positive growth trends, with an average weekly improvement of
+  \textbf{-0.57 rating points}.
+\item
+  \textbf{Growth Patterns:} Among Blitz players, \textbf{0.0\%} show
+  positive growth trends, with an average weekly improvement of
+  \textbf{-1.90 rating points}.
+\item
+  \textbf{Growth Patterns:} Among Blitz players, \textbf{0.0\%} show
+  positive growth trends, with an average weekly improvement of
+  \textbf{-1.58 rating points}.
 \item
   \textbf{Volatility:} Rating standard deviation varies significantly
   across categories, with faster time controls (Bullet, Blitz) showing
@@ -770,7 +890,31 @@ Highlights}\label{b.7-analytical-highlights}
   models indicates moderate-to-strong linear trends, though nonlinear
   models may provide better fit for many users.
 \item
+  \textbf{Model Fit Quality:} Average R² of \textbf{0.000} for linear
+  models indicates moderate-to-strong linear trends, though nonlinear
+  models may provide better fit for many users.
+\item
+  \textbf{Model Fit Quality:} Average R² of \textbf{0.296} for linear
+  models indicates moderate-to-strong linear trends, though nonlinear
+  models may provide better fit for many users.
+\item
+  \textbf{Model Fit Quality:} Average R² of \textbf{0.861} for linear
+  models indicates moderate-to-strong linear trends, though nonlinear
+  models may provide better fit for many users.
+\item
   \textbf{Model Fit Quality:} Average R² of \textbf{0.335} for linear
+  models indicates moderate-to-strong linear trends, though nonlinear
+  models may provide better fit for many users.
+\item
+  \textbf{Model Fit Quality:} Average R² of \textbf{0.002} for linear
+  models indicates moderate-to-strong linear trends, though nonlinear
+  models may provide better fit for many users.
+\item
+  \textbf{Model Fit Quality:} Average R² of \textbf{0.771} for linear
+  models indicates moderate-to-strong linear trends, though nonlinear
+  models may provide better fit for many users.
+\item
+  \textbf{Model Fit Quality:} Average R² of \textbf{0.642} for linear
   models indicates moderate-to-strong linear trends, though nonlinear
   models may provide better fit for many users.
 \item
@@ -778,11 +922,47 @@ Highlights}\label{b.7-analytical-highlights}
   models indicates moderate-to-strong linear trends, though nonlinear
   models may provide better fit for many users.
 \item
+  \textbf{Model Fit Quality:} Average R² of \textbf{0.753} for linear
+  models indicates moderate-to-strong linear trends, though nonlinear
+  models may provide better fit for many users.
+\item
+  \textbf{Model Fit Quality:} Average R² of \textbf{0.151} for linear
+  models indicates moderate-to-strong linear trends, though nonlinear
+  models may provide better fit for many users.
+\item
+  \textbf{Model Fit Quality:} Average R² of \textbf{0.387} for linear
+  models indicates moderate-to-strong linear trends, though nonlinear
+  models may provide better fit for many users.
+\item
   \textbf{Model Fit Quality:} Average R² of \textbf{0.697} for linear
   models indicates moderate-to-strong linear trends, though nonlinear
   models may provide better fit for many users.
 \item
+  \textbf{Model Fit Quality:} Average R² of \textbf{0.365} for linear
+  models indicates moderate-to-strong linear trends, though nonlinear
+  models may provide better fit for many users.
+\item
+  \textbf{Model Fit Quality:} Average R² of \textbf{0.074} for linear
+  models indicates moderate-to-strong linear trends, though nonlinear
+  models may provide better fit for many users.
+\item
+  \textbf{Model Fit Quality:} Average R² of \textbf{0.838} for linear
+  models indicates moderate-to-strong linear trends, though nonlinear
+  models may provide better fit for many users.
+\item
   \textbf{Model Fit Quality:} Average R² of \textbf{0.398} for linear
+  models indicates moderate-to-strong linear trends, though nonlinear
+  models may provide better fit for many users.
+\item
+  \textbf{Model Fit Quality:} Average R² of \textbf{0.028} for linear
+  models indicates moderate-to-strong linear trends, though nonlinear
+  models may provide better fit for many users.
+\item
+  \textbf{Model Fit Quality:} Average R² of \textbf{0.763} for linear
+  models indicates moderate-to-strong linear trends, though nonlinear
+  models may provide better fit for many users.
+\item
+  \textbf{Model Fit Quality:} Average R² of \textbf{0.603} for linear
   models indicates moderate-to-strong linear trends, though nonlinear
   models may provide better fit for many users.
 \end{enumerate}
@@ -1218,24 +1398,244 @@ Opportunities}\label{b.9-extension-opportunities}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
+\tightlist
 \item
-  \textbf{Hierarchical Mixed-Effects Models:} Account for both
-  user-level and category-level variation using \texttt{lme4}:
+  \textbf{Hierarchical Mixed-Effects Models}
+\end{enumerate}
+
+Mixed-effects models (also known as multilevel models) account for
+nested or grouped data structures, where observations are not
+independent --- e.g., multiple ratings per user or ratings grouped by
+category. Using the \texttt{lme4} package in R:
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(lme4)}
-\NormalTok{mixed\_model }\OtherTok{\textless{}{-}} \FunctionTok{lmer}\NormalTok{(rating }\SpecialCharTok{\textasciitilde{}}\NormalTok{ relative\_time }\SpecialCharTok{+}\NormalTok{ (}\DecValTok{1} \SpecialCharTok{+}\NormalTok{ relative\_time }\SpecialCharTok{|}\NormalTok{ user) }\SpecialCharTok{+} 
-\NormalTok{                    (}\DecValTok{1} \SpecialCharTok{|}\NormalTok{ category), }\AttributeTok{data =}\NormalTok{ rating\_summary)}
+\NormalTok{mixed\_model }\OtherTok{\textless{}{-}} \FunctionTok{lmer}\NormalTok{(}
+\NormalTok{  rating }\SpecialCharTok{\textasciitilde{}}\NormalTok{ relative\_time }\SpecialCharTok{+}\NormalTok{ (}\DecValTok{1} \SpecialCharTok{+}\NormalTok{ relative\_time }\SpecialCharTok{|}\NormalTok{ user) }\SpecialCharTok{+}\NormalTok{ (}\DecValTok{1} \SpecialCharTok{|}\NormalTok{ category),}
+  \AttributeTok{data =}\NormalTok{ rating\_summary}
+\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{itemize}
 \item
-  \textbf{Nonlinear Growth Modeling:} Fit exponential or logistic curves
-  to capture saturation effects (see Appendix C).
+  \textbf{Purpose:} Models both \emph{within-user} and
+  \emph{between-category} variance, controlling for repeated measures
+  and group-level heterogeneity.
 \item
-  \textbf{Cross-Platform Comparison:} Compare Lichess rating
-  trajectories with Chess.com data to assess platform-specific inflation
-  patterns.
+  \textbf{Random Effects:}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{(1\ +\ relative\_time\ \textbar{}\ user)} allows individual
+    users to have unique intercepts and slopes (modeling personalized
+    rating trajectories over time).
+  \item
+    \texttt{(1\ \textbar{}\ category)} adjusts for shared variance among
+    categories (e.g., opening types, time controls, or rating brackets).
+  \end{itemize}
+\item
+  \textbf{Fixed Effects:}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{relative\_time} quantifies the temporal evolution of ratings
+    across the observation period.
+  \end{itemize}
+\item
+  \textbf{Model Diagnostics:}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Evaluate residual normality and homoscedasticity using
+    \texttt{plot(mixed\_model)}.
+  \item
+    Extract random effect variance components using
+    \texttt{VarCorr(mixed\_model)}.
+  \item
+    Assess model fit via AIC/BIC and likelihood ratio tests (using
+    \texttt{anova()}).
+  \end{itemize}
+\item
+  \textbf{Interpretation:}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Quantifies whether improvement rates vary meaningfully across users
+    and whether category effects contribute significantly.
+  \item
+    Useful for identifying systematic overperformance or
+    underperformance trends.
+  \end{itemize}
+\end{itemize}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  \textbf{Nonlinear Growth Modeling}
 \end{enumerate}
+
+Linear models may fail to capture \emph{saturation} or \emph{plateau}
+dynamics in player ratings over time. Nonlinear modeling allows the
+estimation of asymptotic behavior.
+
+\paragraph{Model Options:}\label{model-options}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Exponential Growth:}
+\end{itemize}
+
+\begin{verbatim}
+yt​=α(1−e−βt)+ϵt
+\end{verbatim}
+
+\begin{itemize}
+\item
+  Suitable for early-stage growth that levels off.
+\item
+  \textbf{Logistic Growth:}
+\end{itemize}
+
+\begin{verbatim}
+yt​=1+e−r(t−t0​)K​+ϵt​
+\end{verbatim}
+
+\begin{itemize}
+\tightlist
+\item
+  Captures S-shaped trajectories where growth slows near a carrying
+  capacity ( K ).
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{nls\_model }\OtherTok{\textless{}{-}} \FunctionTok{nls}\NormalTok{(}
+\NormalTok{  rating }\SpecialCharTok{\textasciitilde{}}\NormalTok{ K }\SpecialCharTok{/}\NormalTok{ (}\DecValTok{1} \SpecialCharTok{+} \FunctionTok{exp}\NormalTok{(}\SpecialCharTok{{-}}\NormalTok{r }\SpecialCharTok{*}\NormalTok{ (relative\_time }\SpecialCharTok{{-}}\NormalTok{ t0))),}
+  \AttributeTok{data =}\NormalTok{ rating\_summary,}
+  \AttributeTok{start =} \FunctionTok{list}\NormalTok{(}\AttributeTok{K =} \DecValTok{2500}\NormalTok{, }\AttributeTok{r =} \FloatTok{0.05}\NormalTok{, }\AttributeTok{t0 =} \DecValTok{100}\NormalTok{)}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\item
+  \textbf{Parameter Meaning:}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{K}: The asymptotic (maximum achievable) rating.
+  \item
+    \texttt{r}: Growth rate parameter.
+  \item
+    \texttt{t0}: Inflection point (time at which growth rate changes).
+  \end{itemize}
+\item
+  \textbf{Model Comparison:}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Compare nonlinear vs.~mixed-effects linear fits using AIC or
+    adjusted R².
+  \item
+    Use \texttt{nlsLM} from the \texttt{minpack.lm} package for better
+    convergence.
+  \end{itemize}
+\item
+  \textbf{Applications:}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Quantifies player improvement ceilings.
+  \item
+    Reveals if rating gains diminish over extended playtime.
+  \item
+    Detects early vs.~late bloomers.
+  \end{itemize}
+\end{itemize}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Cross-Platform Comparison}
+\end{enumerate}
+
+To evaluate \textbf{rating inflation or deflation} across online chess
+platforms (e.g., Lichess vs.~Chess.com), perform comparative trajectory
+analyses.
+
+\begin{itemize}
+\item
+  \textbf{Data Harmonization:}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Align rating scales (e.g., convert both to an estimated
+    Elo-equivalent if available).
+  \item
+    Normalize timestamps or relative game counts per user.
+  \end{itemize}
+\item
+  \textbf{Model Specification:}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{combined\_model }\OtherTok{\textless{}{-}} \FunctionTok{lmer}\NormalTok{(}
+\NormalTok{  rating }\SpecialCharTok{\textasciitilde{}}\NormalTok{ relative\_time }\SpecialCharTok{*}\NormalTok{ platform }\SpecialCharTok{+}\NormalTok{ (}\DecValTok{1} \SpecialCharTok{|}\NormalTok{ user),}
+  \AttributeTok{data =}\NormalTok{ combined\_ratings}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Interaction term \texttt{relative\_time\ *\ platform} isolates
+    platform-specific time trends.
+  \end{itemize}
+\item
+  \textbf{Hypothesis Testing:}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{H₀}: Rating growth rate does not differ between platforms.
+  \item
+    \texttt{H₁}: Growth rate differs, indicating rating inflation or
+    deflation.
+  \end{itemize}
+\item
+  \textbf{Post-Estimation Analysis:}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Plot predicted trajectories by platform using \texttt{ggplot2}.
+  \item
+    Compare average slopes (improvement rates) and intercepts (baseline
+    ratings).
+  \item
+    Use \texttt{emmeans} for marginal means and contrast tests.
+  \end{itemize}
+\item
+  Detects whether one platform systematically awards higher ratings for
+  equivalent performance.
+\item
+  Identifies structural biases due to differing rating systems, player
+  pools, or matchmaking algorithms.
+\end{itemize}
 
 \end{document}
