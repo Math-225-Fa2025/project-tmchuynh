@@ -1,0 +1,29 @@
+# Environment variables (contains sensitive tokens)
+.env
+
+# R files
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+
+# Data files (optional - uncomment if you don't want to commit data)
+# *.csv
+# *.json
+# *.rds
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Temporary files
+*~
+*.tmp
+*.swp
