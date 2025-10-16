@@ -101,7 +101,7 @@ ggplot(predicted_curves, aes(x = time_index, y = rating, color = user)) +
   geom_line(aes(y = predicted), linewidth = 1) +
   facet_wrap(~user, scales = "free_y") +
   labs(
-    title = "Nonlinear Rating Progression — Logistic Learning Curves",
+    title = "Nonlinear Rating Progression - Logistic Learning Curves",
     subtitle = "Observed vs. Modeled Rating Trajectories (Blitz Category)",
     x = "Game Sequence (Relative Time)",
     y = "Rating",
@@ -116,7 +116,7 @@ ggplot(predicted_curves, aes(x = time_index, y = rating, color = user)) +
 
 ---
 
-### D.5 Learning Rate Analysis
+### C.5 Learning Rate Analysis
 
 ```{r nonlinear-summary}
 nonlinear_summary <- nonlinear_models %>%
@@ -144,7 +144,7 @@ knitr::kable(
 
 ---
 
-### D.6 (Optional) Bayesian Extension via `brms`
+### C.6 Bayesian Extension via `brms`
 
 > For richer inference, we can estimate the same model in a Bayesian framework.
 
@@ -173,7 +173,7 @@ summary(brm_model)
 
 ---
 
-### D.7 Interpretation & Future Directions
+### C.7 Interpretation & Future Directions
 
 **Empirical Takeaways:**
 
