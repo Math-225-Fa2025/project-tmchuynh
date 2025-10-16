@@ -700,9 +700,13 @@ if (!exists("period_summary") || nrow(period_summary) == 0) {
         }
     }
 }
+} else {
+  cat("Insufficient data for activity-improvement heatmap.\n")
+}
 ```
 
 ```{r statistical-test}
+if (nrow(period_summary) > 0) {
 # Statistical significance test
 if (nrow(period_summary) > 30) {
     cor_test <- cor.test(period_summary$avg_activity, period_summary$avg_improvement)
