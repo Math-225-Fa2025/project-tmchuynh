@@ -135,17 +135,25 @@ library(zoo)
 
 # Clean, filter, and aggregate by category (e.g., Blitz, Rapid)
 rating_summary <- rating_histories %>%
-    filter(!is.na(rating)) %>%
+    filter(!is.na(rating), !is.na(user), !is.na(category)) %>%
+    arrange(user, category, date_index) %>%
     group_by(user, category) %>%
+    filter(n() >= 3) %>%  # Ensure minimum data for rolling average
     mutate(
-        rating_smooth = zoo::rollapply(rating, width = 3, FUN = mean, fill = NA, align = "right"),
         relative_time = row_number(),
-        rating_change = rating - lag(rating),
-        cumulative_change = rating - first(rating)
+        rating_change = rating - lag(rating, default = first(rating)),
+        cumulative_change = rating - first(rating),
+        .before = everything()
+    ) %>%
+    mutate(
+        rating_smooth = case_when(
+            n() >= 3 ~ zoo::rollapply(rating, width = 3, FUN = mean, fill = NA, align = "right"),
+            TRUE ~ rating  # Use original rating if insufficient data for smoothing
+        )
     ) %>%
     ungroup()
 
-# Summary statistics by category
+# Optimized summary statistics with single pass through data
 category_stats <- rating_summary %>%
     group_by(category) %>%
     summarise(
@@ -153,16 +161,19 @@ category_stats <- rating_summary %>%
         observations = n(),
         mean_rating = mean(rating, na.rm = TRUE),
         sd_rating = sd(rating, na.rm = TRUE),
-        mean_change = mean(rating_change, na.rm = TRUE),
+        mean_change = mean(rating_change[rating_change != 0], na.rm = TRUE),  # Exclude initial zeros
+        median_rating = median(rating, na.rm = TRUE),
         .groups = "drop"
     ) %>%
-    arrange(desc(users))
+    arrange(desc(users), desc(observations))
 
+# Enhanced table output with better formatting
 knitr::kable(
     category_stats,
     digits = 2,
     caption = "Rating Summary Statistics by Game Category",
-    col.names = c("Category", "Users", "Obs", "Mean Rating", "SD", "Avg Change/Week")
+    col.names = c("Category", "Users", "Obs", "Mean Rating", "SD", "Avg Change/Week", "Median Rating"),
+    format.args = list(big.mark = ",")
 )
 
 head(rating_summary, 10)
