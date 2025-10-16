@@ -712,47 +712,67 @@ if (nrow(period_summary) > 0) {
 
 ```{r statistical-test}
 if (nrow(period_summary) > 0) {
-# Statistical significance test
-if (nrow(period_summary) > 30) {
-    cor_test <- cor.test(period_summary$avg_activity, period_summary$avg_improvement)
+    # Statistical significance test
+    if (nrow(period_summary) > 30) {
+        cor_test <- cor.test(period_summary$avg_activity, period_summary$avg_improvement)
 
-    cat("Correlation Test Results:\n")
-    cat(sprintf("Pearson correlation: %.4f\n", cor_test$estimate))
-    cat(sprintf("95%% CI: [%.4f, %.4f]\n", cor_test$conf.int[1], cor_test$conf.int[2]))
-    cat(sprintf("p-value: %.4f\n", cor_test$p.value))
-    cat(sprintf(
-        "Interpretation: %s\n",
-        ifelse(cor_test$p.value < 0.05, "Statistically significant", "Not statistically significant")
-    ))
+        cat("Correlation Test Results:\n")
+        cat(sprintf("Pearson correlation: %.4f\n", cor_test$estimate))
+        cat(sprintf("95%% CI: [%.4f, %.4f]\n", cor_test$conf.int[1], cor_test$conf.int[2]))
+        cat(sprintf("p-value: %.4f\n", cor_test$p.value))
+        cat(sprintf(
+            "Interpretation: %s\n",
+            ifelse(cor_test$p.value < 0.05, "Statistically significant", "Not statistically significant")
+        ))
+    }
+
+    # Effect size interpretation
+    effect_size <- abs(correlation_results$pearson_r)
+    effect_interpretation <- case_when(
+        effect_size < 0.1 ~ "Negligible",
+        effect_size < 0.3 ~ "Small",
+        effect_size < 0.5 ~ "Medium",
+        TRUE ~ "Large"
+    )
+
+    cat(sprintf("\nEffect size: %.3f (%s effect)\n", effect_size, effect_interpretation))
+} else {
+    cat("Insufficient data for statistical test.\n")
 }
-
-# Effect size interpretation
-effect_size <- abs(correlation_results$pearson_r)
-effect_interpretation <- case_when(
-    effect_size < 0.1 ~ "Negligible",
-    effect_size < 0.3 ~ "Small",
-    effect_size < 0.5 ~ "Medium",
-    TRUE ~ "Large"
-)
-
-cat(sprintf("\nEffect size: %.3f (%s effect)\n", effect_size, effect_interpretation))
 ```
 
-**Key Findings from Activity-Performance Analysis:**
+```{r activity-findings, results='asis'}
+# Only display findings if we have valid correlation results
+if (nrow(period_summary) > 0 && !is.na(correlation_results$pearson_r)) {
+    cat("**Key Findings from Activity-Performance Analysis:**\n\n")
 
-1. **Overall Correlation:** The Pearson correlation between activity level and rating improvement is **`r round(correlation_results$pearson_r, 3)`**, indicating a **`r ifelse(abs(correlation_results$pearson_r) < 0.3, "weak", ifelse(abs(correlation_results$pearson_r) < 0.5, "moderate", "strong"))`** relationship.
+    cat(sprintf(
+        "1. **Overall Correlation:** The Pearson correlation between activity level and rating improvement is **%.3f**, indicating a **%s** relationship.\n\n",
+        round(correlation_results$pearson_r, 3),
+        ifelse(abs(correlation_results$pearson_r) < 0.3, "weak",
+            ifelse(abs(correlation_results$pearson_r) < 0.5, "moderate", "strong")
+        )
+    ))
 
-2. **Individual Variation:** Among users with sufficient data, **`r scales::percent(user_corr_summary$positive_corr / user_corr_summary$users)`** show positive correlations between activity and improvement, with **`r scales::percent(user_corr_summary$strong_positive / user_corr_summary$users)`** exhibiting strong positive relationships (r > 0.3).
+    cat(sprintf(
+        "2. **Individual Variation:** Among users with sufficient data, **%s** show positive correlations between activity and improvement, with **%s** exhibiting strong positive relationships (r > 0.3).\n\n",
+        scales::percent(user_corr_summary$positive_corr / user_corr_summary$users, accuracy = 0.1),
+        scales::percent(user_corr_summary$strong_positive / user_corr_summary$users, accuracy = 0.1)
+    ))
 
-3. **Practical Implications:** 
-   - Higher game frequency generally correlates with rating improvements
-   - Individual responses vary significantly, suggesting personal factors (learning style, motivation, fatigue) moderate this relationship
-   - The relationship may be non-linear, with diminishing returns at very high activity levels
+    cat("3. **Practical Implications:**\n")
+    cat("   - Higher game frequency generally correlates with rating improvements\n")
+    cat("   - Individual responses vary significantly, suggesting personal factors (learning style, motivation, fatigue) moderate this relationship\n")
+    cat("   - The relationship may be non-linear, with diminishing returns at very high activity levels\n\n")
 
-4. **Methodological Notes:**
-   - Activity proxy based on inverse time gaps between games
-   - 4-week rolling windows used to smooth short-term fluctuations
-   - Minimum threshold filters ensure reliable correlation estimates
+    cat("4. **Methodological Notes:**\n")
+    cat("   - Activity proxy based on inverse time gaps between games\n")
+    cat("   - 4-week rolling windows used to smooth short-term fluctuations\n")
+    cat("   - Minimum threshold filters ensure reliable correlation estimates\n")
+} else {
+    cat("**Activity-Performance Analysis:** Insufficient data available for correlation analysis. This section requires rating history data with activity metrics.\n")
+}
+```
 
 ---
 
