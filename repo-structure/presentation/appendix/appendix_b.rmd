@@ -25,7 +25,7 @@ get_rating_history <- function(username) {
     url <- paste0("https://lichess.org/api/user/", username, "/rating-history")
     tryCatch(
         {
-            response <- fromJSON(url)
+            response <- fromJSON(url, simplifyDataFrame = FALSE)
             cat(paste0("  Response length: ", length(response), "\n"))
             if (length(response) == 0) {
                 cat("  No rating history available\n")
@@ -35,15 +35,18 @@ get_rating_history <- function(username) {
             # Process each game type
             result_list <- list()
             for (i in seq_along(response)) {
-                game_type <- response[[i]]$name
-                points_df <- response[[i]]$points
+                item <- response[[i]]
+                game_type <- item[["name"]]
+                points_list <- item[["points"]]
                 
-                if (!is.null(points_df) && nrow(points_df) > 0) {
+                if (!is.null(points_list) && length(points_list) > 0) {
+                    # Convert list of points to data frame
+                    points_matrix <- do.call(rbind, points_list)
                     result_list[[i]] <- tibble(
                         user = username,
                         category = game_type,
-                        date_index = points_df[, 1],
-                        rating = points_df[, 2]
+                        date_index = points_matrix[, 1],
+                        rating = points_matrix[, 2]
                     ) %>%
                         mutate(date = as_date("2013-01-01") + weeks(date_index))
                 }
