@@ -680,7 +680,7 @@ Highlights}\label{b.7-analytical-highlights}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(rating\_summary) }\SpecialCharTok{\textgreater{}} \DecValTok{0} \SpecialCharTok{\&\&}\NormalTok{ growth\_summary}\SpecialCharTok{$}\NormalTok{users }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{) \{}
+\ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(rating\_summary) }\SpecialCharTok{\textgreater{}} \DecValTok{0} \SpecialCharTok{\&\&} \FunctionTok{nrow}\NormalTok{(growth\_summary) }\SpecialCharTok{\textgreater{}} \DecValTok{0} \SpecialCharTok{\&\&}\NormalTok{ growth\_summary}\SpecialCharTok{$}\NormalTok{users[}\DecValTok{1}\NormalTok{] }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{) \{}
     \FunctionTok{cat}\NormalTok{(}\StringTok{"**Key Findings:**}\SpecialCharTok{\textbackslash{}n\textbackslash{}n}\StringTok{"}\NormalTok{)}
 
     \FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}
@@ -707,11 +707,6 @@ Highlights}\label{b.7-analytical-highlights}
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
-
-\begin{verbatim}
-## Warning in nrow(rating_summary) > 0 && growth_summary$users > 0: 'length(x) = 5
-## > 1' in coercion to 'logical(1)'
-\end{verbatim}
 
 \textbf{Key Findings:}
 
@@ -856,89 +851,88 @@ Analysis}\label{b.8-activity-performance-correlation-analysis}
 \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(period\_summary) }\SpecialCharTok{==} \DecValTok{0}\NormalTok{) \{}
     \FunctionTok{cat}\NormalTok{(}\StringTok{"No period summary data available.}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
 \NormalTok{\} }\ControlFlowTok{else}\NormalTok{ \{}
-    \CommentTok{\# Overall correlation analysis}
-\NormalTok{    correlation\_results }\OtherTok{\textless{}{-}}\NormalTok{ period\_summary }\SpecialCharTok{\%\textgreater{}\%}
-        \FunctionTok{summarise}\NormalTok{(}
-            \AttributeTok{pearson\_r =} \FunctionTok{cor}\NormalTok{(avg\_activity, avg\_improvement, }\AttributeTok{use =} \StringTok{"complete.obs"}\NormalTok{),}
-            \AttributeTok{spearman\_rho =} \FunctionTok{cor}\NormalTok{(avg\_activity, avg\_improvement, }\AttributeTok{method =} \StringTok{"spearman"}\NormalTok{, }\AttributeTok{use =} \StringTok{"complete.obs"}\NormalTok{),}
-            \AttributeTok{n\_observations =} \FunctionTok{n}\NormalTok{(),}
-            \AttributeTok{users =} \FunctionTok{n\_distinct}\NormalTok{(user)}
+    \CommentTok{\# Check for sufficient variance before correlation}
+\NormalTok{    sd\_activity }\OtherTok{\textless{}{-}} \FunctionTok{sd}\NormalTok{(period\_summary}\SpecialCharTok{$}\NormalTok{avg\_activity, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{    sd\_improvement }\OtherTok{\textless{}{-}} \FunctionTok{sd}\NormalTok{(period\_summary}\SpecialCharTok{$}\NormalTok{avg\_improvement, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{)}
+    
+    \ControlFlowTok{if}\NormalTok{ (sd\_activity }\SpecialCharTok{==} \DecValTok{0} \SpecialCharTok{||}\NormalTok{ sd\_improvement }\SpecialCharTok{==} \DecValTok{0} \SpecialCharTok{||} \FunctionTok{is.na}\NormalTok{(sd\_activity) }\SpecialCharTok{||} \FunctionTok{is.na}\NormalTok{(sd\_improvement)) \{}
+        \FunctionTok{cat}\NormalTok{(}\StringTok{"Insufficient variance in data for correlation analysis.}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+        \FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"  SD(activity) = \%.4f, SD(improvement) = \%.4f}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, sd\_activity, sd\_improvement))}
+\NormalTok{        correlation\_results }\OtherTok{\textless{}{-}} \FunctionTok{tibble}\NormalTok{(}\AttributeTok{pearson\_r =} \ConstantTok{NA\_real\_}\NormalTok{, }\AttributeTok{spearman\_rho =} \ConstantTok{NA\_real\_}\NormalTok{, }
+                                      \AttributeTok{n\_observations =} \FunctionTok{nrow}\NormalTok{(period\_summary), }\AttributeTok{users =} \FunctionTok{n\_distinct}\NormalTok{(period\_summary}\SpecialCharTok{$}\NormalTok{user))}
+\NormalTok{        user\_correlations }\OtherTok{\textless{}{-}} \FunctionTok{tibble}\NormalTok{()}
+\NormalTok{    \} }\ControlFlowTok{else}\NormalTok{ \{}
+        \CommentTok{\# Overall correlation analysis with warning suppression}
+\NormalTok{        correlation\_results }\OtherTok{\textless{}{-}}\NormalTok{ period\_summary }\SpecialCharTok{\%\textgreater{}\%}
+            \FunctionTok{summarise}\NormalTok{(}
+                \AttributeTok{pearson\_r =} \FunctionTok{suppressWarnings}\NormalTok{(}\FunctionTok{cor}\NormalTok{(avg\_activity, avg\_improvement, }\AttributeTok{use =} \StringTok{"complete.obs"}\NormalTok{)),}
+                \AttributeTok{spearman\_rho =} \FunctionTok{suppressWarnings}\NormalTok{(}\FunctionTok{cor}\NormalTok{(avg\_activity, avg\_improvement, }\AttributeTok{method =} \StringTok{"spearman"}\NormalTok{, }\AttributeTok{use =} \StringTok{"complete.obs"}\NormalTok{)),}
+                \AttributeTok{n\_observations =} \FunctionTok{n}\NormalTok{(),}
+                \AttributeTok{users =} \FunctionTok{n\_distinct}\NormalTok{(user)}
+\NormalTok{            )}
+
+        \CommentTok{\# Per{-}user correlation analysis with variance check}
+\NormalTok{        user\_correlations }\OtherTok{\textless{}{-}}\NormalTok{ period\_summary }\SpecialCharTok{\%\textgreater{}\%}
+            \FunctionTok{group\_by}\NormalTok{(user) }\SpecialCharTok{\%\textgreater{}\%}
+            \FunctionTok{filter}\NormalTok{(}\FunctionTok{n}\NormalTok{() }\SpecialCharTok{\textgreater{}=} \DecValTok{5}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# Minimum periods for reliable correlation}
+            \FunctionTok{mutate}\NormalTok{(}
+                \AttributeTok{sd\_act =} \FunctionTok{sd}\NormalTok{(avg\_activity, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+                \AttributeTok{sd\_imp =} \FunctionTok{sd}\NormalTok{(avg\_improvement, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{            ) }\SpecialCharTok{\%\textgreater{}\%}
+            \FunctionTok{filter}\NormalTok{(sd\_act }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{, sd\_imp }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{, }\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(sd\_act), }\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(sd\_imp)) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# Only users with variance}
+            \FunctionTok{summarise}\NormalTok{(}
+                \AttributeTok{correlation =} \FunctionTok{suppressWarnings}\NormalTok{(}\FunctionTok{cor}\NormalTok{(avg\_activity, avg\_improvement, }\AttributeTok{use =} \StringTok{"complete.obs"}\NormalTok{)),}
+                \AttributeTok{periods =} \FunctionTok{n}\NormalTok{(),}
+                \AttributeTok{.groups =} \StringTok{"drop"}
+\NormalTok{            ) }\SpecialCharTok{\%\textgreater{}\%}
+            \FunctionTok{filter}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(correlation))}
+\NormalTok{    \}}
+
+    \CommentTok{\# Only display tables if we have valid correlations}
+    \ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(correlation\_results}\SpecialCharTok{$}\NormalTok{pearson\_r)) \{}
+\NormalTok{        knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(}
+\NormalTok{            correlation\_results,}
+            \AttributeTok{digits =} \DecValTok{3}\NormalTok{,}
+            \AttributeTok{caption =} \StringTok{"Overall Activity{-}Performance Correlation"}\NormalTok{,}
+            \AttributeTok{col.names =} \FunctionTok{c}\NormalTok{(}\StringTok{"Pearson r"}\NormalTok{, }\StringTok{"Spearman ρ"}\NormalTok{, }\StringTok{"Observations"}\NormalTok{, }\StringTok{"Users"}\NormalTok{)}
 \NormalTok{        )}
-
-    \CommentTok{\# Per{-}user correlation analysis}
-\NormalTok{    user\_correlations }\OtherTok{\textless{}{-}}\NormalTok{ period\_summary }\SpecialCharTok{\%\textgreater{}\%}
-        \FunctionTok{group\_by}\NormalTok{(user) }\SpecialCharTok{\%\textgreater{}\%}
-        \FunctionTok{filter}\NormalTok{(}\FunctionTok{n}\NormalTok{() }\SpecialCharTok{\textgreater{}=} \DecValTok{5}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# Minimum periods for reliable correlation}
-        \FunctionTok{summarise}\NormalTok{(}
-            \AttributeTok{correlation =} \FunctionTok{cor}\NormalTok{(avg\_activity, avg\_improvement, }\AttributeTok{use =} \StringTok{"complete.obs"}\NormalTok{),}
-            \AttributeTok{periods =} \FunctionTok{n}\NormalTok{(),}
-            \AttributeTok{.groups =} \StringTok{"drop"}
-\NormalTok{        ) }\SpecialCharTok{\%\textgreater{}\%}
-        \FunctionTok{filter}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(correlation))}
-
-\NormalTok{    knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(}
-\NormalTok{        correlation\_results,}
-        \AttributeTok{digits =} \DecValTok{3}\NormalTok{,}
-        \AttributeTok{caption =} \StringTok{"Overall Activity{-}Performance Correlation"}\NormalTok{,}
-        \AttributeTok{col.names =} \FunctionTok{c}\NormalTok{(}\StringTok{"Pearson r"}\NormalTok{, }\StringTok{"Spearman ρ"}\NormalTok{, }\StringTok{"Observations"}\NormalTok{, }\StringTok{"Users"}\NormalTok{)}
-\NormalTok{    )}
+\NormalTok{    \}}
 
     \CommentTok{\# Summary of user{-}level correlations}
-\NormalTok{    user\_corr\_summary }\OtherTok{\textless{}{-}}\NormalTok{ user\_correlations }\SpecialCharTok{\%\textgreater{}\%}
-        \FunctionTok{summarise}\NormalTok{(}
-            \AttributeTok{users =} \FunctionTok{n}\NormalTok{(),}
-            \AttributeTok{positive\_corr =} \FunctionTok{sum}\NormalTok{(correlation }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{),}
-            \AttributeTok{strong\_positive =} \FunctionTok{sum}\NormalTok{(correlation }\SpecialCharTok{\textgreater{}} \FloatTok{0.3}\NormalTok{),}
-            \AttributeTok{negative\_corr =} \FunctionTok{sum}\NormalTok{(correlation }\SpecialCharTok{\textless{}} \DecValTok{0}\NormalTok{),}
-            \AttributeTok{mean\_correlation =} \FunctionTok{mean}\NormalTok{(correlation),}
-            \AttributeTok{median\_correlation =} \FunctionTok{median}\NormalTok{(correlation)}
-\NormalTok{        )}
+    \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(user\_correlations) }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{) \{}
+\NormalTok{        user\_corr\_summary }\OtherTok{\textless{}{-}}\NormalTok{ user\_correlations }\SpecialCharTok{\%\textgreater{}\%}
+            \FunctionTok{summarise}\NormalTok{(}
+                \AttributeTok{users =} \FunctionTok{n}\NormalTok{(),}
+                \AttributeTok{positive\_corr =} \FunctionTok{sum}\NormalTok{(correlation }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{),}
+                \AttributeTok{strong\_positive =} \FunctionTok{sum}\NormalTok{(correlation }\SpecialCharTok{\textgreater{}} \FloatTok{0.3}\NormalTok{),}
+                \AttributeTok{negative\_corr =} \FunctionTok{sum}\NormalTok{(correlation }\SpecialCharTok{\textless{}} \DecValTok{0}\NormalTok{),}
+                \AttributeTok{mean\_correlation =} \FunctionTok{mean}\NormalTok{(correlation),}
+                \AttributeTok{median\_correlation =} \FunctionTok{median}\NormalTok{(correlation)}
+\NormalTok{            )}
 
-\NormalTok{    knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(}
-\NormalTok{        user\_corr\_summary,}
-        \AttributeTok{digits =} \DecValTok{3}\NormalTok{,}
-        \AttributeTok{caption =} \StringTok{"User{-}Level Correlation Summary"}\NormalTok{,}
-        \AttributeTok{col.names =} \FunctionTok{c}\NormalTok{(}\StringTok{"Users"}\NormalTok{, }\StringTok{"Positive"}\NormalTok{, }\StringTok{"Strong Pos."}\NormalTok{, }\StringTok{"Negative"}\NormalTok{, }\StringTok{"Mean r"}\NormalTok{, }\StringTok{"Median r"}\NormalTok{)}
-\NormalTok{    )}
+\NormalTok{        knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(}
+\NormalTok{            user\_corr\_summary,}
+            \AttributeTok{digits =} \DecValTok{3}\NormalTok{,}
+            \AttributeTok{caption =} \StringTok{"User{-}Level Correlation Summary"}\NormalTok{,}
+            \AttributeTok{col.names =} \FunctionTok{c}\NormalTok{(}\StringTok{"Users"}\NormalTok{, }\StringTok{"Positive"}\NormalTok{, }\StringTok{"Strong Pos."}\NormalTok{, }\StringTok{"Negative"}\NormalTok{, }\StringTok{"Mean r"}\NormalTok{, }\StringTok{"Median r"}\NormalTok{)}
+\NormalTok{        )}
+\NormalTok{    \} }\ControlFlowTok{else}\NormalTok{ \{}
+\NormalTok{        user\_corr\_summary }\OtherTok{\textless{}{-}} \FunctionTok{tibble}\NormalTok{(}
+            \AttributeTok{users =} \DecValTok{0}\NormalTok{, }\AttributeTok{positive\_corr =} \DecValTok{0}\NormalTok{, }\AttributeTok{strong\_positive =} \DecValTok{0}\NormalTok{,}
+            \AttributeTok{negative\_corr =} \DecValTok{0}\NormalTok{, }\AttributeTok{mean\_correlation =} \ConstantTok{NA}\NormalTok{, }\AttributeTok{median\_correlation =} \ConstantTok{NA}
+\NormalTok{        )}
+        \FunctionTok{cat}\NormalTok{(}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{No users with sufficient variance for individual correlation analysis.}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\NormalTok{    \}}
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-## Warning: There were 2 warnings in `summarise()`.
-## The first warning was:
-## i In argument: `pearson_r = cor(avg_activity, avg_improvement, use =
-##   "complete.obs")`.
-## Caused by warning in `cor()`:
-## ! the standard deviation is zero
-## i Run `dplyr::last_dplyr_warnings()` to see the 1 remaining warning.
+## Insufficient variance in data for correlation analysis.
+##   SD(activity) = 0.0000, SD(improvement) = 7.1217
+## 
+## No users with sufficient variance for individual correlation analysis.
 \end{verbatim}
-
-\begin{verbatim}
-## Warning: There were 5 warnings in `summarise()`.
-## The first warning was:
-## i In argument: `correlation = cor(avg_activity, avg_improvement, use =
-##   "complete.obs")`.
-## i In group 1: `user = "Anna_Chess"`.
-## Caused by warning in `cor()`:
-## ! the standard deviation is zero
-## i Run `dplyr::last_dplyr_warnings()` to see the 4 remaining warnings.
-\end{verbatim}
-
-\begin{longtable}[]{@{}rrrrrr@{}}
-\caption{User-Level Correlation Summary}\tabularnewline
-\toprule\noalign{}
-Users & Positive & Strong Pos. & Negative & Mean r & Median r \\
-\midrule\noalign{}
-\endfirsthead
-\toprule\noalign{}
-Users & Positive & Strong Pos. & Negative & Mean r & Median r \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-0 & 0 & 0 & 0 & NaN & NA \\
-\end{longtable}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1118,31 +1112,38 @@ Users & Positive & Strong Pos. & Negative & Mean r & Median r \\
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(period\_summary) }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{) \{}
+\ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(period\_summary) }\SpecialCharTok{\textgreater{}} \DecValTok{0} \SpecialCharTok{\&\&} \SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(correlation\_results}\SpecialCharTok{$}\NormalTok{pearson\_r)) \{}
+    \CommentTok{\# Check for sufficient variance before statistical test}
+\NormalTok{    sd\_activity }\OtherTok{\textless{}{-}} \FunctionTok{sd}\NormalTok{(period\_summary}\SpecialCharTok{$}\NormalTok{avg\_activity, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{    sd\_improvement }\OtherTok{\textless{}{-}} \FunctionTok{sd}\NormalTok{(period\_summary}\SpecialCharTok{$}\NormalTok{avg\_improvement, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{)}
+    
     \CommentTok{\# Statistical significance test}
-    \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(period\_summary) }\SpecialCharTok{\textgreater{}} \DecValTok{30}\NormalTok{) \{}
-\NormalTok{        cor\_test }\OtherTok{\textless{}{-}} \FunctionTok{cor.test}\NormalTok{(period\_summary}\SpecialCharTok{$}\NormalTok{avg\_activity, period\_summary}\SpecialCharTok{$}\NormalTok{avg\_improvement)}
+    \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(period\_summary) }\SpecialCharTok{\textgreater{}} \DecValTok{30} \SpecialCharTok{\&\&}\NormalTok{ sd\_activity }\SpecialCharTok{\textgreater{}} \DecValTok{0} \SpecialCharTok{\&\&}\NormalTok{ sd\_improvement }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{) \{}
+\NormalTok{        cor\_test }\OtherTok{\textless{}{-}} \FunctionTok{suppressWarnings}\NormalTok{(}\FunctionTok{cor.test}\NormalTok{(period\_summary}\SpecialCharTok{$}\NormalTok{avg\_activity, period\_summary}\SpecialCharTok{$}\NormalTok{avg\_improvement))}
 
-        \FunctionTok{cat}\NormalTok{(}\StringTok{"Correlation Test Results:}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
-        \FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"Pearson correlation: \%.4f}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, cor\_test}\SpecialCharTok{$}\NormalTok{estimate))}
-        \FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"95\%\% CI: [\%.4f, \%.4f]}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, cor\_test}\SpecialCharTok{$}\NormalTok{conf.int[}\DecValTok{1}\NormalTok{], cor\_test}\SpecialCharTok{$}\NormalTok{conf.int[}\DecValTok{2}\NormalTok{]))}
-        \FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"p{-}value: \%.4f}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, cor\_test}\SpecialCharTok{$}\NormalTok{p.value))}
-        \FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}
-            \StringTok{"Interpretation: \%s}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{,}
-            \FunctionTok{ifelse}\NormalTok{(cor\_test}\SpecialCharTok{$}\NormalTok{p.value }\SpecialCharTok{\textless{}} \FloatTok{0.05}\NormalTok{, }\StringTok{"Statistically significant"}\NormalTok{, }\StringTok{"Not statistically significant"}\NormalTok{)}
-\NormalTok{        ))}
+        \ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(cor\_test}\SpecialCharTok{$}\NormalTok{estimate)) \{}
+            \FunctionTok{cat}\NormalTok{(}\StringTok{"Correlation Test Results:}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+            \FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"Pearson correlation: \%.4f}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, cor\_test}\SpecialCharTok{$}\NormalTok{estimate))}
+            \FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"95\%\% CI: [\%.4f, \%.4f]}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, cor\_test}\SpecialCharTok{$}\NormalTok{conf.int[}\DecValTok{1}\NormalTok{], cor\_test}\SpecialCharTok{$}\NormalTok{conf.int[}\DecValTok{2}\NormalTok{]))}
+            \FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"p{-}value: \%.4f}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, cor\_test}\SpecialCharTok{$}\NormalTok{p.value))}
+            \FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}
+                \StringTok{"Interpretation: \%s}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{,}
+                \FunctionTok{ifelse}\NormalTok{(cor\_test}\SpecialCharTok{$}\NormalTok{p.value }\SpecialCharTok{\textless{}} \FloatTok{0.05}\NormalTok{, }\StringTok{"Statistically significant"}\NormalTok{, }\StringTok{"Not statistically significant"}\NormalTok{)}
+\NormalTok{            ))}
+\NormalTok{        \}}
 \NormalTok{    \}}
 
     \CommentTok{\# Effect size interpretation}
 \NormalTok{    effect\_size }\OtherTok{\textless{}{-}} \FunctionTok{abs}\NormalTok{(correlation\_results}\SpecialCharTok{$}\NormalTok{pearson\_r)}
-\NormalTok{    effect\_interpretation }\OtherTok{\textless{}{-}} \FunctionTok{case\_when}\NormalTok{(}
-\NormalTok{        effect\_size }\SpecialCharTok{\textless{}} \FloatTok{0.1} \SpecialCharTok{\textasciitilde{}} \StringTok{"Negligible"}\NormalTok{,}
-\NormalTok{        effect\_size }\SpecialCharTok{\textless{}} \FloatTok{0.3} \SpecialCharTok{\textasciitilde{}} \StringTok{"Small"}\NormalTok{,}
-\NormalTok{        effect\_size }\SpecialCharTok{\textless{}} \FloatTok{0.5} \SpecialCharTok{\textasciitilde{}} \StringTok{"Medium"}\NormalTok{,}
-        \ConstantTok{TRUE} \SpecialCharTok{\textasciitilde{}} \StringTok{"Large"}
-\NormalTok{    )}
-
-    \FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{Effect size: \%.3f (\%s effect)}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, effect\_size, effect\_interpretation))}
+    \ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(effect\_size)) \{}
+\NormalTok{        effect\_interpretation }\OtherTok{\textless{}{-}} \FunctionTok{case\_when}\NormalTok{(}
+\NormalTok{            effect\_size }\SpecialCharTok{\textless{}} \FloatTok{0.1} \SpecialCharTok{\textasciitilde{}} \StringTok{"Negligible"}\NormalTok{,}
+\NormalTok{            effect\_size }\SpecialCharTok{\textless{}} \FloatTok{0.3} \SpecialCharTok{\textasciitilde{}} \StringTok{"Small"}\NormalTok{,}
+\NormalTok{            effect\_size }\SpecialCharTok{\textless{}} \FloatTok{0.5} \SpecialCharTok{\textasciitilde{}} \StringTok{"Medium"}\NormalTok{,}
+            \ConstantTok{TRUE} \SpecialCharTok{\textasciitilde{}} \StringTok{"Large"}
+\NormalTok{        )}
+        \FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{Effect size: \%.3f (\%s effect)}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, effect\_size, effect\_interpretation))}
+\NormalTok{    \}}
 \NormalTok{\} }\ControlFlowTok{else}\NormalTok{ \{}
     \FunctionTok{cat}\NormalTok{(}\StringTok{"Insufficient data for statistical test.}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
 \NormalTok{\}}
@@ -1150,17 +1151,7 @@ Users & Positive & Strong Pos. & Negative & Mean r & Median r \\
 \end{Shaded}
 
 \begin{verbatim}
-## Warning in cor(x, y): the standard deviation is zero
-\end{verbatim}
-
-\begin{verbatim}
-## Correlation Test Results:
-## Pearson correlation: NA
-## 95% CI: [NA, NA]
-## p-value: NA
-## Interpretation: NA
-## 
-## Effect size: NA (Large effect)
+## Insufficient data for statistical test.
 \end{verbatim}
 
 \begin{Shaded}
