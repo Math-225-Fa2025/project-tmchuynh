@@ -519,50 +519,78 @@ if (nrow(rating_summary) == 0) {
 if (nrow(period_summary) == 0) {
     cat("No period summary data available.\n")
 } else {
-    # Overall correlation analysis
-    correlation_results <- period_summary %>%
-        summarise(
-            pearson_r = cor(avg_activity, avg_improvement, use = "complete.obs"),
-            spearman_rho = cor(avg_activity, avg_improvement, method = "spearman", use = "complete.obs"),
-            n_observations = n(),
-            users = n_distinct(user)
+    # Check for sufficient variance before correlation
+    sd_activity <- sd(period_summary$avg_activity, na.rm = TRUE)
+    sd_improvement <- sd(period_summary$avg_improvement, na.rm = TRUE)
+    
+    if (sd_activity == 0 || sd_improvement == 0 || is.na(sd_activity) || is.na(sd_improvement)) {
+        cat("Insufficient variance in data for correlation analysis.\n")
+        cat(sprintf("  SD(activity) = %.4f, SD(improvement) = %.4f\n", sd_activity, sd_improvement))
+        correlation_results <- tibble(pearson_r = NA_real_, spearman_rho = NA_real_, 
+                                      n_observations = nrow(period_summary), users = n_distinct(period_summary$user))
+        user_correlations <- tibble()
+    } else {
+        # Overall correlation analysis with warning suppression
+        correlation_results <- period_summary %>%
+            summarise(
+                pearson_r = suppressWarnings(cor(avg_activity, avg_improvement, use = "complete.obs")),
+                spearman_rho = suppressWarnings(cor(avg_activity, avg_improvement, method = "spearman", use = "complete.obs")),
+                n_observations = n(),
+                users = n_distinct(user)
+            )
+
+        # Per-user correlation analysis with variance check
+        user_correlations <- period_summary %>%
+            group_by(user) %>%
+            filter(n() >= 5) %>% # Minimum periods for reliable correlation
+            mutate(
+                sd_act = sd(avg_activity, na.rm = TRUE),
+                sd_imp = sd(avg_improvement, na.rm = TRUE)
+            ) %>%
+            filter(sd_act > 0, sd_imp > 0, !is.na(sd_act), !is.na(sd_imp)) %>% # Only users with variance
+            summarise(
+                correlation = suppressWarnings(cor(avg_activity, avg_improvement, use = "complete.obs")),
+                periods = n(),
+                .groups = "drop"
+            ) %>%
+            filter(!is.na(correlation))
+    }
+
+    # Only display tables if we have valid correlations
+    if (!is.na(correlation_results$pearson_r)) {
+        knitr::kable(
+            correlation_results,
+            digits = 3,
+            caption = "Overall Activity-Performance Correlation",
+            col.names = c("Pearson r", "Spearman ρ", "Observations", "Users")
         )
-
-    # Per-user correlation analysis
-    user_correlations <- period_summary %>%
-        group_by(user) %>%
-        filter(n() >= 5) %>% # Minimum periods for reliable correlation
-        summarise(
-            correlation = cor(avg_activity, avg_improvement, use = "complete.obs"),
-            periods = n(),
-            .groups = "drop"
-        ) %>%
-        filter(!is.na(correlation))
-
-    knitr::kable(
-        correlation_results,
-        digits = 3,
-        caption = "Overall Activity-Performance Correlation",
-        col.names = c("Pearson r", "Spearman ρ", "Observations", "Users")
-    )
+    }
 
     # Summary of user-level correlations
-    user_corr_summary <- user_correlations %>%
-        summarise(
-            users = n(),
-            positive_corr = sum(correlation > 0),
-            strong_positive = sum(correlation > 0.3),
-            negative_corr = sum(correlation < 0),
-            mean_correlation = mean(correlation),
-            median_correlation = median(correlation)
-        )
+    if (nrow(user_correlations) > 0) {
+        user_corr_summary <- user_correlations %>%
+            summarise(
+                users = n(),
+                positive_corr = sum(correlation > 0),
+                strong_positive = sum(correlation > 0.3),
+                negative_corr = sum(correlation < 0),
+                mean_correlation = mean(correlation),
+                median_correlation = median(correlation)
+            )
 
-    knitr::kable(
-        user_corr_summary,
-        digits = 3,
-        caption = "User-Level Correlation Summary",
-        col.names = c("Users", "Positive", "Strong Pos.", "Negative", "Mean r", "Median r")
-    )
+        knitr::kable(
+            user_corr_summary,
+            digits = 3,
+            caption = "User-Level Correlation Summary",
+            col.names = c("Users", "Positive", "Strong Pos.", "Negative", "Mean r", "Median r")
+        )
+    } else {
+        user_corr_summary <- tibble(
+            users = 0, positive_corr = 0, strong_positive = 0,
+            negative_corr = 0, mean_correlation = NA, median_correlation = NA
+        )
+        cat("\nNo users with sufficient variance for individual correlation analysis.\n")
+    }
 }
 ```
 
