@@ -441,6 +441,41 @@ knitr::kable(
 )
 ```
 
+```{r activity-performance-viz, fig.height=6, fig.width=10}
+# Scatterplot of activity vs performance
+p1 <- ggplot(period_summary, aes(x = avg_activity, y = avg_improvement)) +
+    geom_point(alpha = 0.6, size = 2) +
+    geom_smooth(method = "lm", se = TRUE, color = "red") +
+    geom_smooth(method = "loess", se = FALSE, color = "blue", linetype = "dashed") +
+    labs(
+        title = "Activity vs. Rating Improvement",
+        subtitle = paste("r =", round(correlation_results$pearson_r, 3)),
+        x = "Average Activity (Games per Week)",
+        y = "Average Rating Improvement per Period"
+    ) +
+    theme_minimal()
+
+# Distribution of user-level correlations
+p2 <- ggplot(user_correlations, aes(x = correlation)) +
+    geom_histogram(bins = 15, fill = "skyblue", alpha = 0.7, color = "white") +
+    geom_vline(xintercept = 0, linetype = "dashed", color = "red") +
+    geom_vline(
+        xintercept = median(user_correlations$correlation),
+        linetype = "solid", color = "blue"
+    ) +
+    labs(
+        title = "Distribution of User-Level Correlations",
+        subtitle = paste("Median =", round(median(user_correlations$correlation), 3)),
+        x = "Correlation Coefficient",
+        y = "Number of Users"
+    ) +
+    theme_minimal()
+
+# Combine plots
+library(patchwork)
+p1 / p2
+```
+
 1. **Hierarchical Mixed-Effects Models:**
    Account for both user-level and category-level variation using `lme4`:
    
