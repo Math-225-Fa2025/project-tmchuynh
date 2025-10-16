@@ -75,9 +75,9 @@ This nonlinear model represents **asymptotic learning behavior**, capturing how 
 **Behavioral Interpretation:**
 
 * **At t = 0:**
-  ( R₀ = A - B ), corresponding to the **initial rating baseline**.
+  `R₀ = A - B`, corresponding to the **initial rating baseline**.
 * **As t → ∞:**
-  ( Rₜ → A ), meaning the player’s rating **approaches the performance ceiling asymptotically**, never fully reaching it in finite time.
+  `Rₜ → A`, meaning the player’s rating **approaches the performance ceiling asymptotically**, never fully reaching it in finite time.
 * **Effect of k:**
   The **learning rate constant** determines how steeply the curve rises and how quickly it flattens — capturing the **transition from rapid acquisition to refinement and consolidation**.
 
@@ -86,7 +86,7 @@ This nonlinear model represents **asymptotic learning behavior**, capturing how 
 * **Concave Upward:**
   The model begins with **exponential-like acceleration**, reflecting efficient early learning.
 * **Inflection Point:**
-  Occurs at ( t = \ln(2)/k ), where the **rate of improvement begins to slow**, marking the shift from **exploratory learning** to **skill stabilization**.
+  Occurs at `t = ln(2)/k`, where the **rate of improvement begins to slow**, marking the shift from **exploratory learning** to **skill stabilization**.
 * **Horizontal Asymptote (y = A):**
   Defines the **performance ceiling**, representing the **limit of measurable improvement** under consistent learning conditions.
 
@@ -216,11 +216,11 @@ This formulation models **nonlinear learning behavior**—capturing the rapid ea
 **Interpretation:**
 
 * **At t = 0:**
-  ( R₀ = A - B ), representing the **initial rating baseline** before measurable improvement occurs.
+  `R₀ = A - B`, representing the **initial rating baseline** before measurable improvement occurs.
 * **As t increases:**
-  ( e^{-kt} ) progressively decreases toward zero, reflecting **diminishing distance from the performance ceiling (A)**.
+  `e^(-kt)` progressively decreases toward zero, reflecting **diminishing distance from the performance ceiling (A)**.
 * **Long-term limit:**
-  As ( t → ∞ ), ( Rₜ → A ), meaning the player’s rating **approaches but never fully reaches the ceiling** within finite time.
+  As `t → ∞`, `Rₜ → A`, meaning the player’s rating **approaches but never fully reaches the ceiling** within finite time.
 * **Conceptual insight:**
   The exponential term **quantifies the “remaining potential for growth”**, providing a dynamic measure of **how far the player remains from maximum skill realization**.
 
@@ -231,11 +231,11 @@ dR/dt = k × B × e^(-k×t)
 ```
 
 * **Initial Growth Rate:**
-  At ( t = 0 ), the instantaneous rate is ( k × B ) — the **maximum possible learning velocity**.
+  At `t = 0`, the instantaneous rate is `k × B` — the **maximum possible learning velocity**.
 * **Temporal Behavior:**
   The derivative decays **exponentially with time**, mirroring the natural slowdown of learning as experience accumulates.
 * **Long-Term Limit:**
-  As ( t → ∞ ), ( dR/dt → 0 ), indicating that **further improvement becomes negligible** near the skill ceiling.
+  As `t → ∞`, `dR/dt → 0`, indicating that **further improvement becomes negligible** near the skill ceiling.
 
 **Half-Life (Time to Reach 50% of Ceiling Gain):**
 
@@ -456,7 +456,7 @@ fit_growth_curve <- function(df) {
 * **B = 198:** Denotes the **total improvement potential**, corresponding closely to the observed increase (1,720 – 1,522 = 198 points).
 * **k = 0.082:** Indicates a **rapid learning rate**, characteristic of fast early-stage growth.
 
-  * **Half-life:** ( t_{50} = \ln(2) / 0.082 = 8.5 ) periods — reaches **50% of potential improvement within ~9 weeks**.
+  * **Half-life:** `t₅₀ = ln(2) / 0.082 = 8.5` periods — reaches **50% of potential improvement within ~9 weeks**.
   * **95% Completion:** Approximately **3 × t₅₀ = 37 weeks**, marking near-saturation of skill growth.
   * Suggests **efficient learning behavior** and **short adaptation cycles** relative to peers.
 
@@ -466,7 +466,7 @@ fit_growth_curve <- function(df) {
 * **B = 162:** Represents a **moderate improvement window**, implying more incremental progress relative to GothamChess.
 * **k = 0.065:** Corresponds to a **slower learning rate**, indicative of steady, methodical development.
 
-  * **Half-life:** ( t_{50} = 10.7 ) periods — requires approximately **25% longer to reach mid-curve performance** compared to GothamChess.
+  * **Half-life:** `t₅₀ = 10.7` periods — requires approximately **25% longer to reach mid-curve performance** compared to GothamChess.
   * Reflects **gradual adaptation** and more **sustained learning efficiency** over time.
 
 **Standard Errors and Significance**
@@ -645,8 +645,8 @@ predicted = A - B * exp(-k * time_index)
 
 **Calculations:**
 
-* **t₅₀:** ( \ln(2) / k ) — Time required to achieve **50% of total potential improvement**.
-* **90% Ceiling:** ( \ln(10) / k = 2.303 / k ) — Approximate time to reach **90% of the asymptotic performance ceiling** (A).
+* **t₅₀:** `ln(2) / k` — Time required to achieve **50% of total potential improvement**.
+* **90% Ceiling:** `ln(10) / k = 2.303 / k` — Approximate time to reach **90% of the asymptotic performance ceiling** (A).
 
 These metrics provide intuitive measures of **learning velocity** and **curve steepness**, allowing direct comparison of how quickly each player approaches their long-term performance limit.
 
@@ -687,8 +687,8 @@ Predicted asymptotic ceilings (**A**) span from **1,720 to 2,850**, encompassing
 **Pattern:**
 
 * **Strong correlation** with final observed rating (**r = 0.98**), confirming high predictive alignment between modeled ceilings and empirical performance outcomes.
-* **Elite players:** ( A > 2,700 ) — consistent with top-tier competitors (*Magnus*, *Hikaru*).
-* **Improving players:** ( A = 1,700–2,000 ) — aligns with steady progression profiles (*GothamChess*, *Anna_Chess*, *ChessNetwork*).
+* **Elite players:** `A > 2,700` — consistent with top-tier competitors (*Magnus*, *Hikaru*).
+* **Improving players:** `A = 1,700–2,000` — aligns with steady progression profiles (*GothamChess*, *Anna_Chess*, *ChessNetwork*).
 * **Interpretation:** The model effectively **differentiates skill tiers** and captures **performance stratification** across users, validating its use for comparative benchmarking.
 
 **Extrapolation Validity:**
@@ -707,8 +707,8 @@ Estimated improvement spans from **5 to 198 rating points**, reflecting the tota
 **Pattern:**
 
 * **Inverse correlation** with starting rating (**r = –0.85**), indicating that players who begin at lower skill levels exhibit **greater absolute improvement potential**.
-* **Low-rated beginners:** ( B = 150–200 ) — represent substantial headroom for growth, driven by rapid early-stage learning and tactical consolidation.
-* **High-rated experts:** ( B = 5–10 ) — display limited upward mobility, consistent with near-ceiling skill saturation.
+* **Low-rated beginners:** `B = 150–200` — represent substantial headroom for growth, driven by rapid early-stage learning and tactical consolidation.
+* **High-rated experts:** `B = 5–10` — display limited upward mobility, consistent with near-ceiling skill saturation.
 * **Interpretation:** The parameter **B** effectively quantifies “remaining learning capacity,” demonstrating that **lower-skilled players have proportionally more room for development**, while elite players operate within diminishing returns zones.
 
 **Percentile Improvement:**
