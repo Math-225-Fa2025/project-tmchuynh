@@ -1069,7 +1069,8 @@ for (i in seq_len(nrow(rating_dist))) {
 }
 
 write_csv(lichess_clean, paste0(data_dir, "lichess_clean.csv"))
-message("✓ Lichess random user data saved.")
+write_csv(lichess_all, paste0(data_dir, "lichess_games_raw.csv"))
+message("✓ Lichess user data and raw games saved.")
 
 ############################################################
 # 6. SIMULATE RANDOM FIDE PLAYERS
