@@ -427,9 +427,12 @@ get_lichess_data <- function(username, max_games = 20, access_token = NULL) {
         return(NULL)
       }
 
-      df <- bind_rows(json_games)
-
-      if (nrow(df) == 0) {
+      message(paste(
+        "Successfully parsed",
+        length(json_games),
+        "games for user:",
+        username
+      ))
         return(NULL)
       }
 
