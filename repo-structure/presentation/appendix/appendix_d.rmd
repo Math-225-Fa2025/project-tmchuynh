@@ -205,8 +205,263 @@ if (nrow(rating_history) == 0) {
           theme(legend.position = "right")
     print(p3)
     ggplotly(p3, tooltip = "text")
-    ggsave("../../presentation/presentation_files/rating_progression_timeseries.png", plot = p3, width = 10, height = 6, dpi = 300)
+    ggsave("../../presentation/presentation_files/rating_progression_timeseries_blitz.png", plot = p3, width = 10, height = 6, dpi = 300)
   }
+}
+```
+
+---
+
+### D.5b Time-Series Rating Progression: Bullet
+
+```{r rating-timeseries-bullet, fig.height=6, fig.width=10}
+# Bullet category analysis
+if (nrow(rating_history) == 0) {
+  cat("No rating history data available. Skipping Bullet plot.\n")
+  plot.new()
+  text(0.5, 0.5, "No rating history data available", cex = 1.5)
+} else {
+  # Select top 5 users with most rating history in Bullet category
+  top_users_bullet <- rating_history %>%
+    filter(!is.na(rating), !is.na(date), category == "Bullet") %>%
+    count(user, sort = TRUE) %>%
+    slice_head(n = 5) %>%
+    pull(user)
+  
+  if (length(top_users_bullet) == 0) {
+    cat("No users found with Bullet rating history.\n")
+    plot.new()
+    text(0.5, 0.5, "No Bullet data available", cex = 1.5)
+  } else {
+    rating_bullet_data <- rating_history %>%
+      filter(user %in% top_users_bullet, category == "Bullet", !is.na(rating), !is.na(date)) %>%
+      group_by(user) %>%
+      arrange(date) %>%
+      mutate(rating_smooth = if(n() >= 3) {
+        zoo::rollmean(rating, k = 3, fill = NA, align = "right")
+      } else {
+        rating
+      }) %>%
+      ungroup() %>%
+      filter(!is.na(rating_smooth))
+    
+    if (nrow(rating_bullet_data) > 0) {
+      p_bullet <- ggplot(rating_bullet_data, aes(x = date, y = rating_smooth, color = user,
+                                        text = paste0("User: ", user,
+                                                     "<br>Date: ", date,
+                                                     "<br>Rating: ", round(rating_smooth, 0)))) +
+        geom_line(linewidth = 1, alpha = 0.8) +
+        geom_point(size = 0.5, alpha = 0.5) +
+        labs(
+          title = "Rating Progression Over Time (Bullet, Top 5 Active Users)",
+          x = "Date",
+          y = "Smoothed Rating",
+          color = "User"
+        ) +
+        theme_minimal(base_size = 12) +
+        theme(legend.position = "right")
+      print(p_bullet)
+      ggplotly(p_bullet, tooltip = "text")
+      ggsave("../../presentation/presentation_files/rating_progression_bullet.png", plot = p_bullet, width = 10, height = 6, dpi = 300)
+    }
+  }
+}
+```
+
+---
+
+### D.5c Time-Series Rating Progression: Rapid
+
+```{r rating-timeseries-rapid, fig.height=6, fig.width=10}
+# Rapid category analysis
+if (nrow(rating_history) == 0) {
+  cat("No rating history data available. Skipping Rapid plot.\n")
+  plot.new()
+  text(0.5, 0.5, "No rating history data available", cex = 1.5)
+} else {
+  # Select top 5 users with most rating history in Rapid category
+  top_users_rapid <- rating_history %>%
+    filter(!is.na(rating), !is.na(date), category == "Rapid") %>%
+    count(user, sort = TRUE) %>%
+    slice_head(n = 5) %>%
+    pull(user)
+  
+  if (length(top_users_rapid) == 0) {
+    cat("No users found with Rapid rating history.\n")
+    plot.new()
+    text(0.5, 0.5, "No Rapid data available", cex = 1.5)
+  } else {
+    rating_rapid_data <- rating_history %>%
+      filter(user %in% top_users_rapid, category == "Rapid", !is.na(rating), !is.na(date)) %>%
+      group_by(user) %>%
+      arrange(date) %>%
+      mutate(rating_smooth = if(n() >= 3) {
+        zoo::rollmean(rating, k = 3, fill = NA, align = "right")
+      } else {
+        rating
+      }) %>%
+      ungroup() %>%
+      filter(!is.na(rating_smooth))
+    
+    if (nrow(rating_rapid_data) > 0) {
+      p_rapid <- ggplot(rating_rapid_data, aes(x = date, y = rating_smooth, color = user,
+                                      text = paste0("User: ", user,
+                                                   "<br>Date: ", date,
+                                                   "<br>Rating: ", round(rating_smooth, 0)))) +
+        geom_line(linewidth = 1, alpha = 0.8) +
+        geom_point(size = 0.5, alpha = 0.5) +
+        labs(
+          title = "Rating Progression Over Time (Rapid, Top 5 Active Users)",
+          x = "Date",
+          y = "Smoothed Rating",
+          color = "User"
+        ) +
+        theme_minimal(base_size = 12) +
+        theme(legend.position = "right")
+      print(p_rapid)
+      ggplotly(p_rapid, tooltip = "text")
+      ggsave("../../presentation/presentation_files/rating_progression_rapid.png", plot = p_rapid, width = 10, height = 6, dpi = 300)
+    }
+  }
+}
+```
+
+---
+
+### D.5d Time-Series Rating Progression: Classical
+
+```{r rating-timeseries-classical, fig.height=6, fig.width=10}
+# Classical category analysis
+if (nrow(rating_history) == 0) {
+  cat("No rating history data available. Skipping Classical plot.\n")
+  plot.new()
+  text(0.5, 0.5, "No rating history data available", cex = 1.5)
+} else {
+  # Select top 5 users with most rating history in Classical category
+  top_users_classical <- rating_history %>%
+    filter(!is.na(rating), !is.na(date), category == "Classical") %>%
+    count(user, sort = TRUE) %>%
+    slice_head(n = 5) %>%
+    pull(user)
+  
+  if (length(top_users_classical) == 0) {
+    cat("No users found with Classical rating history.\n")
+    plot.new()
+    text(0.5, 0.5, "No Classical data available", cex = 1.5)
+  } else {
+    rating_classical_data <- rating_history %>%
+      filter(user %in% top_users_classical, category == "Classical", !is.na(rating), !is.na(date)) %>%
+      group_by(user) %>%
+      arrange(date) %>%
+      mutate(rating_smooth = if(n() >= 3) {
+        zoo::rollmean(rating, k = 3, fill = NA, align = "right")
+      } else {
+        rating
+      }) %>%
+      ungroup() %>%
+      filter(!is.na(rating_smooth))
+    
+    if (nrow(rating_classical_data) > 0) {
+      p_classical <- ggplot(rating_classical_data, aes(x = date, y = rating_smooth, color = user,
+                                         text = paste0("User: ", user,
+                                                      "<br>Date: ", date,
+                                                      "<br>Rating: ", round(rating_smooth, 0)))) +
+        geom_line(linewidth = 1, alpha = 0.8) +
+        geom_point(size = 0.5, alpha = 0.5) +
+        labs(
+          title = "Rating Progression Over Time (Classical, Top 5 Active Users)",
+          x = "Date",
+          y = "Smoothed Rating",
+          color = "User"
+        ) +
+        theme_minimal(base_size = 12) +
+        theme(legend.position = "right")
+      print(p_classical)
+      ggplotly(p_classical, tooltip = "text")
+      ggsave("../../presentation/presentation_files/rating_progression_classical.png", plot = p_classical, width = 10, height = 6, dpi = 300)
+    }
+  }
+}
+```
+
+---
+
+### D.5e Comparative Rating Distribution by Game Type
+
+```{r rating-comparison-by-type, fig.height=7, fig.width=11}
+# Compare rating distributions across all game types
+rating_by_category <- rating_history %>%
+  filter(!is.na(rating)) %>%
+  group_by(category, user) %>%
+  summarize(
+    avg_rating = mean(rating, na.rm = TRUE),
+    max_rating = max(rating, na.rm = TRUE),
+    games_played = n(),
+    .groups = "drop"
+  )
+
+if (nrow(rating_by_category) > 0) {
+  # Box plot comparing distributions
+  p_dist <- ggplot(rating_by_category, aes(x = category, y = avg_rating, fill = category,
+                                            text = paste0("Category: ", category,
+                                                         "<br>Avg Rating: ", round(avg_rating, 0)))) +
+    geom_boxplot(alpha = 0.7, outlier.alpha = 0.3) +
+    geom_jitter(alpha = 0.2, width = 0.2, size = 1) +
+    scale_fill_brewer(palette = "Set2") +
+    labs(
+      title = "Average Rating Distribution by Game Type",
+      subtitle = "Each point represents a player's average rating in that category",
+      x = "Game Type",
+      y = "Average Rating",
+      fill = "Category"
+    ) +
+    theme_minimal(base_size = 12) +
+    theme(legend.position = "none")
+  
+  print(p_dist)
+  ggplotly(p_dist, tooltip = "text")
+  ggsave("../../presentation/presentation_files/rating_distribution_by_type.png", plot = p_dist, width = 11, height = 7, dpi = 300)
+}
+```
+
+---
+
+### D.5f Game Activity Comparison Across Categories
+
+```{r activity-comparison, fig.height=6, fig.width=10}
+# Compare activity levels across game types
+activity_by_category <- rating_history %>%
+  filter(!is.na(rating)) %>%
+  group_by(category) %>%
+  summarize(
+    total_games = n(),
+    unique_users = n_distinct(user),
+    avg_games_per_user = n() / n_distinct(user),
+    .groups = "drop"
+  )
+
+if (nrow(activity_by_category) > 0) {
+  p_activity <- ggplot(activity_by_category, aes(x = reorder(category, -avg_games_per_user), 
+                                                   y = avg_games_per_user, fill = category,
+                                                   text = paste0("Category: ", category,
+                                                                "<br>Avg Games/User: ", round(avg_games_per_user, 1),
+                                                                "<br>Total Users: ", unique_users))) +
+    geom_col(alpha = 0.8) +
+    scale_fill_brewer(palette = "Set1") +
+    labs(
+      title = "Average Game Activity by Category",
+      subtitle = "Which game types are most popular?",
+      x = "Game Type",
+      y = "Average Games per User",
+      fill = "Category"
+    ) +
+    theme_minimal(base_size = 12) +
+    theme(legend.position = "none") +
+    coord_flip()
+  
+  print(p_activity)
+  ggplotly(p_activity, tooltip = "text")
+  ggsave("../../presentation/presentation_files/activity_by_category.png", plot = p_activity, width = 10, height = 6, dpi = 300)
 }
 ```
 
@@ -237,22 +492,25 @@ player_summary %>%
 
 ---
 
-### D.7 Nonlinear Growth Model Parameters
+### D.7 Nonlinear Growth Model Parameters (Multi-Category)
 
 ```{r growth-parameters, message=FALSE}
-# Fit exponential growth models for sample users
+# Fit exponential growth models for sample users across ALL categories
 rating_nl_df <- rating_history %>%
-  filter(category == "Blitz", !is.na(rating)) %>%
-  group_by(user) %>%
+  filter(!is.na(rating)) %>%
+  group_by(user, category) %>%
   mutate(time_index = row_number()) %>%
   filter(n() >= 15) %>%
   ungroup()
 
-target_users <- rating_nl_df %>%
-  count(user) %>%
+# Select users with data in multiple categories
+target_user_categories <- rating_nl_df %>%
+  count(user, category) %>%
+  group_by(user) %>%
+  filter(n() >= 2) %>%  # Users with at least 2 categories
   arrange(desc(n)) %>%
-  slice_head(n = 5) %>%
-  pull(user)
+  slice_head(n = 3) %>% # Top 3 most active users
+      ungroup()
 
 fit_growth_curve <- function(df) {
   tryCatch({
@@ -262,68 +520,73 @@ fit_growth_curve <- function(df) {
       start = list(A = max(df$rating), B = max(df$rating) - min(df$rating), k = 0.05),
       control = nls.lm.control(maxiter = 100)
     )
-    tidy(model) %>% mutate(user = unique(df$user))
+    tidy(model) %>% mutate(user = unique(df$user), category = unique(df$category))
   }, error = function(e) NULL)
 }
 
 nonlinear_models <- rating_nl_df %>%
-  filter(user %in% target_users) %>%
-  group_by(user) %>%
+  semi_join(target_user_categories, by = c("user", "category")) %>%
+  group_by(user, category) %>%
   group_modify(~ fit_growth_curve(.x)) %>%
   ungroup()
 
-# Create summary table
+# Create summary table with category information
 growth_summary <- nonlinear_models %>%
-  select(user, term, estimate) %>%
+  select(user, category, term, estimate) %>%
   pivot_wider(names_from = term, values_from = estimate) %>%
   mutate(
     ceiling_rating = round(A, 1),
     learning_rate = round(k, 4),
     rating_span = round(B, 1)
   ) %>%
-  select(user, ceiling_rating, learning_rate, rating_span)
+  select(user, category, ceiling_rating, learning_rate, rating_span) %>%
+      arrange(user, category)
 
 datatable(
   growth_summary,
-  caption = "Nonlinear Growth Model Parameters (Exponential Fit)",
-  colnames = c("User", "Ceiling Rating", "Learning Rate (k)", "Rating Span"),
-  options = list(pageLength = 5)
+  caption = "Nonlinear Growth Model Parameters (Exponential Fit) - Multi-Category Comparison",
+  colnames = c("User", "Category", "Ceiling Rating", "Learning Rate (k)", "Rating Span"),
+  options = list(pageLength = 10)
 )
 ```
 
 ---
 
-### D.8 Fitted Growth Curves Visualization
+### D.8 Fitted Growth Curves Visualization (Multi-Category)
 
-```{r growth-curves, fig.height=6, fig.width=10}
+```{r growth-curves, fig.height=8, fig.width=12}
 predicted_curves <- nonlinear_models %>%
-  select(user, term, estimate) %>%
+  select(user, category, term, estimate) %>%
   pivot_wider(names_from = term, values_from = estimate) %>%
-  left_join(rating_nl_df %>% filter(user %in% target_users), by = "user") %>%
+  left_join(rating_nl_df %>% semi_join(target_user_categories, by = c("user", "category")), 
+            by = c("user", "category")) %>%
   mutate(predicted = A - B * exp(-k * time_index))
 
 # Add tooltip column to data
 predicted_curves <- predicted_curves %>%
   mutate(
-    tooltip_actual = paste0("User: ", user, "<br>Game: ", time_index, "<br>Actual: ", round(rating, 0)),
-    tooltip_pred = paste0("User: ", user, "<br>Game: ", time_index, "<br>Predicted: ", round(predicted, 0))
+    tooltip_actual = paste0("User: ", user, "<br>Category: ", category, "<br>Game: ", time_index, "<br>Actual: ", round(rating, 0)),
+    tooltip_pred = paste0("User: ", user, "<br>Category: ", category, "<br>Game: ", time_index, "<br>Predicted: ", round(predicted, 0))
   )
 
-p4 <- ggplot(predicted_curves, aes(x = time_index, y = rating, color = user)) +
-  geom_point(alpha = 0.3, size = 1) +
+p4 <- ggplot(predicted_curves, aes(x = time_index, y = rating, color = category)) +
+  geom_point(alpha = 0.3, size = 0.8) +
   geom_line(aes(y = predicted), linewidth = 1.2) +
-  facet_wrap(~user, scales = "free") +
+  facet_wrap(~user, scales = "free", ncol = 1) +
+  scale_color_brewer(palette = "Set1") +
   labs(
-    title = "Nonlinear Rating Growth Models - Actual vs Fitted",
+    title = "Nonlinear Rating Growth Models - Actual vs Fitted (Multi-Category)",
+    subtitle = "Comparing learning curves across different game types",
     x = "Game Sequence",
     y = "Rating",
-    color = "User"
+    color <- "Category"
   ) +
-  theme_minimal(base_size = 11)
+  theme_minimal(base_size = 11) +
+      theme(legend.position = "right")
 
 ggplotly(p4)
 print(p4)
-ggsave("../../presentation/presentation_files/nonlinear_growth_models.png", plot = p4, width = 10, height = 6, dpi = 300)
+ggsave("../../presentation/presentation_files/nonlinear_growth_models_multicategory.png", plot = p4, width = 12, height = 8, dpi = 300)
 ```
 
 ---
