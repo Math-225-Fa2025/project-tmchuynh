@@ -888,7 +888,7 @@ write_csv(fide_clean, paste0(data_dir, "fide_clean.csv"))
 message("✓ FIDE random player data saved.")
 
 ############################################################
-# 5. MERGE & SUMMARY
+# 7. MERGE & SUMMARY
 ############################################################
 
 message("\n=== COMPREHENSIVE DATA MERGING AND SUMMARY ===")
@@ -896,13 +896,15 @@ message("\n=== COMPREHENSIVE DATA MERGING AND SUMMARY ===")
 # Create comprehensive summary by rating groups
 merged_summary <- lichess_clean %>%
   # Standardize rating groups for comparison
-  mutate(rating_group = case_when(
-    avg_rating < 1600 ~ "Under 1600",
-    avg_rating < 2000 ~ "1600–1999",
-    avg_rating < 2400 ~ "2000–2399",
-    avg_rating < 2600 ~ "2400–2599",
-    TRUE ~ "2600+"
-  )) %>%
+  mutate(
+    rating_group = case_when(
+      avg_rating < 1600 ~ "Under 1600",
+      avg_rating < 2000 ~ "1600–1999",
+      avg_rating < 2400 ~ "2000–2399",
+      avg_rating < 2600 ~ "2400–2599",
+      TRUE ~ "2600+"
+    )
+  ) %>%
   group_by(rating_group) %>%
   summarise(
     # Lichess statistics
