@@ -436,7 +436,7 @@ if (nrow(rating_summary) == 0) {
 ### B.7 Analytical Highlights
 
 ```{r analytical-highlights, results='asis'}
-if (nrow(rating_summary) > 0 && growth_summary$users > 0) {
+if (nrow(rating_summary) > 0 && nrow(growth_summary) > 0 && growth_summary$users[1] > 0) {
     cat("**Key Findings:**\n\n")
 
     cat(sprintf(
@@ -752,31 +752,38 @@ if (nrow(period_summary) > 0) {
 ```
 
 ```{r statistical-test}
-if (nrow(period_summary) > 0) {
+if (nrow(period_summary) > 0 && !is.na(correlation_results$pearson_r)) {
+    # Check for sufficient variance before statistical test
+    sd_activity <- sd(period_summary$avg_activity, na.rm = TRUE)
+    sd_improvement <- sd(period_summary$avg_improvement, na.rm = TRUE)
+    
     # Statistical significance test
-    if (nrow(period_summary) > 30) {
-        cor_test <- cor.test(period_summary$avg_activity, period_summary$avg_improvement)
+    if (nrow(period_summary) > 30 && sd_activity > 0 && sd_improvement > 0) {
+        cor_test <- suppressWarnings(cor.test(period_summary$avg_activity, period_summary$avg_improvement))
 
-        cat("Correlation Test Results:\n")
-        cat(sprintf("Pearson correlation: %.4f\n", cor_test$estimate))
-        cat(sprintf("95%% CI: [%.4f, %.4f]\n", cor_test$conf.int[1], cor_test$conf.int[2]))
-        cat(sprintf("p-value: %.4f\n", cor_test$p.value))
-        cat(sprintf(
-            "Interpretation: %s\n",
-            ifelse(cor_test$p.value < 0.05, "Statistically significant", "Not statistically significant")
-        ))
+        if (!is.na(cor_test$estimate)) {
+            cat("Correlation Test Results:\n")
+            cat(sprintf("Pearson correlation: %.4f\n", cor_test$estimate))
+            cat(sprintf("95%% CI: [%.4f, %.4f]\n", cor_test$conf.int[1], cor_test$conf.int[2]))
+            cat(sprintf("p-value: %.4f\n", cor_test$p.value))
+            cat(sprintf(
+                "Interpretation: %s\n",
+                ifelse(cor_test$p.value < 0.05, "Statistically significant", "Not statistically significant")
+            ))
+        }
     }
 
     # Effect size interpretation
     effect_size <- abs(correlation_results$pearson_r)
-    effect_interpretation <- case_when(
-        effect_size < 0.1 ~ "Negligible",
-        effect_size < 0.3 ~ "Small",
-        effect_size < 0.5 ~ "Medium",
-        TRUE ~ "Large"
-    )
-
-    cat(sprintf("\nEffect size: %.3f (%s effect)\n", effect_size, effect_interpretation))
+    if (!is.na(effect_size)) {
+        effect_interpretation <- case_when(
+            effect_size < 0.1 ~ "Negligible",
+            effect_size < 0.3 ~ "Small",
+            effect_size < 0.5 ~ "Medium",
+            TRUE ~ "Large"
+        )
+        cat(sprintf("\nEffect size: %.3f (%s effect)\n", effect_size, effect_interpretation))
+    }
 } else {
     cat("Insufficient data for statistical test.\n")
 }
