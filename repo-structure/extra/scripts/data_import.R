@@ -803,7 +803,7 @@ write_csv(lichess_clean, paste0(data_dir, "lichess_clean.csv"))
 message("✓ Lichess random user data saved.")
 
 ############################################################
-# 4. SIMULATE RANDOM FIDE PLAYERS
+# 6. SIMULATE RANDOM FIDE PLAYERS
 ############################################################
 
 message("\n=== FIDE DATA SIMULATION ===")
