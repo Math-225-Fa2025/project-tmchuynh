@@ -1,0 +1,11 @@
+# Lichess API Configuration
+# Copy this file to .Renviron and fill in your actual token
+
+# Personal Access Token from https://lichess.org/account/oauth/token
+LICHESS_ACCESS_TOKEN=lip_your_token_here
+
+# Optional: OAuth2 Client ID (for applications)
+LICHESS_CLIENT_ID=your_client_id_here
+
+# Optional: Custom API rate limiting (requests per minute)
+# LICHESS_RATE_LIMIT=30
