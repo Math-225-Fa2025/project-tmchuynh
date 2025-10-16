@@ -542,12 +542,14 @@ user_corr_summary <- user_correlations %>%
 knitr::kable(
     user_corr_summary,
     digits = 3,
-    caption = "User-Level Correlation Summary",
-    col.names = c("Users", "Positive", "Strong Pos.", "Negative", "Mean r", "Median r")
+    caption = \"User-Level Correlation Summary\",
+    col.names = c(\"Users\", \"Positive\", \"Strong Pos.\", \"Negative\", \"Mean r\", \"Median r\")
 )
+}
 ```
 
 ```{r activity-performance-viz, fig.height=6, fig.width=10}
+if (nrow(period_summary) > 0 && nrow(user_correlations) > 0) {
 # Scatterplot of activity vs performance
 p1 <- ggplot(period_summary, aes(x = avg_activity, y = avg_improvement)) +
     geom_point(alpha = 0.6, size = 2) +
