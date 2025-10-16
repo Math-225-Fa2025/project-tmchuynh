@@ -274,9 +274,12 @@ if (nrow(rating_summary) == 0) {
 ### B.4 Rating Volatility Analysis
 
 ```{r rating-volatility, fig.height=5, fig.width=9}
-# Calculate volatility metrics per user and category
-volatility_stats <- rating_summary %>%
-    filter(category %in% top_categories) %>%
+if (nrow(rating_summary) == 0) {
+    cat("No data available. Skipping volatility analysis.\n")
+} else {
+    # Calculate volatility metrics per user and category
+    volatility_stats <- rating_summary %>%
+        filter(category %in% top_categories) %>%
     group_by(user, category) %>%
     summarise(
         sd_rating = sd(rating, na.rm = TRUE),
