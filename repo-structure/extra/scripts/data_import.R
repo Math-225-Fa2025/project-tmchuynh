@@ -677,10 +677,6 @@ get_lichess_data <- function(username, max_games = 20, access_token = NULL) {
 }
 
 ############################################################
-# 3. FETCH RANDOM LICHESS USERS
-############################################################
-
-############################################################
 # 4. OAUTH AUTHENTICATION SETUP
 ############################################################
 
@@ -752,19 +748,19 @@ message("Fetching usernames from Lichess leaderboards...")
 
 # Top players (high rating tier)
 top_endpoints <- c(
-  "https://lichess.org/api/player/top/200/ultraBullet",
-  "https://lichess.org/api/player/top/200/bullet",
-  "https://lichess.org/api/player/top/200/blitz",
-  "https://lichess.org/api/player/top/200/rapid",
-  "https://lichess.org/api/player/top/200/classical",
-  "https://lichess.org/api/player/top/200/chess960",
-  "https://lichess.org/api/player/top/200/crazyhouse",
-  "https://lichess.org/api/player/top/200/antichess",
-  "https://lichess.org/api/player/top/200/atomic",
-  "https://lichess.org/api/player/top/200/horde",
-  "https://lichess.org/api/player/top/200/kingOfTheHill",
-  "https://lichess.org/api/player/top/200/racingKings",
-  "https://lichess.org/api/player/top/200/threeCheck"
+  "https://lichess.org/api/player/top/50/ultraBullet",
+  "https://lichess.org/api/player/top/50/bullet",
+  "https://lichess.org/api/player/top/50/blitz",
+  "https://lichess.org/api/player/top/50/rapid",
+  "https://lichess.org/api/player/top/50/classical",
+  "https://lichess.org/api/player/top/50/chess960",
+  "https://lichess.org/api/player/top/50/crazyhouse",
+  "https://lichess.org/api/player/top/50/antichess",
+  "https://lichess.org/api/player/top/50/atomic",
+  "https://lichess.org/api/player/top/50/horde",
+  "https://lichess.org/api/player/top/50/kingOfTheHill",
+  "https://lichess.org/api/player/top/50/racingKings",
+  "https://lichess.org/api/player/top/50/threeCheck"
 )
 
 for (endpoint in top_endpoints) {
